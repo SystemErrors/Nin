@@ -53,7 +53,8 @@ import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
-import net.sf.odinms.client.NinjaMS.MapleFML;
+import net.sf.odinms.client.NinjaMS.IRCStuff.RPG;
+import net.sf.odinms.client.NinjaMS.IRCStuff.RPG_1;
 import net.sf.odinms.client.messages.CommandProcessor;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.MaplePacket;
@@ -107,7 +108,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
     private static WorldRegistry worldRegistry;
     private PlayerStorage players = new PlayerStorage();
     // private Map<String, MapleCharacter> clients = new LinkedHashMap<String, MapleCharacter>();
-    private String serverMessage;
+    private String serverMessage = " Welcome to NinjaMS - Sunny";
     private int expRate;
     private int mesoRate;
     private int dropRate;
@@ -136,6 +137,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
     private static boolean shuttingdown;
     private Map<Integer, MapMonitor> mapMonitors = new HashMap<Integer, MapMonitor>();
     private boolean isRebooting = false;
+    private static String arrayString = " ";
 
     public void addMapMonitor(int mapId, MapMonitor monitor) {
         mapMonitors.put(mapId, monitor);
@@ -264,12 +266,13 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         TimerManager tMan = TimerManager.getInstance();
         tMan.start();
         tMan.register(AutobanManager.getInstance(), 60000);
-        setServerMessage();
         if (channel == 1) {
             AutomagicShit.getInstance().start();
         }
         if (channel == 9) {
             sendIRCNotice();
+            RPG.getInstance();
+            RPG_1.getInstance();
         }
         tMan.register(new spawnMobs(), 10000);
         tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));
@@ -371,14 +374,13 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         broadcastPacket(MaplePacketCreator.serverMessage(serverMessage));
     }
 
-    public void setServerMessage() {
-        try {
-            serverMessage = getWorldInterface().getArrayString();
-        } catch (RemoteException ex) {
-            java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static void setArrayString(String newMessage){
+        arrayString = newMessage;
     }
 
+    public static String getArrayString(){
+        return arrayString;
+    }
     public void broadcastPacket(MaplePacket data) {
         for (MapleCharacter chr : players.getAllCharacters()) {
             chr.getClient().getSession().write(data);

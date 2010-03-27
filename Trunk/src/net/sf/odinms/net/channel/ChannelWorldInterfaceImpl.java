@@ -46,7 +46,6 @@ import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleCharacterUtil;
 import net.sf.odinms.client.BuddyList.BuddyAddResult;
 import net.sf.odinms.client.BuddyList.BuddyOperation;
-import net.sf.odinms.client.Inventory.MaplePet;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.ByteArrayMaplePacket;
 import net.sf.odinms.net.MaplePacket;

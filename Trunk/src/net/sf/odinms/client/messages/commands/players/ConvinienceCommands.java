@@ -83,11 +83,11 @@ public class ConvinienceCommands implements PlayerCommand {
                     mc.dropMessage("No mobs drop this item. ( Item id : " + itemid+" )");
                 }
             }
-        } else if (splitted[0].equalsIgnoreCase("@whisper")) {
+        } else if (splitted[0].equalsIgnoreCase("whisper")) {
             String name = splitted[1];
             String words = StringUtil.joinStringFrom(splitted, 2);
             WhisperHandler.whisper(name, words, c);
-        } else if (splitted[0].equalsIgnoreCase("@addbuddy")) {
+        } else if (splitted[0].equalsIgnoreCase("addbuddy")) {
             String name = splitted[1];
             String group = "Default Group";
             BuddylistModifyHandler.addBuddy(name, group, c); // cheat, but who cares!

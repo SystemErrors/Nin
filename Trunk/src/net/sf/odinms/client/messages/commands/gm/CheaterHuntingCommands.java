@@ -57,16 +57,7 @@ public class CheaterHuntingCommands implements GMCommand {
             builder.setLength(builder.length() - 2);
             mc.dropMessage(builder.toString());
         } else if (splitted[0].equals("cheaters")) {
-            try {
-                List<CheaterData> cheaters = c.getChannelServer().getWorldInterface().getCheaters();
-                for (int x = cheaters.size() - 1; x >= 0; x--) {
-                    CheaterData cheater = cheaters.get(x);
-                    mc.dropMessage(cheater.getInfo());
-                    mc.dropMessage("This doesnt do shit");
-                }
-            } catch (RemoteException e) {
-                c.getChannelServer().reconnectWorld();
-            }
+            mc.dropMessage("This doesnt do shit");
         } else if (splitted[0].equalsIgnoreCase("dehide")) {
             if (splitted.length < 2) {
                 mc.dropMessage("Syntax: !dehide ign");

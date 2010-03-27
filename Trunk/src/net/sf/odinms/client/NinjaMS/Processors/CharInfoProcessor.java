@@ -71,7 +71,9 @@ public class CharInfoProcessor {
                     + " PvP Deaths : " + other.getPvpDeaths()
                     + " NinjaTensu : " + other.getNinjaTensu()
                     + " DojoPoints : " + other.getDojoPoints()
-                    + " BQPoints :" + other.getBossPoints());
+                    + " BQPoints : " + other.getBossPoints()
+                    + " JQFinished : " + other.getJqFinished()
+                    + " JQPoints : " + other.getJqpoints());
             sb.add("Rasengan Quest Level : " + other.getRasengan()
                     + "Exp/meso/drop/bossdrop boost :" + other.getExpBoost()
                     + " / " + other.getMesoBoost()
@@ -229,7 +231,9 @@ public class CharInfoProcessor {
                     + " PvP Deaths : " + other.getPvpDeaths()
                     + " NinjaTensu : " + other.getNinjaTensu()
                     + " DojoPoints : " + other.getDojoPoints()
-                    + " BQPoints :" + other.getBossPoints());
+                    + " BQPoints :" + other.getBossPoints()
+                    + " JQFinished : " + other.getJqFinished()
+                    + " JQPoints : " + other.getJqpoints());
             mc.dropMessage("Rasengan Quest Level : " + other.getRasengan()
                     + "Exp/meso/drop/bossdrop boost :" + other.getExpBoost()
                     + " / " + other.getMesoBoost()

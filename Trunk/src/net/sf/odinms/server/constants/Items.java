@@ -46,7 +46,7 @@ public class Items {
         return itemid >= 3000000 && itemid < 4000000;
     }
 
-    public static boolean isCurrency(int itemid){
+    public static boolean isCurrency(int itemid) {
         return itemid >= 4032015 && itemid < 4032017;
     }
 
@@ -110,6 +110,13 @@ public class Items {
         public final static int Shadow = 4032015;
     }
 
+    public static class GachaType {
+
+        public final static int regular = 5220000;
+        public final static int special = 5220010;
+        public final static int super1337 = 5220020;
+    }
+
     public enum MegaPhoneType {
 
         MEGAPHONE(2),
@@ -125,6 +132,7 @@ public class Items {
             return i;
         }
     }
+
     public static final boolean isThrowingStar(int itemId) {
         return itemId / 10000 == 207;
     }

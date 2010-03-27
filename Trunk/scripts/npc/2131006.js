@@ -23,7 +23,7 @@ function action(mode, type, selection) {
 				txt += "\r\n#L2# GMS Mode 2 #r(for LPQ - Unavailable)#l#b";
 				txt += "\r\n#L3# GMS Mode 3 #r(for Orbis PQ - Unavailable)#l#b";
 				txt += "\r\n#L4# GMS Mode 4 #r(for Zakum)#l#b";
-				txt += "\r\n#L5# GMS Mode 5 #r(for HT and Mu Lung Dojo)#l#b";
+				txt += "\r\n#L5# GMS Mode 5 #r(for HT, Mu Lung Dojo and BossPQ)#l#b";
 			} else {
 				txt += "\r\n#L10#Cancel GMS Mode#l";
 			}			

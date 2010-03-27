@@ -67,7 +67,6 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
     private ChannelWorldInterface cb;
     private int dbId;
     private boolean ready = false;
-    private String arraystring;
 
     public WorldChannelInterfaceImpl() throws RemoteException {
         super(0, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
@@ -652,64 +651,5 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
                 WorldRegistryImpl.getInstance().deregisterChannelServer(i);
             }
         }
-    }
-
-    public String getArrayString() {
-        if (arraystring == null) {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = null;
-            ResultSet rs = null;
-            String sql = "SELECT array FROM `array_string` WHERE id = 1;";
-            try {
-                ps = con.prepareStatement(sql);
-                rs = ps.executeQuery();
-                if (rs.next()) {
-                    arraystring = rs.getString("array");
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            } finally {
-                try {
-                    if (rs != null) {
-                        rs.close();
-                    }
-                    if (ps != null) {
-                        ps.close();
-                    }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        return arraystring;
-    }
-
-    public void setArrayString(String arraylar){
-        arraystring = arraylar;
-    }
-
-    public void updateArrayString() {        
-        Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String sql = "UPDATE `array_string` SET array = ?;";
-        try {
-            ps = con.prepareStatement(sql);
-            ps.setString(1, arraystring);
-            ps.executeUpdate();            
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally{
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
+    }    
 }

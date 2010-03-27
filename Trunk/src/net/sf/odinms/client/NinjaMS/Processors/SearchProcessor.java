@@ -30,9 +30,14 @@ public class SearchProcessor {
         List<String> ret = new ArrayList<String>();
         ret.add("<<ItemId Search: " + search + ">>");
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+        int i = 0;
         for (Pair<Integer, String> itemPair : ii.getAllItems()) {
             if (itemPair.getRight().toLowerCase().contains(search.toLowerCase())) {
                 ret.add(itemPair.getLeft() + " - " + itemPair.getRight());
+                i++;
+            }
+            if (i >= 20) {
+                break;
             }
         }
         return ret;
@@ -45,6 +50,7 @@ public class SearchProcessor {
         MapleDataProvider dataProvider = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/" + "String.wz"));
         data = dataProvider.getData("Map.img");
         List<Pair<Integer, String>> mapPairList = new LinkedList<Pair<Integer, String>>();
+
         for (MapleData mapAreaData : data.getChildren()) {
             for (MapleData mapIdData : mapAreaData.getChildren()) {
                 int mapIdFromData = Integer.parseInt(mapIdData.getName());
@@ -52,9 +58,14 @@ public class SearchProcessor {
                 mapPairList.add(new Pair<Integer, String>(mapIdFromData, mapNameFromData));
             }
         }
+        int i = 0;
         for (Pair<Integer, String> mapPair : mapPairList) {
             if (mapPair.getRight().toLowerCase().contains(search.toLowerCase())) {
                 ret.add(mapPair.getLeft() + " - " + mapPair.getRight());
+                i++;
+            }
+            if (i >= 20) {
+                break;
             }
         }
         return ret;
@@ -73,9 +84,14 @@ public class SearchProcessor {
             String mobNameFromData = MapleDataTool.getString(mobIdData.getChildByPath("name"), "NO-NAME");
             mobPairList.add(new Pair<Integer, String>(mobIdFromData, mobNameFromData));
         }
+        int i = 0;
         for (Pair<Integer, String> mobPair : mobPairList) {
             if (mobPair.getRight().toLowerCase().contains(search.toLowerCase())) {
                 ret.add(mobPair.getLeft() + " - " + mobPair.getRight());
+                i++;
+            }
+            if (i >= 20) {
+                break;
             }
         }
         return ret;
@@ -83,7 +99,7 @@ public class SearchProcessor {
 
     public static List<String> getNPCId(String search) {
         List<String> retNpcs = new ArrayList<String>();
-        retNpcs.add("<<Mobid  Search: " + search + ">>");
+        retNpcs.add("<<NPCid  Search: " + search + ">>");
         MapleData data;
         MapleDataProvider dataProvider = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/" + "String.wz"));
         data = dataProvider.getData("Npc.img");
@@ -93,10 +109,14 @@ public class SearchProcessor {
             String npcNameFromData = MapleDataTool.getString(npcIdData.getChildByPath("name"), "NO-NAME");
             npcPairList.add(new Pair<Integer, String>(npcIdFromData, npcNameFromData));
         }
-
+        int i = 0;
         for (Pair<Integer, String> npcPair : npcPairList) {
             if (npcPair.getRight().toLowerCase().contains(search.toLowerCase())) {
                 retNpcs.add(npcPair.getLeft() + " - " + npcPair.getRight());
+                i++;
+            }
+             if (i >= 20){
+                break;
             }
         }
         return retNpcs;

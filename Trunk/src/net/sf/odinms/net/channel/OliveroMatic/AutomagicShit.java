@@ -54,7 +54,7 @@ public class AutomagicShit {
             public void run() {
                 startFML();
             }
-        }, 3 * 60 * 1000); // 15 min once
+        }, 10 * 60 * 1000); // 10 min once
     }
 
     public void scheduleVoteMsg() {
@@ -64,7 +64,7 @@ public class AutomagicShit {
             public void run() {
                 startVoteMsg();
             }
-        }, 7 * 60 * 1000); // 15 min once
+        }, 15 * 60 * 1000); // 15 min once
     }
 
     public void broadcastFMLMessage() {
@@ -76,22 +76,27 @@ public class AutomagicShit {
         } else {
             sendFML();
         }
-        log.info("Anonymous Bot Message broadcasted.");
     }
 
     public void sendBashQuote() {
+        MainIRC.getInstance().sendMessage("Sunny", "#BASH : 0");
         for (ChannelServer lol : ChannelServer.getAllInstances()) {
+            MainIRC.getInstance().sendMessage("Sunny", "#BASH : 1 - "+ lol.getChannel());
             List<String> gay = BashBot.getQuotes();
+            MainIRC.getInstance().sendMessage("Sunny", "#BASH : 2- Gay");
             lol.broadcastPacket(MaplePacketCreator.sendYellowTip("---------------------------------------Random bash.org Quote---------------------------------------"));
             for (String i : gay) {
                 lol.broadcastPacket(MaplePacketCreator.sendYellowTip(i));
             }
             lol.broadcastPacket(MaplePacketCreator.sendYellowTip("---------------------------------------Random bash.org Quote---------------------------------------"));
+            if (lol.getChannel() == 2) {
+                for (String i : gay) {
+                    MainIRC.getInstance().sendIrcMessage("#BASH : " + i);
+                }
+            }
         }
-        List<String> gay = BashBot.getQuotes();
-        for (String i : gay) {
-            MainIRC.getInstance().sendIrcMessage("#BASH : " + i);
-        }
+
+
     }
 
     public void sendMLIA() {
@@ -105,7 +110,12 @@ public class AutomagicShit {
         for (ChannelServer lol : ChannelServer.getAllInstances()) {
             lol.broadcastPacket(MaplePacketCreator.sendYellowTip(MapleFML.getFML()));
         }
-        MainIRC.getInstance().sendIrcMessage("#FML : " + MapleFML.getFML());
+        int lol = (int) (Math.random() * 3);
+        if (lol < 1) {
+            MainIRC.getInstance().sendGlobalMessage("#FML : " + MapleFML.getFML());
+        } else {
+            MainIRC.getInstance().sendIrcMessage("#FML : " + MapleFML.getFML());
+        }
     }
 
     public void broadcastVoteMsg() {

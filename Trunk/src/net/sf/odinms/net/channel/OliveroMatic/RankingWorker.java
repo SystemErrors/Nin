@@ -64,7 +64,7 @@ public class RankingWorker {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = con.prepareStatement("SELECT c.name, c.taorank, c.clantaorank, c.reborns, c.taocheck, a.clan AS clan FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE c.reborns > 10 AND c.taocheck > 10 AND a.gm < 3 AND a.banned < 1 ORDER BY c.taorank ASC");
+            ps = con.prepareStatement("SELECT c.name, c.taorank, c.clantaorank, c.reborns, c.taocheck, c.clan AS clan FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE c.reborns > 10 AND c.taocheck > 10 AND a.gm < 3 AND a.banned < 1 ORDER BY c.taorank ASC");
             rs = ps.executeQuery();
             System.out.println("Tao ranking Query executed");
             while (rs.next()) {
@@ -113,7 +113,7 @@ public class RankingWorker {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = con.prepareStatement("SELECT c.name, c.msi, c.level, c.reborns, c.jobrank, c.rank, a.clan AS clan FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE c.reborns > 10 AND a.gm < 3 AND a.banned < 1 ORDER BY c.rank ASC");
+            ps = con.prepareStatement("SELECT c.name, c.msi, c.level, c.reborns, c.jobrank, c.rank, c.clan AS clan FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE c.reborns > 10 AND a.gm < 3 AND a.banned < 1 ORDER BY c.rank ASC");
             rs = ps.executeQuery();
             while (rs.next()) {
                 int clan = rs.getByte("clan");

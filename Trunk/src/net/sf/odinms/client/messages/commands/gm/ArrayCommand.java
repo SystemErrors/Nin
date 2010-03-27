@@ -24,6 +24,7 @@ import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.GMCommand;
 import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
+import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.tools.StringUtil;
 
 public class ArrayCommand implements GMCommand {
@@ -32,16 +33,14 @@ public class ArrayCommand implements GMCommand {
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         if (splitted.length >= 2) {
             if (splitted[1].equalsIgnoreCase("*CLEAR")) {
-                c.getChannelServer().getWorldInterface().setArrayString("");
+                ChannelServer.setArrayString("");
                 mc.dropMessage("Array Sucessfully Flushed");
-            } else if (splitted[1].equalsIgnoreCase("*UPDATE")){
-                c.getChannelServer().getWorldInterface().updateArrayString();
             } else {
-                c.getChannelServer().getWorldInterface().setArrayString(c.getChannelServer().getWorldInterface().getArrayString() + StringUtil.joinStringFrom(splitted, 1));
+                ChannelServer.setArrayString(ChannelServer.getArrayString() + " || " + StringUtil.joinStringFrom(splitted, 1));
                 mc.dropMessage("Added " + StringUtil.joinStringFrom(splitted, 1) + " to the array. Use !array to check.");
             }
         } else {
-            mc.dropMessage("Array: " + c.getChannelServer().getWorldInterface().getArrayString());
+            mc.dropMessage("Array: " + ChannelServer.getArrayString());
         }
     }
 

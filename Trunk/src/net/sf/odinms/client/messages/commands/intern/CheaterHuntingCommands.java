@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.sf.odinms.client.messages.commands.intern;
 
 import java.rmi.RemoteException;
@@ -22,7 +21,7 @@ import net.sf.odinms.server.constants.Skills;
  *
  * @author Owner
  */
-public class CheaterHuntingCommands implements InternCommand{
+public class CheaterHuntingCommands implements InternCommand {
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         MapleCharacter pl = c.getPlayer();
@@ -43,16 +42,7 @@ public class CheaterHuntingCommands implements InternCommand{
             builder.setLength(builder.length() - 2);
             mc.dropMessage(builder.toString());
         } else if (splitted[0].equals("cheaters")) {
-            try {
-                List<CheaterData> cheaters = c.getChannelServer().getWorldInterface().getCheaters();
-                for (int x = cheaters.size() - 1; x >= 0; x--) {
-                    CheaterData cheater = cheaters.get(x);
-                    mc.dropMessage(cheater.getInfo());
-                    mc.dropMessage("This doesnt do shit");
-                }
-            } catch (RemoteException e) {
-                c.getChannelServer().reconnectWorld();
-            }
+            mc.dropMessage("This doesnt do shit");
         } else if (splitted[0].equalsIgnoreCase("dehide")) {
             if (splitted.length < 2) {
                 mc.dropMessage("Syntax: $dehide ign");

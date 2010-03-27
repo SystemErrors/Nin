@@ -100,6 +100,11 @@ class IRCCommands {
             } else {
                 kick(channel, sender, "You are such a unlucky fag");
             }
+        } else if (command.equalsIgnoreCase("topic")){
+            if(splitted.length > 1)
+            for (ChannelServer cs : ChannelServer.getAllInstances()){
+                cs.setServerMessage(sender);
+            }
         }
     }
 

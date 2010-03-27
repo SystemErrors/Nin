@@ -51,7 +51,6 @@ import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MapleShopFactory;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.client.Enums.MapleStat;
-import net.sf.odinms.client.NinjaMS.SuperShuriken;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.guild.MapleAlliance;
@@ -110,6 +109,7 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
 
     public void voteMSG() {
         sendOk("Don't forget to vote for us #b http://ninjams.org/vote");
+        dispose();
     }
 
     public void sendYesNo(String text) {
@@ -514,11 +514,11 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         getPlayer().startAlert(fuck);
     }
 
-    public void dropMessage(String fuck) {
-        getPlayer().dropMessage(fuck);
+    public int getLastJQ(){
+        return getPlayer().getLastJQ();
     }
 
-    public void jqBonus() {
+     public void jqBonus() {
         if (checkPages()) {
             getPlayer().bonusReward();
         } else {
@@ -878,4 +878,9 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
                 break;
         }
     }
+
+     public void needGMSModeMsg(int lol){
+        sendOk("You need to be in GMS mode "+lol+". Talk to NPC duru in henesys to go into GMS mode");
+        dispose();
+     }
 }

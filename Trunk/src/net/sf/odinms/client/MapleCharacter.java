@@ -20,18 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.client;
 
-import net.sf.odinms.client.Inventory.InventoryContainer;
-import net.sf.odinms.client.Inventory.MapleInventoryType;
-import net.sf.odinms.client.Inventory.IEquip;
-import net.sf.odinms.client.Inventory.Equip;
-import net.sf.odinms.client.Inventory.MapleWeaponType;
-import net.sf.odinms.client.Inventory.MapleInventory;
-import net.sf.odinms.client.Inventory.IItem;
-import net.sf.odinms.client.Inventory.Item;
-import net.sf.odinms.client.Inventory.MaplePet;
-import net.sf.odinms.client.Enums.MapleStat;
-import net.sf.odinms.client.Enums.MapleBuffStat;
-import net.sf.odinms.server.constants.Skills;
+import net.sf.odinms.client.Inventory.*;
+import net.sf.odinms.server.constants.*;
 import java.awt.Point;
 import java.lang.ref.WeakReference;
 import java.net.InetAddress;
@@ -57,11 +47,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
-import net.sf.odinms.client.Enums.Clans;
-import net.sf.odinms.client.Enums.Status;
-import net.sf.odinms.client.Enums.MapleDisease;
-import net.sf.odinms.client.Enums.MapleJob;
-import net.sf.odinms.client.Enums.MapleSkinColor;
+import net.sf.odinms.client.Enums.*;
 import net.sf.odinms.client.Inventory.MapleRing;
 
 import net.sf.odinms.client.anticheat.CheatTracker;
@@ -105,9 +91,6 @@ import net.sf.odinms.net.world.guild.*;
 import net.sf.odinms.scripting.npc.NPCScriptManager;
 import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MiniGame;
-import net.sf.odinms.server.constants.GameConstants;
-import net.sf.odinms.server.constants.Items;
-import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.server.life.MapleLifeFactory;
 import net.sf.odinms.server.life.MobSkill;
 import net.sf.odinms.server.life.MobSkillFactory;
@@ -182,6 +165,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     // ninja special
     private int reborn, mobkilled, ninjatensu, bosskilled, mutality, clonelimit, rank, rankmove, jobrank, jobrankmove, taorank, clantaorank;
     private Clans clan = Clans.UNDECIDED;
+    private Village village = Village.UNDECIDED;
     private boolean leet = false;
     private byte rasengan;
     /**
@@ -205,6 +189,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private short dpoints, damount;
     //JQ
     private String jqStart;
+    private int jqFinished, jqpoints, lastjq;
     private String lastJQFinish = "In 1947";
     // PVP
     private int pvpkills, pvpdeaths;
@@ -216,7 +201,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private int expBoost, mesoBoost, dropBoost, bdropBoost;
     private boolean rateChange, noHide;
     // Checks
-    private String previousnames;
+    private String previousnames, footnote;
     private int taocheck;
     private boolean keymapchange, macrochange;
     //GMS Mode
@@ -365,7 +350,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.mgc = new MapleGuildCharacter(ret);
         }
         if (channelserver) {
-            ret.maxQuests();
             ret.createdate = rs.getString("createdate");
             ret.previousnames = rs.getString("previousnames");
             if (ret.previousnames == null || ret.previousnames.length() < 2) {
@@ -379,6 +363,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.clantaorank = rs.getInt("clantaorank");
             ret.smega = rs.getByte("smega");
             ret.bossPoints = rs.getInt("bosspoints");
+            ret.clan = Clans.getById(rs.getInt("clan"));
             doLoginMapCheck(ret);
             int partyid = rs.getInt("party");
             if (partyid >= 0) {
@@ -402,7 +387,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.paypalNX = rs.getInt("paypalNX");
             ret.maplePoints = rs.getInt("maplePoints");
             ret.cardNX = rs.getInt("cardNX");
-            ret.clan = Clans.getById(rs.getInt("clan"));
             gmm = rs.getInt("gm");
             ret.gmLevel = Status.getByLevel(gmm);
             if ((jobId == 900 || jobId == 910) && gmm < 3) {
@@ -411,6 +395,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.ninjatensu = rs.getInt("ninjatensu");
             ret.dpoints = rs.getShort("dpoints");
             ret.damount = rs.getShort("damount");
+            ret.jqpoints = rs.getInt("jqpoints");
+            ret.jqFinished = rs.getInt("jqfinished");
+            ret.lastjq = rs.getInt("lastjq");
+            ret.footnote = rs.getString("footnote");
+            ret.village = Village.getById(rs.getInt("village"));
         }
         rs.close();
         ps.close();
@@ -497,7 +486,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ps.close();
         if (channelserver) {
             ret.maxSkills(false);
-            ret.maxQuests();
             ret.loadMacrosFromDB(con);
             ret.loadKeyMapFromDB(con);
             ps = con.prepareStatement("SELECT `locationtype`,`map`,`portal` FROM savedlocations WHERE characterid = ?");
@@ -519,18 +507,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             }
             rs.close();
             ps.close();
-
             ret.buddylist.loadFromDb(charid);
             ret.storage = MapleStorage.loadOrCreateFromDB(ret.accountid);
-
         }
-        ret.maxQuests();
         ret.recalcLocalStats();
         ret.silentEnforceMaxHpMp();
         ret.resetBattleshipHp();
         if (channelserver) {
             ChannelServer.getServerPlayerStorage().addPlayerToWorldStorage(ret);
-            //ret.spawnPets();
         }
         return ret;
     }
@@ -577,11 +561,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 ret.paypalNX = rs.getInt("paypalNX");
                 ret.maplePoints = rs.getInt("maplePoints");
                 ret.cardNX = rs.getInt("cardNX");
-                ret.clan = Clans.getById(rs.getInt("clan"));
                 ret.gmLevel = Status.getByLevel(rs.getInt("gm"));
                 ret.ninjatensu = rs.getInt("ninjatensu");
                 ret.dpoints = rs.getShort("dpoints");
                 ret.damount = rs.getShort("damount");
+                ret.jqpoints = rs.getInt("jqpoints");
+                ret.jqFinished = rs.getInt("jqfinished");
+                ret.footnote = rs.getString("footnote");
+                ret.village = Village.getById(rs.getInt("village"));
             }
             rs.close();
             ps.close();
@@ -600,22 +587,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         //     ret.petid2 = -1;
         //   ret.petid3 = -1;
         ret.recalcLocalStats();
-        ret.maxQuests();
         return ret;
-    }
-
-    public void maxQuests() {
-        try {
-            for (Entry<Integer, MapleQuest> quest : MapleQuest.getAllQuests().entrySet()) {
-                MapleQuest noob = MapleQuest.getInstance2(quest.getKey());
-                MapleQuestStatus s = new MapleQuestStatus(noob, MapleQuestStatus.Status.getById(2));
-                s.setCompletionTime(System.currentTimeMillis());
-                s.setForfeited(0);
-                quests.put(noob, s);
-            }
-        } catch (Exception e) {
-            log.error("ERROR ", e);
-        }
     }
 
     public void saveNewToDB() {
@@ -782,7 +754,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     " `reborns` = ?, `mobkilled` = ?, `bosskilled` = ?, `mutality` =?, `clonelimit` = ?," +//24
                     " `legend` = ?, `msi` = ?, `name` = ?, `pvpdeaths` = ?," + //28
                     " `pvpkills` = ?, `prefixshit` = ?, `autoap` = ?, `irc` = ?, `taocheck` = ?, `gmsmode` = ?," + //34
-                    " `lastdojostage` = ? , `dojopoints` = ?, `smega` = ?, `bosspoints` = ?" + //38
+                    " `lastdojostage` = ? , `dojopoints` = ?, `smega` = ?, `bosspoints` = ?," + //38
+                    " `clan` = ?" +//39
                     //      " `matchcardwins` = ?, `matchcardlosses` = ?, `matchcardties` = ?, `omokwins` = ?, `omoklosses` = ?, `omokties` = ?" + //46
                     " WHERE id = ?"); //40
             ps.setInt(1, level);
@@ -834,7 +807,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ps.setInt(36, dojoPoints);
             ps.setByte(37, smega);
             ps.setInt(38, bossPoints);
-            ps.setInt(39, id);
+            ps.setInt(39, clan.getId());
+            ps.setInt(40, id);
             int updateRows = ps.executeUpdate();
             if (updateRows < 1) {
                 throw new DatabaseException("Character not in database (" + id + ")");
@@ -864,7 +838,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
                 ps.executeBatch();
             }
-
             deleteWhereCharacterId(con, "DELETE FROM inventoryitems WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO inventoryitems (characterid, itemid, inventorytype, position, quantity, owner, uniqueid, expiredate, petindex) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             PreparedStatement pse = con.prepareStatement("INSERT INTO inventoryequipment VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -984,15 +957,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 ps.executeBatch();
                 ps.close();
             }
-            ps = con.prepareStatement("UPDATE accounts SET `cardNX` = ?, `maplePoints` = ?, `paypalNX` = ?, `clan` = ?, `ninjatensu` = ?, `dpoints` = ?, `damount` = ?  WHERE id = ?");
+            ps = con.prepareStatement("UPDATE accounts SET `cardNX` = ?, `maplePoints` = ?, `paypalNX` = ?, `village` = ?, `ninjatensu` = ?, `dpoints` = ?, `damount` = ?, `jqfinished` = ?, `jqpoints` = ?, `lastjq` = ? WHERE id = ?");
             ps.setInt(1, cardNX);
             ps.setInt(2, maplePoints);
             ps.setInt(3, paypalNX);
-            ps.setInt(4, clan.getId());
+            ps.setInt(4, village.getId());
             ps.setInt(5, ninjatensu);
             ps.setShort(6, dpoints);
             ps.setShort(7, damount);
-            ps.setInt(8, client.getAccID());
+            ps.setInt(8, jqFinished);
+            ps.setInt(9, jqpoints);
+            ps.setInt(10, lastjq);
+            ps.setInt(11, client.getAccID());
             ps.executeUpdate();
             if (storage != null) {
                 storage.saveToDB();
@@ -4337,7 +4313,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
             }, 1000);
         }
-
     }
 
     public void torture(String reason) {
@@ -4665,8 +4640,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         sb.append(" has just finished the JQ: ");
         sb.append(getMapId());
         sb.append(". Last Jq Finished at : ").append(lastJQFinish);
-        lastJQFinish =
-                new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(System.currentTimeMillis()));
+        lastJQFinish = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date(System.currentTimeMillis()));
         sb.append(" Started at System time : ").append(jqStart).append(". finished at : ").append(lastJQFinish).append(". ");
         try {
             getClient().getChannelServer().broadcastStaffPacket(MaplePacketCreator.serverNotice(5, sb.toString()));
@@ -4676,72 +4650,92 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void giveJQReward() {
-        if (jqStart == null) {
+        if (jqStart == null || client.getChannel() != 3) {
             dropMessage("You did not start the JQ properly. either you warped in or CCed . so no rewards for you");
             return;
-
         }
-
-
         int type = (int) Math.floor(Math.random() * 3200 + 1);
-        int[] specialitem = {4001064, 4001065, 4001066, 4001067, 4001068, 4001069, 4001070, 4001071, 4001072, 4001073};
         int[] jqmap = {105040311, 105040313, 105040316, 103000902, 103000905, 103000909, 101000101, 101000104, 109040004, 280020001};
-        int i;
-        for (i = 0; i < jqmap.length; i++) {
+        for (int i = 0; i < jqmap.length; i++) {
             if (this.getMapId() == jqmap[i]) {
-                dropMessage("diarypage gain");
-                gainItem(specialitem[i], 1);
-                dropMessage("diarypage gained2");
+                jqFinished++;
+                if (i == 9) {
+                    jqpoints++;
+                    lastjq = 0;
+                } else {
+                    lastjq = i + 1;
+                }
+                dropMessage("Congratulations on successfully finishing the JQ #" + (i + 1));
             } else {
                 // Do nothing
             }
         }
-        if (type < 250) {
-            this.dropMessage("How sweet! You have been scammed! :)");
-        } else if (type >= 250 && type < 500) {
-            int nxx = (int) Math.floor(Math.random() * 2000 + 1);
-            this.modifyCSPoints(1, nxx);
-            this.dropMessage("You have gained " + nxx + " NX.");
-        } else if (type >= 500 && type < 1000) {
-            this.gainMeso((type * 10000), true);
-            this.dropMessage("You have gained " + (type * 10000) + " mesos");
-        } else if (type >= 1000 && type < 1500) {
-            this.levelUp();
-            this.levelUp();
-            this.levelUp();
-        } else if (type >= 1500 && type < 2000) {
-            int aap = (int) Math.floor(Math.random() * 15);
-            this.gainAp(aap);
-            this.dropMessage("You have gained" + aap + "Ap");
-        } else if (type >= 2000 && type < 2500) {
-            int[] scrolls = {2040011, 2040012, 2040013, 2040014, 2040015, 2040028, 2040100, 2040101, 2040102, 2040103, 2040104, 2040200, 2040201, 2040203, 2040204,
-                2040205, 2040206, 2040207, 2040208, 2040209, 2040300, 2040301, 2040302, 2040303, 2040304, 2040305, 2040306,
-                2040307, 2040308, 2040309, 2040310, 2040311, 2040312, 2040314, 2040317, 2040318, 2040319, 2040320, 2040321, 2040322, 2040323, 2040327,
-                2040328, 2040412, 2040413, 2040414, 2040417, 2040418, 2040419, 2040530, 2040531, 2040532, 2040533, 2040623, 2040624, 2040625,
-                2040626, 2040627, 2040803, 2040804, 2040805, 2040806, 2040807, 2040810, 2040811, 2040814, 2040815, 2040914, 2040915, 2040916, 2040917, 2040918, 2040919, 2040920, 2040921, 2040922, 2049100, 2049000, 2049001, 2049002, 2049003};
-            int[] dragonweapon = {1302059, 1312031, 1322052, 1332049, 1332050, 1372032, 1382036, 1402036, 1412026, 1422028, 1432038, 1442045, 1452044, 1462039, 1472051, 1472052, 1482012, 1492013};
-            if (type < 2250) {
-                i = (int) Math.floor(Math.random() * scrolls.length);
-                MapleInventoryManipulator.addById(this.getClient(), scrolls[i], (short) 1, null);
-                this.dropMessage("You have gained a scroll");
-            } else {
-                i = (int) Math.floor(Math.random() * dragonweapon.length);
-                MapleInventoryManipulator.addById(this.getClient(), dragonweapon[i], (short) 1, null);
-                this.dropMessage("you have gained dragon weapon");
-            }
-        } else if (type >= 2500 && type < 3000) {
-            MapleInventoryManipulator.addById(this.getClient(), 2000005, (short) 30, null);
-            this.dropMessage("you have gained 30 power elixirs");
-        } else {
-            MapleInventoryManipulator.addById(this.getClient(), 2000004, (short) 50, null);
-            this.dropMessage("you have gained 50 elixirs");
+        int chance = (int) (Math.random() * 1000);
+        if (chance < 10) {
+            giveSpecialScroll(1);
+        } else if (chance < 50) {
+            giveRebirth();
+        } else if (chance < 75) {
+            gainItem(Items.GachaType.regular, 1);
+        } else if (chance < 100) {
+            levelUp();
+            levelUp();
+            levelUp();
+        } else if (chance < 110) {
+            addNinjaTensu();
+        } else if (chance < 200) {
+            this.addCSPoints(1, chance * 5);
         }
-
         changeMap(100000000);
+    }
+
+    public void giveSpecialScroll(int amt) {
+        int[] scrolls = {2040603, 2044503, 2041024, 2041025, 2044703, 2044603, 2043303, 2040807, 2040806, 2040006, 2040007, 2043103, 2043203, 2043003, 2040506, 2044403, 2040903, 2040709, 2040710, 2040711, 2044303, 2043803, 2040403, 2044103, 2044203, 2044003, 2043703, 2041200, 2049100, 2049000, 2049001, 2049002, 2049003};
+        int i = (int) (Math.random() * scrolls.length);
+        if (checkSpace(2040603, amt)) {
+            gainItem(scrolls[i], amt);
+        } else {
+            dropMessage("You did not gain a special scroll because your inventory was full");
+        }
+    }
+
+    public void giveRebirth() {
+        while (getLevel() < getMaxLevel()) {
+            levelUp();
+        }
+        doRebornn(false);
+        dropMessage("You have gained a Rebirth");
     }
 
     public String jqStartTime() {
         return this.jqStart;
+    }
+
+    public int getJqFinished() {
+        return jqFinished;
+    }
+
+    public void setJqFinished(int jqFinished) {
+        this.jqFinished = jqFinished;
+    }
+
+    public int getJqpoints() {
+        return jqpoints;
+    }
+
+    public void setJqpoints(int jqpoints) {
+        this.jqpoints = jqpoints;
+    }
+
+    public int getLastJQ() {
+        if (lastjq > 9) {
+            lastjq = 0;
+        }
+        return lastjq;
+    }
+
+    public void setLastJQ(int x) {
+        this.lastjq = x;
     }
 
     public void startJq(int wtf) {
@@ -4793,8 +4787,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             showMessage("You have gained " + nxxx + " NX");
         } else if (type >= 1500 && type < 2500) {
             int[] scrolls = {2040603, 2044503, 2041024, 2041025, 2044703, 2044603, 2043303, 2040807, 2040806, 2040006, 2040007, 2043103, 2043203, 2043003, 2040506, 2044403, 2040903, 2040709, 2040710, 2040711, 2044303, 2043803, 2040403, 2044103, 2044203, 2044003, 2043703, 2041200, 2049100, 2049000, 2049001, 2049002, 2049003};
-            i =
-                    (int) Math.floor(Math.random() * scrolls.length);
+            i = (int) Math.floor(Math.random() * scrolls.length);
             MapleInventoryManipulator.addById(getClient(), scrolls[i], (short) 1);
             showMessage("You have gained a scroll (Gm scroll / Chaos scroll / Clean slate scroll)");
         } else if (type >= 2500 && type < 3000) {
@@ -5987,5 +5980,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         client.getSession().write(MaplePacketCreator.getCharInfo(this));
         getMap().removePlayer(this);
         getMap().addPlayer(this);
+    }
+
+    public Village getVillage() {
+        return village;
     }
 }

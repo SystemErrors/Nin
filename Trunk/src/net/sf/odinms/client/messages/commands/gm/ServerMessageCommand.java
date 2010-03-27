@@ -27,6 +27,7 @@ import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.tools.StringUtil;
 import java.util.Collection;
+import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
 
 public class ServerMessageCommand implements GMCommand {
 
@@ -34,12 +35,13 @@ public class ServerMessageCommand implements GMCommand {
     public void execute(MapleClient c, MessageCallback mc, String[] splittedLine) throws Exception {
         String msg = StringUtil.joinStringFrom(splittedLine, 1);
         if (msg.equalsIgnoreCase("!array")) {
-            msg = c.getChannelServer().getWorldInterface().getArrayString();
+            msg = ChannelServer.getArrayString();
         }
         Collection<ChannelServer> cservs = ChannelServer.getAllInstances();
         for (ChannelServer cserv : cservs) {
             cserv.setServerMessage(msg);
         }
+        MainIRC.getInstance().setTopic("#ninjas", msg);
     }
 
     @Override

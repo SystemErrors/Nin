@@ -5,11 +5,9 @@
 package net.sf.odinms.client.NinjaMS.IRCStuff;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import net.sf.odinms.client.NinjaMS.IRCStuff.Commands.IRCCommandProcessor;
 import net.sf.odinms.client.NinjaMS.IRCStuff.Commands.IRCFunProcessor;
-import net.sf.odinms.client.NinjaMS.Processors.SmegaProcessor;
+import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.server.TimerManager;
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.PircBot;
@@ -37,7 +35,7 @@ public class MainIRC extends PircBot {
 
     public MainIRC() {
         try {
-            this.setName("ninjabot");
+            this.setName("NinjaBot");
             this.setAutoNickChange(true);
             this.connect("irc.vbirc.com");
             this.identify("{Janet143<3}");
@@ -51,6 +49,11 @@ public class MainIRC extends PircBot {
             ex.printStackTrace();
         }
     }
+
+    public void changeLogin(String lol){
+        this.setLogin(lol);
+    }
+
 
     @Override
     protected void onFinger(String sourceNick, String sourceLogin, String sourceHostname, String target) {
@@ -85,8 +88,20 @@ public class MainIRC extends PircBot {
             }
             IRCFunProcessor.process(message, sender, channel);
         }
-
     }
+
+
+    @Override
+    protected void onTopic(String channel, String topic, String setBy, long date, boolean changed) {
+        if (channel.equals("#ninjas")){
+            for (ChannelServer cs : ChannelServer.getAllInstances()){
+                cs.setServerMessage(topic);                
+            }
+            sendMessage(channel1, "The channel topic is set as server message in game");
+        }
+        
+    }
+
 
     public void sendIrcMessage(String Message) {
         this.sendMessage(channel, Message);

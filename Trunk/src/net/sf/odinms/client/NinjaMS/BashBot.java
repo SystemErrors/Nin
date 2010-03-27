@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class BashBot {
 
-    public static List<String> getQuotes() {
+     public static List<String> getQuotes() {
         List<String> ff = new LinkedList<String>();
         try {
             HttpURLConnection con = (HttpURLConnection) new URL("http://www.bash.org/?random").openConnection();
@@ -51,17 +51,15 @@ public class BashBot {
                     send.append(ch);
                 }
             }
-
             input.close();
             con.disconnect();
         } catch (Exception e) {
             System.err.println("[Bash Bot] There has been an error displaying the Bash.");
             e.printStackTrace();
         }
-
-
         return ff;
     }
+
 
     public static String ignore(String in) {
         in = in.replaceAll(Pattern.quote("&quot;"), "");

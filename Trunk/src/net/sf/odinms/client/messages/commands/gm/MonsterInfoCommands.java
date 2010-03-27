@@ -22,6 +22,7 @@ package net.sf.odinms.client.messages.commands.gm;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -75,29 +76,31 @@ public class MonsterInfoCommands implements GMCommand {
                 return;
             }
             int chance = Integer.parseInt(splitted[3]);
-            PreparedStatement ps = con.prepareStatement("INSERT INTO `monsterdrops` (`monsterid`,`itemid`,`chance`) VALUES (?, ?, ?);");
-            ps.setInt(1, mid);
-            ps.setInt(2, iid);
-            ps.setInt(3, chance);
-            if (ps.execute()) {
+            try {
+                PreparedStatement ps = con.prepareStatement("INSERT INTO `monsterdrops` (`monsterid`,`itemid`,`chance`) VALUES (?, ?, ?);");
+                ps.setInt(1, mid);
+                ps.setInt(2, iid);
+                ps.setInt(3, chance);
+                ps.executeUpdate();
                 mc.dropMessage(" Success ");
-            } else {
-                mc.dropMessage(" Failed ");
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            ps.close();
         } else if (splitted[0].equalsIgnoreCase("removedrop")) {
-            int mid = Integer.parseInt(splitted[1]);
-            int iid = Integer.parseInt(splitted[2]);
-            PreparedStatement ps = con.prepareStatement("DELETE FROM `monsterdrops` where `monsterid` = ? AND `itemid` = ?");
-            ps.setInt(1, mid);
-            ps.setInt(2, iid);
-            if (ps.execute()) {
-                mc.dropMessage(" Success ");
-            } else {
-                mc.dropMessage(" Failed ");
+            try {
+                int mid = Integer.parseInt(splitted[1]);
+                int iid = Integer.parseInt(splitted[2]);
+                PreparedStatement ps = con.prepareStatement("DELETE FROM `monsterdrops` where `monsterid` = ? AND `itemid` = ?");
+                ps.setInt(1, mid);
+                ps.setInt(2, iid);
+                ps.executeUpdate();
+                mc.dropMessage(" Success ");               
+                ps.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            ps.close();
-        } else if (splitted[0].equalsIgnoreCase("relaoddrops")) {
+        } else if (splitted[0].equalsIgnoreCase("reloaddrops")) {
             MapleMonsterInformationProvider.getInstance().clearDrops();
             mc.dropMessage("Reloaded drops");
         }

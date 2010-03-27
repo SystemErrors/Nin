@@ -88,7 +88,7 @@ function playerExit(eim, player) {
     if (party.size() == 1) {
         dispose = true;
     }
-    eim.saveBossQuestPoints(parseInt(eim.getProperty("points")), player);
+    //eim.saveBossQuestPoints(parseInt(eim.getProperty("points")), player);
     player.getClient().getSession().write(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] Your current points have been awarded, spend them as you wish. Better luck next time!"));
     eim.unregisterPlayer(player);
     player.changeMap(exitMap, exitMap.getPortal(0));

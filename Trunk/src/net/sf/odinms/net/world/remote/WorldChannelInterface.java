@@ -52,12 +52,6 @@ import net.sf.odinms.net.world.guild.MapleGuildCharacter;
  */
 public interface WorldChannelInterface extends Remote, WorldChannelCommonOperations {
 
-    public String getArrayString() throws RemoteException;
-
-    public void updateArrayString() throws RemoteException;
-
-    public void setArrayString(String arraylar) throws RemoteException;
-
     public Properties getDatabaseProperties() throws RemoteException;
 
     public Properties getGameProperties() throws RemoteException;
