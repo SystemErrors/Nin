@@ -514,76 +514,29 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         getPlayer().startAlert(fuck);
     }
 
-    public int getLastJQ(){
+    public int getLastJQ() {
         return getPlayer().getLastJQ();
     }
 
-     public void jqBonus() {
-        if (checkPages()) {
+    public void jqBonus() {
+        int jqp = getPlayer().getJqpoints();
+        if (jqp >= 1) {
             getPlayer().bonusReward();
         } else {
-            dropMessage("you don't have the pages. you can go fap now");
+            dropMessage("you don't have any JQ point. you can go fap now");
         }
     }
 
-    public boolean checkPages() {
-        int[] pages = {4001064, 4001065, 4001066, 4001067, 4001068, 4001069, 4001070, 4001071, 4001072, 4001073};
-        int i = 0;
-        for (i = 0; i < pages.length; i++) {
-            if (!getPlayer().haveItem(pages[i], 1)) {
-                return false;
+    public void jqRBBonus() {
+        int jqp = getPlayer().getJqpoints();
+        if (jqp >= 1) {
+            getPlayer().setJqpoints(jqp - 1);
+            for (int i = 0; i < 5; i++) {
+                getPlayer().giveRebirth();
             }
-        }
-        return true;
-    }
-
-    public void apBonus() {
-        if (checkPages()) {
-            if (getPlayer().getRemainingAp() < (32767 - 1500)) {
-                getPlayer().gainAp(1500);
-                removePages();
-                dropMessage("you have gained 1500 Ap");
-            } else {
-                dropMessage("Too bad you have too much remaining AP");
-                return;
-            }
+            dropMessage("you have gained 5 RB");
         } else {
-            dropMessage("you don't have the pages. you can go fap now");
-        }
-    }
-
-    public boolean checkPagesTence() {
-        int[] pages = {4001064, 4001065, 4001066, 4001067, 4001068, 4001069, 4001070, 4001071, 4001072, 4001073};
-        int i = 0;
-        for (i = 0; i < pages.length; i++) {
-            if (!getPlayer().haveItem(pages[i], 10)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void superYellowSnowShoes() {
-        if (checkPagesTence()) {
-            if (checkSpace(1072239, 1)) {
-                int i = 0;
-                for (i = 0; i < 10; i++) {
-                    removePages();
-                }
-                gainStatItem(1072239, (short) 13337, (short) 10, (short) 69);
-            } else {
-                dropMessage("You don't have space in your bag.");
-            }
-        } else {
-            dropMessage("You no have enuff chakra lor. go fap fap ;P");
-        }
-    }
-
-    public void removePages() {
-        int[] pages = {4001064, 4001065, 4001066, 4001067, 4001068, 4001069, 4001070, 4001071, 4001072, 4001073};
-        int i = 0;
-        for (i = 0; i < pages.length; i++) {
-            gainItem(pages[i], (short) -1);
+            dropMessage("you don't have any Jq points. you can go fap now");
         }
     }
 
@@ -815,9 +768,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         return false;
     }
 
-    public boolean nonExistantItem(int itemId){
+    public boolean nonExistantItem(int itemId) {
         return MapleItemInformationProvider.getInstance().getSlotMax(itemId) < 1;
     }
+
     public boolean checkShurikenEtcitems() {
         int msicount = getPlayer().getMaxStatItems();
         switch (msicount) {
@@ -843,10 +797,10 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
     }
 
-     public void removeShurikenEtcItems() {
-         int x = getPlayer().getMaxStatItems();
-         MapleCharacter player = getPlayer();
-         switch(x){
+    public void removeShurikenEtcItems() {
+        int x = getPlayer().getMaxStatItems();
+        MapleCharacter player = getPlayer();
+        switch (x) {
             case 0:
                 break;
             case 1:
@@ -879,8 +833,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         }
     }
 
-     public void needGMSModeMsg(int lol){
-        sendOk("You need to be in GMS mode "+lol+". Talk to NPC duru in henesys to go into GMS mode");
+    public void needGMSModeMsg(int lol) {
+        sendOk("You need to be in GMS mode " + lol + ". Talk to NPC duru in henesys to go into GMS mode");
         dispose();
-     }
+    }
 }

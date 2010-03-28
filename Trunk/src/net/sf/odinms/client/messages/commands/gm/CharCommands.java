@@ -63,14 +63,6 @@ public class CharCommands implements GMCommand {
             player.updateSingleStat(MapleStat.MP, 500);
         } else if (splitted[0].equals("heal")) {
             player.addMPHP(player.getMaxHp() - player.getHp(), player.getMaxMp() - player.getMp());
-        } else if (splitted[0].equals("skill")) {
-            int skill = Integer.parseInt(splitted[1]);
-            int level = getOptionalIntArg(splitted, 2, 1);
-            if (skill == Skills.Hermit.FlashJump) {
-                level = 0;
-            }
-            int masterlevel = getOptionalIntArg(splitted, 3, 1);
-            c.getPlayer().changeSkillLevel(SkillFactory.getSkill(skill), level, masterlevel);
         } else if (splitted[0].equals("ap")) {
             player.setRemainingAp(getOptionalIntArg(splitted, 1, 1));
             player.updateSingleStat(MapleStat.AVAILABLEAP, player.getRemainingAp());
@@ -78,8 +70,20 @@ public class CharCommands implements GMCommand {
             new ServernoticeMapleClientMessageCallback(c).dropMessage("You are on map "
                     + c.getPlayer().getMap().getId() + " - " + c.getPlayer().getMap().getMapName());
         } else if (splitted[0].equals("levelup")) {
-            c.getPlayer().levelUp();
-            c.getPlayer().setExp(0);
+            if (splitted.length < 2) {
+                c.getPlayer().levelUp();
+                c.getPlayer().setExp(0);
+            } else if (splitted.length == 2) {
+                int quantity = Integer.parseInt(splitted[1]);
+                c.getPlayer().setLevel(quantity);
+                c.getPlayer().levelUp();
+                int newexp = c.getPlayer().getExp();
+                if (newexp < 0) {
+                    c.getPlayer().gainExp(-newexp, false, false);
+                }
+            } else {
+                mc.dropMessage("learn to read commands la nub. Syntax : !levelup <ign (optional)>");
+            }
         } else if (splitted[0].equals("level")) {
             if (splitted.length == 3) {
                 MapleCharacter noob = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
@@ -102,7 +106,8 @@ public class CharCommands implements GMCommand {
                     c.getPlayer().gainExp(-newexp, false, false);
                 }
             } else {
-                mc.dropMessage("Read @commands lar euu nub");
+                c.getPlayer().levelUp();
+                c.getPlayer().setExp(0);
             }
         } else if (splitted[0].equals("statreset")) {
             int str = c.getPlayer().getStr();
@@ -215,8 +220,8 @@ public class CharCommands implements GMCommand {
                 } else if (splitted[1].equalsIgnoreCase("lightning")) {
                     other.setClanz(5);
                 } else {
-                     mc.dropMessage("Read !commands please. Syntax : !setclan ign clanname");
-                     return;
+                    mc.dropMessage("Read !commands please. Syntax : !setclan ign clanname");
+                    return;
                 }
                 mc.dropMessage(splitted[1] + " has been set to" + splitted[2] + " clan");
             }

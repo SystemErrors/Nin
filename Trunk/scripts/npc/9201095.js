@@ -25,11 +25,11 @@ function action(mode, type, selection) {
         else
             status--;
         if (status == 0) {
-            var simple = "Hello #h #. I'm fiona the nifty ninja of the NinjaMS. Welcome to our ninja World. I manage the Jump Quest for NinjaMS. So what you want to do? #b\r\n#L1#JumpQuest#l\r\n#L2#Duck out#l#k";
+            var simple = "Hello #h #. I'm fiona the nifty ninja of the NinjaMS. Welcome to our ninja World. I manage the Jump Quest for NinjaMS. So what you want to do? #b\r\n#L1#JumpQuest / Bonus rewards#l\r\n#L2#Duck out#l#k";
             if (cm.getPlayer().getMapId() == 100000000){
                 cm.sendSimple(simple);
             } else {
-                cm.sendYesNo("Grats on finishing the JQ. Do you want to get your reward?");
+                cm.sendYesNo("Grats on finishing the JQ "+(cm.getLastJQ() + 1)+". Do you want to get your reward?");
                 status = 100;
             }
         } else if (status == 1){
@@ -67,8 +67,8 @@ function action(mode, type, selection) {
                     cm.sendOk("JumpQuest is only available in channel 3");
                 }
             } else if (selection == 1) {
-                //cm.sendSimple("Here are the bonus Rewards: #b\r\n#L0# Gamble with 10 Dairy Pages for a bonus prize #r[prizes include Max stat items]#l#b\r\n#L1#Get Stat Bonus for 10 Dairy Pages #r[1500 stats for 10 pages]#l#b\r\n#L2#Super Yellow Snow Shoes 13337 stats each #r[ you need 10 full sets of dairy pages]#l#k");
-                //status = 220;
+                cm.sendSimple("Here are the bonus Rewards: #b\r\n#L0# Gamble with 1 JQ point #r[prizes include Max stats]#l#b\r\n#L1#Get 5 rebirths #rfor 1 jq point#l#b\r\n#L2#bow-tie#l#k");
+                status = 220;
                 cm.voteMSG();
             }
         } else if (status == 211){
@@ -84,7 +84,7 @@ function action(mode, type, selection) {
                 cm.jqBonus();
                 cm.dispose();
             } else if (selection == 1) {
-                cm.apBonus();
+                cm.jqRBBonus();
                 cm.dispose();
             } else if (selection == 2) {
                 cm.superYellowSnowShoes();

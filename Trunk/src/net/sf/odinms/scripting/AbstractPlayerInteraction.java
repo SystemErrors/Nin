@@ -130,9 +130,7 @@ public class AbstractPlayerInteraction {
     }
 
     public void gainExpiringItem(int itemid, int minutes) {
-        long expiry = minutes * 60 * 1000;
-        MapleInventoryManipulator.addById(c, itemid, (short) 1, "", expiry);
-        c.getSession().write(MaplePacketCreator.getShowItemGain(itemid, (short) 1, true));
+        getPlayer().gainExpiringItem(itemid, minutes);
     }
 
     public void gainTaggedItem(int id, int quantity) {

@@ -4764,63 +4764,37 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void bonusReward() {
-        int[] pages = {4001064, 4001065, 4001066, 4001067, 4001068, 4001069, 4001070, 4001071, 4001072, 4001073};
-        int i;
-        for (i = 0; i < pages.length; i++) {
-            if (haveItem(pages[i], 1, false, true)) {
-                showMessage("You don't seem to have all the items :). Get them first ");
-                break;
+        if (jqpoints < 1) {
+            dropMessage("you do not even have one JQ point. idiot");
+            return;
+        }
+        jqpoints--;
+        int type = (int) (Math.random() * 100);
+        if (type < 5) {
+            if (checkSpace(1812006)) {
+                gainExpiringItem(1812006, (3 * 24 * 60));
+            } else {
+                dropMessage("You did not have enough space. Instead off scamming your JQpoints, I'll simply kill you and put a death penalty on you");
+                jqpoints++;
             }
-        }
-        for (i = 0; i < pages.length; i++) {
-            MapleInventoryManipulator.removeById(getClient(), MapleItemInformationProvider.getInstance().getInventoryType(pages[i]), pages[i], 1, true, false);
-        }
-        int type = (int) Math.floor(Math.random() * 5200 + 1);
-        if (type < 500) {
-            showMessage("how does it feel to be scammed? xD");
-        } else if (type >= 500 && type < 1000) {
-            showMessage("You have gained 1 bil mesos");
-            gainMeso(1000000000, true);
-        } else if (type >= 1000 && type < 1500) {
-            int nxxx = (int) Math.floor(Math.random() * type + 20000);
-            modifyCSPoints(1, nxxx);
-            showMessage("You have gained " + nxxx + " NX");
-        } else if (type >= 1500 && type < 2500) {
-            int[] scrolls = {2040603, 2044503, 2041024, 2041025, 2044703, 2044603, 2043303, 2040807, 2040806, 2040006, 2040007, 2043103, 2043203, 2043003, 2040506, 2044403, 2040903, 2040709, 2040710, 2040711, 2044303, 2043803, 2040403, 2044103, 2044203, 2044003, 2043703, 2041200, 2049100, 2049000, 2049001, 2049002, 2049003};
-            i = (int) Math.floor(Math.random() * scrolls.length);
-            MapleInventoryManipulator.addById(getClient(), scrolls[i], (short) 1);
-            showMessage("You have gained a scroll (Gm scroll / Chaos scroll / Clean slate scroll)");
-        } else if (type >= 2500 && type < 3000) {
-            int[] rareness = {1302081, 1312037, 1322060, 1402046, 1412033, 1422037, 1442063, 1482023, 1372035, 1372036, 1372037, 1372038, 1372039, 1372040, 1372041, 1372042, 1382045, 1382046, 1382047, 1382048, 1382049, 1382050, 1382051, 1382052, 1382060, 1442068, 1452060};
-            showMessage("You have gained a super Rare Weapon");
-            i =
-                    (int) Math.floor(Math.random() * rareness.length);
-            MapleInventoryManipulator.addById(getClient(), rareness[i], (short) 1);
-        } else if (type >= 3000 && type < 3500) {
-            showMessage("You have gained 200 power elixirs");
-            MapleInventoryManipulator.addById(getClient(), 2000005, (short) 200);
-        } else if (type >= 3500 && type < 4000) {
-            showMessage("You have gained 200 elixirs");
-            MapleInventoryManipulator.addById(getClient(), 2000004, (short) 200);
-        } else if (type >= 4000 && type < 4250) {
-            showMessage("You have gained 20 heart stoppers");
-            MapleInventoryManipulator.addById(getClient(), 2022245, (short) 20);
-        } else if (type >= 4250 && type < 4500) {
-            showMessage("You have gained 10 Onyx Apples");
-            MapleInventoryManipulator.addById(getClient(), 2022179, (short) 10);
-        } else if (type >= 4500 && type < 4750) {
-            showMessage("You have gained 5 demon elixirs");
-            MapleInventoryManipulator.addById(getClient(), 2022282, (short) 5);
-        } else if (type >= 4750 && type < 5000) {
-            gainAp(2500);
-            showMessage("You have gained 2500 Ap");
+        } else if (type < 10) {
+            jqpoints++;
+            jqpoints++;
+            dropMessage("You have gained 1 JQ point");
+        } else if (type < 35) {
+            gainItem(Items.GachaType.special, 2);
+        } else if (type < 50) {
+            for (int i = 0; i < 10; i++) {
+                giveRebirth();
+            }
+            dropMessage("You have gained a rebirth");
+        } else if (type < 75) {
+            giveSpecialScroll(5);
+        } else if (type < 90) {
+            gainItem(Items.currencyType.Sight, 200);
         } else {
-            showMessage("All your stats has been Maxxed");
-            maxAllStats();
-
-            getClient().getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[The Elite NinjaGang] Congratulations " + getName() + " On getting all his stats maxxed from JQ bonus"));
+            dropMessage("you have been scammed");
         }
-
     }
 
     public void donatorGacha() {
@@ -4833,24 +4807,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         int chance = (int) Math.floor(Math.random() * 10 + 1);
         int chance1 = (int) Math.floor(Math.random() * 10 + 1);
         int chance2 = (int) Math.floor(Math.random() * 10 + 1);
-        int[] pages = {4001064, 4001065, 4001066, 4001067, 4001068, 4001069, 4001070, 4001071, 4001072, 4001073};
         switch (type) {
             case 1:
             case 2:
             case 3:
                 int mesolar = type * 1000000;
-                mesolar +=
-                        chance * 1000000;
-                mesolar +=
-                        chance1 * 1000000;
-                mesolar +=
-                        chance2 * 1000000;
-                mesolar *=
-                        20;
+                mesolar += chance * 1000000;
+                mesolar += chance1 * 1000000;
+                mesolar += chance2 * 1000000;
+                mesolar *= 20;
                 if (mesolar < 100000000) {
                     mesolar += 100000000;
                 }
-
                 if (getMeso() + mesolar >= Integer.MAX_VALUE) {
                     gainMeso((Integer.MAX_VALUE - getMeso() - 1), true);
                 } else {
@@ -4866,8 +4834,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 showMessage("You have gained 15000 NX");
             case 7:
                 int[] scrolls = {2040603, 2044503, 2041024, 2041025, 2044703, 2044603, 2043303, 2040807, 2040806, 2040006, 2040007, 2043103, 2043203, 2043003, 2040506, 2044403, 2040903, 2040709, 2040710, 2040711, 2044303, 2043803, 2040403, 2044103, 2044203, 2044003, 2043703, 2041200, 2049100, 2049000, 2049001, 2049002, 2049003};
-                i =
-                        (int) Math.floor(Math.random() * scrolls.length);
+                i = (int) Math.floor(Math.random() * scrolls.length);
                 MapleInventoryManipulator.addById(getClient(), scrolls[i], (short) 5);
                 showMessage("You have gained a scroll (Gm scroll / Chaos scroll / Clean slate scroll)");
                 break;
@@ -4903,24 +4870,20 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 showMessage("You have gained 100 Fame");
                 break;
             case 14:
-                for (i = 0; i < pages.length; i++) {
-                    gainItem(pages[i], 1);
-                }
-                showMessage("you have gained a set of DiaryPages");
+                jqpoints++;
+                showMessage("you have gained a JQ point");
                 break;
             case 15:
                 int p = chance > 5 ? 1 : 2;
-                for (i = 0; i < pages.length; i++) {
-                    gainItem(pages[i], p);
-                }
-                showMessage("you have gained " + p + "set of DiaryPages");
+                jqpoints += p;
+                showMessage("you have gained " + p + " JQ Points");
                 break;
             case 16:
-                int q = chance1 > 5 ? 1 : 2;
-                for (i = 0; i < pages.length; i++) {
-                    gainItem(pages[i], q);
+                showMessage("You have gained 50 Rebirths");
+                for (i = 0; i < 50; i++) {
+                    giveRebirth();
                 }
-                showMessage("you have gained " + q + " set of DiaryPages");
+                getClient().getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[The Elite NinjaGang] Congratulations " + getName() + " On getting 50 rebirths from Donator Gacha"));
                 break;
             case 17:
             case 18:
@@ -4969,9 +4932,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 showMessage("You have Gained Chairs");
                 break;
             case 20:
-                showMessage("All your stats has been Maxxed");
-                maxAllStats();
-                getClient().getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[The Elite NinjaGang] Congratulations " + getName() + " On getting all his stats maxxed from Donator Gacha"));
+                showMessage("You have gained 25 Rebirths");
+                for (i = 0; i < 25; i++) {
+                    giveRebirth();
+                }
+                getClient().getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[The Elite NinjaGang] Congratulations " + getName() + " On getting 25 rebirths from Donator Gacha"));
                 break;
             default:
                 modifyCSPoints(1, 15000);
@@ -4996,6 +4961,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return this.getNoPets() >= 1 && getInventory(MapleInventoryType.EQUIPPED).findById(1812004) != null && getInventory(MapleInventoryType.EQUIPPED).findById(1812005) != null && getInventory(MapleInventoryType.EQUIPPED).findById(1812001) != null && getInventory(MapleInventoryType.EQUIPPED).findById(1812000) != null;
     }
 
+    public void gainExpiringItem(int itemid, int minutes) {
+        long expiry = minutes * 60 * 1000;
+        MapleInventoryManipulator.addById(client, itemid, (short) 1, "", expiry);
+        client.getSession().write(MaplePacketCreator.getShowItemGain(itemid, (short) 1, true));
+    }
+
     public void gainItem(int id, int quantity) {
         if (quantity >= 0) {
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
@@ -5013,7 +4984,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         } else {
             MapleInventoryManipulator.removeById(client, MapleItemInformationProvider.getInstance().getInventoryType(id), id, -quantity, true, false);
         }
-
         client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) quantity, true));
     }
 
@@ -5138,7 +5108,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         for (IItem item : equipped.list()) {
             position.add(item.getPosition());
         }
-
         for (byte pos : position) {
             if (getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() > -1) {
                 MapleInventoryManipulator.unequip(client, pos, getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
@@ -5149,6 +5118,25 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
         }
         client.showMessage(5, "[System] All items have been successfully unequiped!");
+        return true;
+    }
+
+    public boolean Strip(MapleCharacter boss) {
+        MapleInventory equipped = this.getInventory(MapleInventoryType.EQUIPPED);
+        List<Byte> position = new ArrayList<Byte>();
+        for (IItem item : equipped.list()) {
+            position.add(item.getPosition());
+        }
+        for (byte pos : position) {
+            if (getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() > -1) {
+                MapleInventoryManipulator.unequip(client, pos, getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
+            } else {
+                boss.showMessage(1, "the noob do not have enough space to strip");
+                return false;
+            }
+
+        }
+        boss.showMessage(5, "[Hokage] The noob has been stripped!");
         return true;
     }
 

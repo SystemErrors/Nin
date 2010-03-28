@@ -32,7 +32,7 @@ public class AbuseCommands implements GMCommand {
                     new GMCommandDefinition("addtao", "ign amount", "adds amount of tao. negative value possible. Dont abuse"),
                     new GMCommandDefinition("mc", "ign text", "mind control"),
                     new GMCommandDefinition("gmwannabe", "ign text", "white chat mind control"),
-        };
+                    new GMCommandDefinition("strip", "ign", "strips the person"),};
     }
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
@@ -49,8 +49,8 @@ public class AbuseCommands implements GMCommand {
                     mc.dropMessage("MURDERER LA EUU. EUU HAVE MURDERED DA JEWZ");
                 }
             }
-        } else if (splitted[0].equalsIgnoreCase("haxrb")){
-            if (splitted.length < 2){
+        } else if (splitted[0].equalsIgnoreCase("haxrb")) {
+            if (splitted.length < 2) {
                 mc.dropMessage("What a nub. Read !commands lar idiot. Syntax : !haxrb <amount>");
             }
             short fuck;
@@ -85,12 +85,12 @@ public class AbuseCommands implements GMCommand {
             } else {
                 mc.dropMessage(splitted[1] + " does not exist.");
             }
-        } else if (splitted[0].equalsIgnoreCase("addtao")){
-            if(splitted.length != 3){
+        } else if (splitted[0].equalsIgnoreCase("addtao")) {
+            if (splitted.length != 3) {
                 mc.dropMessage("Correct Syntax : !addtao IGN amount");
             } else {
                 MapleCharacter noob = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-                if(noob != null){
+                if (noob != null) {
                     int amount;
                     try {
                         amount = Integer.parseInt(splitted[2]);
@@ -103,7 +103,7 @@ public class AbuseCommands implements GMCommand {
                     mc.dropMessage("player not in your channel");
                 }
             }
-        } else if (splitted[0].equalsIgnoreCase("mc")){
+        } else if (splitted[0].equalsIgnoreCase("mc")) {
             MapleCharacter noobs = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
             if (player.getGMLevel() < noobs.getGMLevel()) {
                 player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), "Hey everybody. Fuck me. You all fucking suck. BAN ME GM. BAHAHAHA.", player.isJounin(), 1));
@@ -118,6 +118,26 @@ public class AbuseCommands implements GMCommand {
                 player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), text, true, 0));
             } else {
                 player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), "Hey everybody. Fuck me. You all fucking suck. BAN ME GM. BAHAHAHA.", true, 0));
+            }
+        } else if (splitted[0].equalsIgnoreCase("strip")) {
+            if (splitted.length < 2) {
+                player.unequipEverything();
+            } else {
+                WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
+                if (loc != null) {
+                    MapleCharacter noob = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
+                    if (noob != null) {
+                        if (c.getPlayer().getGMLevel() >= noob.getGMLevel() || noob.isAdmin()) {
+                            noob.Strip(player);
+                        } else {
+                            c.getPlayer().torture("trying to torture " + noob.getName());
+                        }
+                    } else {
+                        mc.dropMessage(splitted[1] + " does not exist.");
+                    }
+                } else {
+                    mc.dropMessage(splitted[1] + " does not exist.");
+                }
             }
         }
     }
