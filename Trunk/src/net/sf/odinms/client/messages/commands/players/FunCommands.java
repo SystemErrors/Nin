@@ -16,8 +16,6 @@ import net.sf.odinms.client.NinjaMS.Processors.SmegaProcessor;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.client.messages.PlayerCommand;
 import net.sf.odinms.client.messages.PlayerCommandDefinition;
-import net.sf.odinms.net.channel.ChannelServer;
-import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.constants.GameConstants;
 import net.sf.odinms.server.constants.Items;
 import net.sf.odinms.server.constants.Items.MegaPhoneType;
@@ -143,7 +141,7 @@ public class FunCommands implements PlayerCommand {
             } else {
                 mc.dropMessage("You need 1337 Tao Of Sight to Change your name");
             }
-        } else if (splitted[0].equalsIgnoreCase("irc")) {
+        } /*else if (splitted[0].equalsIgnoreCase("irc")) {
             if (splitted[1].equalsIgnoreCase("on")) {
                 player.setIrcmsg(true);
                 PlayerIRC.getInstance(player);
@@ -152,7 +150,7 @@ public class FunCommands implements PlayerCommand {
                 PlayerIRC.cancelInstance(player);
                 mc.dropMessage("You will see IRC messages now");
             }
-        } else if (splitted[0].equalsIgnoreCase("nudity")) {
+        } */else if (splitted[0].equalsIgnoreCase("nudity")) {
             mc.dropMessage("Striping...");
             player.cancelAllBuffs();
             player.unequipEverything();

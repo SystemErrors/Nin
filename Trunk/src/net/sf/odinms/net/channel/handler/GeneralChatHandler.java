@@ -56,28 +56,28 @@ public class GeneralChatHandler extends AbstractMaplePacketHandler {
                 }
                 text = text.replaceAll("y0u", "j00");
             }
-            if (!checkIRC(c, text)) {
-                //TODO: add block Chat for Advertisers
-                switch (player.getMute()) {
-                    case 1:
-                        player.dropMessage("You have been event muted. You shall not talk in General Chat. use @unmute to unmute yourself.");
-                        break;
-                    case 2:
-                        player.dropMessage("You have been perma muted. You shall not talk");
-                        break;
-                    case 3:
-                        processPermaSay(c, text);
-                        break;
-                    default:
-                        player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), text, player.isJounin() && c.getChannelServer().allowGmWhiteText(), show));
-                        if (player.isJounin()) {
-                            for (Clones clone : c.getPlayer().getClones()) {
-                                player.getMap().broadcastMessage(MaplePacketCreator.getChatText(clone.getClone().getId(), text, c.getChannelServer().allowGmWhiteText() && player.isJounin(), 1));
-                            }
+            //  if (!checkIRC(c, text)) {
+            //TODO: add block Chat for Advertisers
+            switch (player.getMute()) {
+                case 1:
+                    player.dropMessage("You have been event muted. You shall not talk in General Chat. use @unmute to unmute yourself.");
+                    break;
+                case 2:
+                    player.dropMessage("You have been perma muted. You shall not talk");
+                    break;
+                case 3:
+                    processPermaSay(c, text);
+                    break;
+                default:
+                    player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), text, player.isJounin() && c.getChannelServer().allowGmWhiteText(), show));
+                    if (player.isJounin()) {
+                        for (Clones clone : c.getPlayer().getClones()) {
+                            player.getMap().broadcastMessage(MaplePacketCreator.getChatText(clone.getClone().getId(), text, c.getChannelServer().allowGmWhiteText() && player.isJounin(), 1));
                         }
-                        break;
-                }
+                    }
+                    break;
             }
+            // } 
         }
     }
 
@@ -108,11 +108,11 @@ public class GeneralChatHandler extends AbstractMaplePacketHandler {
         }
     }
 
-    public static boolean checkIRC(MapleClient c, String text) {
-        if (PlayerIRC.hasInstance(c.getPlayer())) {
-            PlayerIRC.getInstance(c.getPlayer()).sendIRCMessage(text);
-            return true;
-        }
-        return false;
+    /* public static boolean checkIRC(MapleClient c, String text) {
+    if (PlayerIRC.hasInstance(c.getPlayer())) {
+    PlayerIRC.getInstance(c.getPlayer()).sendIRCMessage(text);
+    return true;
     }
+    return false;
+    }*/
 }

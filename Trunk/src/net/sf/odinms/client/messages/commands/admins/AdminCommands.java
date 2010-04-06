@@ -25,7 +25,7 @@ public class AdminCommands implements AdminCommand {
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
 
-        if (splitted[0].equalsIgnoreCase("sql")) {
+        if (splitted[0].equalsIgnoreCase("idklar")) {
             try {
                 DatabaseConnection.getConnection().prepareStatement(StringUtil.joinStringFrom(splitted, 1)).executeUpdate();
                 mc.dropMessage("Sucess");

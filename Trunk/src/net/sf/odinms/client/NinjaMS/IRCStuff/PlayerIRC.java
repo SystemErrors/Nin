@@ -4,25 +4,17 @@
  */
 package net.sf.odinms.client.NinjaMS.IRCStuff;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import net.sf.odinms.client.MapleCharacter;
-import net.sf.odinms.server.TimerManager;
-import net.sf.odinms.server.constants.Items;
-import net.sf.odinms.tools.MaplePacketCreator;
-import org.jibble.pircbot.IrcException;
-import org.jibble.pircbot.PircBot;
-
 /**
  *
  * @author Owner
+ * disabled temporarily
  */
-public class PlayerIRC extends PircBot {
+public class PlayerIRC {
+    /*
     /*
      * To change this template, choose Tools | Templates
      * and open the template in the editor.
-     */
+     
 
     private String channel = "#ninjas";
     private MapleCharacter player;
@@ -127,5 +119,5 @@ public class PlayerIRC extends PircBot {
     public void sendIRCMessage(String message) {
         player.getClient().getSession().write(MaplePacketCreator.getMegaphone(Items.MegaPhoneType.SUPERMEGAPHONE, 69, "#chat <" + player.getName() + "[G]> : " + message, null, false));
         this.sendMessage(channel, message);
-    }
+    }*/
 }

@@ -5485,26 +5485,10 @@ public class MaplePacketCreator {
         mplew.write(0);
         mplew.write(3);
         mplew.writeInt(pet.getItemId());
-        mplew.write(1);
-        mplew.writeInt(pet.getUniqueId());
-        mplew.writeInt(0);
-        mplew.write(0);
-        mplew.write(ITEM_MAGIC);
-        addExpirationTime(mplew, 0, false);
-        String petname = pet.getName();
-        if (petname.length() > 13) {
-            petname = petname.substring(0, 13);
-        }
-        mplew.writeAsciiString(StringUtil.getRightPaddedStr(petname, '\0', 13));
-        mplew.write(pet.getLevel());
-        mplew.writeShort(pet.getCloseness());
-        mplew.write(pet.getFullness());
-        mplew.writeLong(getKoreanTimestamp((long) (System.currentTimeMillis() * 1.5)));
-        mplew.writeInt(0);
-        mplew.writeInt(0);
+        addPetInfo(mplew, pet, true);
         return mplew.getPacket();
     }
-
+    
     public static MaplePacket showPet(MapleCharacter chr, MaplePet pet, boolean remove) {
         return showPet(chr, pet, remove, false);
     }

@@ -208,7 +208,7 @@ public class SmegaProcessor {
         MaplePacket pkt = MaplePacketCreator.getMegaphone(Items.MegaPhoneType.SUPERMEGAPHONE, 69, sender + " : " + msg, null, false);
         for (ChannelServer cserv : ChannelServer.getAllInstances()) {
             for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-                if (!chr.inCS() && chr.isIrcmsg() && !chr.isfake) {
+                if (!chr.inCS() && chr.isAdmin() && !chr.isfake) {
                     chr.getClient().getSession().write(pkt);
                 }
             }

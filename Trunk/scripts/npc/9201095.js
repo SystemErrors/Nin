@@ -38,7 +38,7 @@ function action(mode, type, selection) {
                     cm.sendOk("Jq is available only for those who have passed 10 Rebirths. Head to Room 13/ 14 to RB faster. It takes barely 15 minutes");
                     cm.dispose();
                 } else {
-                    cm.sendSimple("So you are interested in JQ? We have Autobans and GM alerts in JQ. So don't bother Hacking. Jq is only available for those above 10 Rebirths and only in channel 3. Select what you want to do #b\r\n#L0#Start a JQ#l\r\n#L1#Claim rewards#l\r\n#k");
+                    cm.sendSimple("So you are interested in JQ? Please behave and do not hack. Jq is only available for those above 10 Rebirths and only in channel 3. Select what you want to do #b\r\n#L0#Start a JQ#l\r\n#L1#Claim rewards#l\r\n#k");
                     status = 200;
                 }
             } else if (selection == 2) {
@@ -67,9 +67,8 @@ function action(mode, type, selection) {
                     cm.sendOk("JumpQuest is only available in channel 3");
                 }
             } else if (selection == 1) {
-                cm.sendSimple("Here are the bonus Rewards: #b\r\n#L0# Gamble with 1 JQ point #r[prizes include Max stats]#l#b\r\n#L1#Get 5 rebirths #rfor 1 jq point#l#b\r\n#L2#bow-tie#l#k");
+                cm.sendSimple("Here are the bonus Rewards: #b\r\n#L0# Gamble with 1 JQ point#l#b\r\n#L1#Get 5 rebirths #rfor 1 jq point#l#b\r\n#L2#bow-tie#l#k");
                 status = 220;
-                cm.voteMSG();
             }
         } else if (status == 211){
             if (cm.getC().getChannel() == 3) {                

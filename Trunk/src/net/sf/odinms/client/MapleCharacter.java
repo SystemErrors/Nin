@@ -104,7 +104,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     private static Logger log = LoggerFactory.getLogger(PacketProcessor.class);
     public static final double MAX_VIEW_RANGE_SQ = 850 * 850;
-    private int world, accountid, level, str, dex, luk, int_, hp, mp, hair, face, fame, remainingAp, storageAp;
+    private int id, world, accountid, level, str, dex, luk, int_, hp, mp, hair,
+            face, fame, remainingAp, storageAp;
     private String name, createdate;
     private AtomicInteger exp = new AtomicInteger();
     private AtomicInteger meso = new AtomicInteger();
@@ -112,9 +113,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private long lastfametime;
     private List<Integer> lastmonthfameids;
     // local stats represent current stats of the player to avoid expensive operations
-    private transient int localmaxhp, localmaxmp, localstr, localdex, localluk, localint_, magic, localmaxbasedamage, watk;
+    private transient int localmaxhp, localmaxmp, localstr, localdex, localluk,
+            localint_, magic, localmaxbasedamage, watk;
     private transient double speedMod, jumpMod;
-    private int id, parentId, childId;
     private MapleClient client;
     private MapleMap map;
     // mapid is only used when calling getMapId() with map == null, it is not updated when running in channelserver mode
@@ -122,18 +123,16 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private MapleShop shop = null;
     private MaplePlayerShop playerShop = null;
     private MapleStorage storage = null;
-    // pets - Oliver 
     private MaplePet pet = null;
     private MaplePet[] pets = new MaplePet[3];
-    // FunStuff Oliver
-    // torture status and penalties
-    private boolean inflicted;
     private SkillMacro[] skillMacros = new SkillMacro[5];
     private MapleTrade trade = null;
     private MapleSkinColor skinColor = MapleSkinColor.NORMAL;
     private MapleJob job = MapleJob.BEGINNER;
     private Status gmLevel;
-    private boolean hidden, canDoor = true;
+    private boolean inflicted, hidden, canDoor = true, incs, leet = false;
+
+    ;
     private int chair, itemEffect;
     private MapleParty party;
     private EventInstanceManager eventInstance = null;
@@ -148,26 +147,20 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private Map<Integer, MapleSummon> summons = new LinkedHashMap<Integer, MapleSummon>();
     private BuddyList buddylist;
     private Map<Integer, MapleCoolDownValueHolder> coolDowns = new LinkedHashMap<Integer, MapleCoolDownValueHolder>();
-    // anticheat related information
     private CheatTracker anticheat;
     private ScheduledFuture<?> dragonBloodSchedule, mapTimeLimitTask = null;
-    //guild related information
     private int guildid, guildrank, allianceRank;
     private MapleGuildCharacter mgc = null;
-    // cash shop related information
     private int cardNX, maplePoints, paypalNX;
-    private boolean incs;
     private MapleMessenger messenger = null;
     int messengerposition = 4;
     private List<MapleDisease> diseases = new ArrayList<MapleDisease>();
     private int markedMonster = 0, npcId = -1, battleshipHp = 0, energybar;
-    private Byte hammerSlot = null;
-    // ninja special
-    private int reborn, mobkilled, ninjatensu, bosskilled, mutality, clonelimit, rank, rankmove, jobrank, jobrankmove, taorank, clantaorank;
+    private Byte hammerSlot = null, rasengan;
+    private int reborn, mobkilled, ninjatensu, bosskilled, mutality, clonelimit,
+            rank, rankmove, jobrank, jobrankmove, taorank, clantaorank;
     private Clans clan = Clans.UNDECIDED;
     private Village village = Village.UNDECIDED;
-    private boolean leet = false;
-    private byte rasengan;
     /**
      * Title shit contols the display of legend and title.
      * 0 = show none
@@ -177,14 +170,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
      */
     private byte prefixshit, smega;
     private String chalktext, legend;
-    private boolean ircmsg;
     // fakes!- Oliver
     private List<Clones> fakes = new ArrayList<Clones>();
-    public boolean isfake = false;
-    //Rb Glitch Check
-    private boolean rebirthing;
+    public boolean isfake = false, rebirthing;
     //maxtstat counter
-    private byte maxstatitem = 0;
+    private byte maxstatitem = 0, shuriken;
     //donator
     private short dpoints, damount;
     //JQ
@@ -193,9 +183,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private String lastJQFinish = "In 1947";
     // PVP
     private int pvpkills, pvpdeaths;
-    // limitations credits: Gayliver
     private boolean cannotdrop = false;
-    //AutoAp credits: GayLiver
     private byte autoap;
     // Rate boost
     private int expBoost, mesoBoost, dropBoost, bdropBoost;
@@ -209,13 +197,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     // dojo?????
     private int dojoPoints, lastDojoStage, dojoEnergy;
     private Map<Integer, String> entered = new LinkedHashMap<Integer, String>();
-    //autobuff
+    //autobuff - oliver
     private List<Integer> autobuffs = new LinkedList<Integer>(); // 12
     private boolean autobuffchange = false;
-    //BossQuest
-    private int bossPoints;
+    //points
+    private int bossPoints, kpqpoints;
     //MiniGames
-    private int omokwins, omokties, omoklosses, matchcardwins, matchcardties, matchcardlosses;
+    private int omokwins, omokties, omoklosses, matchcardwins, matchcardties,
+            matchcardlosses;
     private MiniGame miniGame;
     //HiredMerchant
     private HiredMerchant hiredMerchant = null;
@@ -311,7 +300,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ret.storageAp = rs.getInt("storageap");
         ret.remainingAp = rs.getInt("ap");
         ret.meso.set(rs.getInt("meso"));
-        int gmm = rs.getInt("gm");
+        int gmm = ret.client.getGMLevel();
         ret.gmLevel = Status.getByLevel(gmm);
         ret.skinColor = MapleSkinColor.getById(rs.getInt("skincolor"));
         int jobId = rs.getInt("job");
@@ -337,6 +326,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ret.rasengan = rs.getByte("rasengan");
         ret.legend = rs.getString("legend");
         ret.maxstatitem = rs.getByte("msi");
+        ret.shuriken = rs.getByte("shuriken");
         ret.pvpdeaths = rs.getInt("pvpdeaths");
         ret.pvpkills = rs.getInt("pvpkills");
         ret.prefixshit = rs.getByte("prefixshit");
@@ -362,7 +352,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.taorank = rs.getInt("taorank");
             ret.clantaorank = rs.getInt("clantaorank");
             ret.smega = rs.getByte("smega");
-            ret.bossPoints = rs.getInt("bosspoints");
+            ret.bossPoints = rs.getInt("bqpoints");
+            ret.kpqpoints = rs.getInt("kpqpoints");
+            ret.expBoost = rs.getInt("exprate");
+            ret.mesoBoost = rs.getInt("mesorate");
+            ret.dropBoost = rs.getInt("droprate");
+            ret.bdropBoost = rs.getInt("bossrate");
             ret.clan = Clans.getById(rs.getInt("clan"));
             doLoginMapCheck(ret);
             int partyid = rs.getInt("party");
@@ -387,11 +382,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.paypalNX = rs.getInt("paypalNX");
             ret.maplePoints = rs.getInt("maplePoints");
             ret.cardNX = rs.getInt("cardNX");
-            gmm = rs.getInt("gm");
-            ret.gmLevel = Status.getByLevel(gmm);
-            if ((jobId == 900 || jobId == 910) && gmm < 3) {
-                ret.job = MapleJob.BEGINNER;
-            }
             ret.ninjatensu = rs.getInt("ninjatensu");
             ret.dpoints = rs.getShort("dpoints");
             ret.damount = rs.getShort("damount");
@@ -541,8 +531,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ret.maplePoints = 0;
         ret.paypalNX = 0;
         ret.incs = false;
-        ret.childId = 0;
-        ret.parentId = 0;
         ret.clonelimit = 0;
         ret.rasengan = 0;
         ret.legend = "";
@@ -753,11 +741,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     " `face` = ?, `map` = ?, `meso` = ?, `spawnpoint` = ?, `party` = ?," + //19
                     " `reborns` = ?, `mobkilled` = ?, `bosskilled` = ?, `mutality` =?, `clonelimit` = ?," +//24
                     " `legend` = ?, `msi` = ?, `name` = ?, `pvpdeaths` = ?," + //28
-                    " `pvpkills` = ?, `prefixshit` = ?, `autoap` = ?, `irc` = ?, `taocheck` = ?, `gmsmode` = ?," + //34
-                    " `lastdojostage` = ? , `dojopoints` = ?, `smega` = ?, `bosspoints` = ?," + //38
-                    " `clan` = ?" +//39
+                    " `pvpkills` = ?, `prefixshit` = ?, `autoap` = ?, `shuriken` = ?, `taocheck` = ?, `gmsmode` = ?," + //34
+                    " `lastdojostage` = ? , `dojopoints` = ?, `smega` = ?, `bqpoints` = ?," + //38
+                    " `clan` = ?, `kpqpoints` = ?" +//40
                     //      " `matchcardwins` = ?, `matchcardlosses` = ?, `matchcardties` = ?, `omokwins` = ?, `omoklosses` = ?, `omokties` = ?" + //46
-                    " WHERE id = ?"); //40
+                    " WHERE id = ?"); //41
             ps.setInt(1, level);
             ps.setInt(2, fame);
             ps.setInt(3, str);
@@ -793,7 +781,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ps.setInt(29, pvpkills);
             ps.setByte(30, prefixshit);
             ps.setByte(31, autoap);
-            ps.setBoolean(32, ircmsg);
+            ps.setInt(32, shuriken);
             int itemcount = getTaoOfSight();
             int difference = itemcount - taocheck;
             if ((difference > 100 && reborn < 5) || (difference > 1000 && reborn < 25) || (difference > 10000 && reborn < 100)) {
@@ -808,7 +796,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ps.setByte(37, smega);
             ps.setInt(38, bossPoints);
             ps.setInt(39, clan.getId());
-            ps.setInt(40, id);
+            ps.setInt(40, kpqpoints);
+            ps.setInt(41, id);
             int updateRows = ps.executeUpdate();
             if (updateRows < 1) {
                 throw new DatabaseException("Character not in database (" + id + ")");
@@ -1694,14 +1683,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         this.fame += fuck;
     }
 
-    public void changeMap(final MapleMap to,
-            final Point pos) {
+    public void changeMap(final MapleMap to, final Point pos) {
         MaplePacket warpPacket = MaplePacketCreator.getWarpToMap(to, 0x80, this);
         changeMapInternal(to, pos, warpPacket);
     }
 
-    public void changeMap(final MapleMap to,
-            final MaplePortal pto) {
+    public void changeMap(final MapleMap to, final MaplePortal pto) {
         MaplePacket warpPacket = MaplePacketCreator.getWarpToMap(to, pto.getId(), this);
         changeMapInternal(to, pto.getPosition(), warpPacket);
     }
@@ -3519,22 +3506,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         this.npcId = npcId;
     }
 
-    public int getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(int id) {
-        this.parentId = id;
-    }
-
-    public int getChildId() {
-        return childId;
-    }
-
-    public void setChildId(int id) {
-        this.childId = id;
-    }
-
     public void resetBattleshipHp() {
         ISkill skill = SkillFactory.getSkill(Skills.Corsair.Battleship);
         this.battleshipHp = (4000 * getSkillLevel(skill)) + ((getLevel() - 120) * 2000);
@@ -4675,16 +4646,20 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             giveSpecialScroll(1);
         } else if (chance < 50) {
             giveRebirth();
+            dropMessage("you have gained a rebirth");
         } else if (chance < 75) {
             gainItem(Items.GachaType.regular, 1);
+            dropMessage("you have gained a Gacha ticket");
         } else if (chance < 100) {
             levelUp();
             levelUp();
             levelUp();
         } else if (chance < 110) {
             addNinjaTensu();
+            dropMessage("you have gained NinjaTensu");
         } else if (chance < 200) {
-            this.addCSPoints(1, chance * 5);
+            addCSPoints(1, chance * 5);
+            dropMessage("You have gained " + (chance * 5) + " NX");
         }
         changeMap(100000000);
     }
@@ -4694,6 +4669,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         int i = (int) (Math.random() * scrolls.length);
         if (checkSpace(2040603, amt)) {
             gainItem(scrolls[i], amt);
+            dropMessage("You have gained " + amt + " of some special scroll");
         } else {
             dropMessage("You did not gain a special scroll because your inventory was full");
         }
@@ -4705,6 +4681,16 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         }
         doRebornn(false);
         dropMessage("You have gained a Rebirth");
+    }
+
+    public void giveRebirth(int amount) {
+        for (int i = 0; i < amount; i++) {
+            while (getLevel() < getMaxLevel()) {
+                levelUp();
+            }
+            doRebornn(false);
+        }
+        dropMessage("You have gained " + amount + " Rebirths");
     }
 
     public String jqStartTime() {
@@ -4787,11 +4773,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             for (int i = 0; i < 10; i++) {
                 giveRebirth();
             }
-            dropMessage("You have gained a rebirth");
+            dropMessage("You have gained 10 rebirths");
         } else if (type < 75) {
             giveSpecialScroll(5);
         } else if (type < 90) {
-            gainItem(Items.currencyType.Sight, 200);
+            gainItem(Items.currencyType.Sight, 100);
         } else {
             dropMessage("you have been scammed");
         }
@@ -5461,14 +5447,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void setAsmega() {
         smega = 1;
-    }
-
-    public boolean isIrcmsg() {
-        return ircmsg;
-    }
-
-    public void setIrcmsg(boolean ircmsg) {
-        this.ircmsg = ircmsg;
     }
 
     public boolean isPsmega() {
