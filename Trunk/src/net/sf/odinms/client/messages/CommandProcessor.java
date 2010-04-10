@@ -86,19 +86,34 @@ public class CommandProcessor implements CommandProcessorMBean {
             synchronized (gmlog) {
                 Connection con = DatabaseConnection.getConnection();
                 try {
-                    PreparedStatement ps = con.prepareStatement("INSERT INTO gmlog (accname, charname, command) VALUES (?, ?, ?)");
+                    PreparedStatement ps = con.prepareStatement("INSERT INTO gmlog (cid, command) VALUES (?, ?)");
                     for (Pair<MapleCharacter, String> logentry : gmlog) {
-                        ps.setString(1, logentry.getLeft().getClient().getAccountName());
-                        ps.setString(2, logentry.getLeft().getName());
-                        ps.setString(3, logentry.getRight().toString());
+                        ps.setInt(1, logentry.getLeft().getId());
+                        ps.setString(2, logentry.getRight());
                         ps.executeUpdate();
                     }
                     ps.close();
                 } catch (SQLException e) {
-                    log.error("error persisting gmlog", e);
+                    log.error("error persisting cheatlog", e);
                 }
                 gmlog.clear();
             }
+
+         /*   synchronized (gmchatlog) {
+                Connection con = DatabaseConnection.getConnection();
+                try {
+                    PreparedStatement ps = con.prepareStatement("INSERT INTO gmchatlog (cid, command) VALUES (?, ?)");
+                    for (Pair<MapleCharacter, String> logentry : gmchatlog) {
+                        ps.setInt(1, logentry.getLeft().getId());
+                        ps.setString(2, logentry.getRight());
+                        ps.executeUpdate();
+                    }
+                    ps.close();
+                } catch (SQLException e) {
+                    log.error("error persisting chatlog", e);
+                }
+                gmchatlog.clear();
+            }*/
         }
     }
 

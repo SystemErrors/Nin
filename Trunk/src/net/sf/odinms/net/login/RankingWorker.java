@@ -41,7 +41,7 @@ public class RankingWorker implements Runnable {
         sb.append(clan != -1 ? "c.jobRank, c.jobRankMove" : "c.rank, c.rankMove");
         sb.append(", a.lastlogin AS lastlogin, a.loggedin FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE a.gm < 3 AND a.banned < 1 AND c.reborns > 10 ");
         if (clan != -1) {
-            sb.append("AND a.clan = ? ");
+            sb.append("AND c.clan = ? ");
         }
         sb.append("ORDER BY c.reborns DESC , c.level DESC , c.exp DESC ");
         PreparedStatement charSelect = con.prepareStatement(sb.toString());
@@ -73,7 +73,7 @@ public class RankingWorker implements Runnable {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT c.id FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE a.gm < 3 AND a.banned < 1 AND c.taocheck > 10 ");
         if (clan != -1) {
-            sb.append("AND a.clan = ? ");
+            sb.append("AND c.clan = ? ");
         }
         sb.append("ORDER BY c.taocheck DESC , c.meso DESC");
         PreparedStatement charSelect = con.prepareStatement(sb.toString());

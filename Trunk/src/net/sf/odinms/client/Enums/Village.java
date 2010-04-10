@@ -132,4 +132,29 @@ public enum Village {
                 return 10;
         }
     }
+
+    public int getHomeTown(){
+        int i = 0;
+        switch(id){
+            case 0:
+                break;
+            case 1:
+                i = 240000000;
+                break;
+            case 2:
+                i = 260000000;
+                break;
+            case 3:
+                i = 102000000;
+                break;
+            case 4:
+                i = 200000000;
+                break;
+            case 5:
+                i = 251000000;
+                break;
+
+        }
+        return i;
+    }
 }

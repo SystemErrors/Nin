@@ -153,15 +153,13 @@ public class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
             if (player.getParty() != null) {
                 channelServer.getWorldInterface().updateParty(player.getParty().getId(), PartyOperation.LOG_ONOFF, new MaplePartyCharacter(player));
             }
-
             CharacterIdChannelPair[] onlineBuddies = cserv.getWorldInterface().multiBuddyFind(player.getId(), buddyIds);
             for (CharacterIdChannelPair onlineBuddy : onlineBuddies) {
                 BuddylistEntry ble = player.getBuddylist().get(onlineBuddy.getCharacterId());
                 ble.setChannel(onlineBuddy.getChannel());
                 player.getBuddylist().put(ble);
             }
-            c.getSession().write(MaplePacketCreator.updateBuddylist(buddies));
-            c.getPlayer().sendMacros();            
+            c.getSession().write(MaplePacketCreator.updateBuddylist(buddies));        
             try {
                 c.getPlayer().showNote();
             } catch (SQLException e) {
@@ -185,7 +183,6 @@ public class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
         }
         player.updatePartyMemberHP();
         player.expirationTask();
-
         CharacterNameAndId pendingBuddyRequest = player.getBuddylist().pollPendingRequest();
         if (pendingBuddyRequest != null) {
             player.getBuddylist().put(new BuddylistEntry(pendingBuddyRequest.getName(), pendingBuddyRequest.getId(), -1, false));

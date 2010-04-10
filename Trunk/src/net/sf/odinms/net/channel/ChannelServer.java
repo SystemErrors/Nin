@@ -271,8 +271,8 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         }
         if (channel == 9) {
             sendIRCNotice();
-            RPG.getInstance();
-            RPG_1.getInstance();
+           // RPG.getInstance();
+           // RPG_1.getInstance();
         }
         tMan.register(new spawnMobs(), 10000);
         tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));

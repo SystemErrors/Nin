@@ -1,6 +1,6 @@
 /*
 This file is part of the OdinMS Maple Story Server
-Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
+Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
 Matthias Butz <matze@odinms.de>
 Jan Christian Meyer <vimes@odinms.de>
 
@@ -26,7 +26,6 @@ import java.util.logging.Logger;
 import net.sf.odinms.client.Clones;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.NinjaMS.IRCStuff.PlayerIRC;
 import net.sf.odinms.client.messages.CommandProcessor;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.net.MaplePacket;
@@ -43,9 +42,7 @@ public class GeneralChatHandler extends AbstractMaplePacketHandler {
         int show = slea.readByte();
         MapleCharacter player = c.getPlayer();
         if (!CommandProcessor.getInstance().processCommand(c, text)) {
-            if (StringUtil.countCharacters(text, '@') > 4 || StringUtil.countCharacters(text, '%') > 4
-                    || StringUtil.countCharacters(text, '+') > 6 || StringUtil.countCharacters(text, '$') > 6
-                    || StringUtil.countCharacters(text, '&') > 6 || StringUtil.countCharacters(text, '~') > 6) {
+            if (StringUtil.countCharacters(text, '@') > 4 || StringUtil.countCharacters(text, '%') > 4 || StringUtil.countCharacters(text, '+') > 6 || StringUtil.countCharacters(text, '$') > 6 || StringUtil.countCharacters(text, '&') > 6 || StringUtil.countCharacters(text, '~') > 6) {
                 text = "I suck, big time. Don't listen to anything I say.";
             }
             if (c.getPlayer().getLeetness()) {
@@ -69,6 +66,7 @@ public class GeneralChatHandler extends AbstractMaplePacketHandler {
                     processPermaSay(c, text);
                     break;
                 default:
+                    processTextColour(c, text, show);
                     player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), text, player.isJounin() && c.getChannelServer().allowGmWhiteText(), show));
                     if (player.isJounin()) {
                         for (Clones clone : c.getPlayer().getClones()) {
@@ -77,7 +75,7 @@ public class GeneralChatHandler extends AbstractMaplePacketHandler {
                     }
                     break;
             }
-            // } 
+            // }
         }
     }
 
@@ -108,11 +106,57 @@ public class GeneralChatHandler extends AbstractMaplePacketHandler {
         }
     }
 
-    /* public static boolean checkIRC(MapleClient c, String text) {
-    if (PlayerIRC.hasInstance(c.getPlayer())) {
-    PlayerIRC.getInstance(c.getPlayer()).sendIRCMessage(text);
-    return true;
+    private void processTextColour(MapleClient c, String text, int show) {
+        MapleCharacter player = c.getPlayer();
+        MaplePacket pkt = null;
+        switch (player.getTextColour()) {            
+            case 1:
+                pkt = MaplePacketCreator.serverNotice(2, player.getName() + " : " + text);
+                break;
+            case 2: // buddy chat
+                pkt = MaplePacketCreator.multiChat(player.getName(), text, 0);
+                break;
+            case 3: // party chat
+                pkt = MaplePacketCreator.multiChat(player.getName(), text, 1);
+                break;
+            case 4:
+                pkt = MaplePacketCreator.multiChat(player.getName(), text, 2);
+                break;
+            case 5:
+                pkt = MaplePacketCreator.multiChat(player.getName(), text, 3);
+                break;
+            case 6:
+                pkt = MaplePacketCreator.serverNotice(1, player.getName() + " : " + text);
+                break;
+            case 7:
+                pkt = MaplePacketCreator.serverNotice(5, player.getName() + " : " + text);
+                break;
+            case 8:
+                pkt = MaplePacketCreator.serverNotice(6, player.getName() + " : " + text);
+                break;
+            case 9:
+                pkt = MaplePacketCreator.serverNotice(3, 69, player.getName() + " : " + text);
+                break;
+            case 10:
+                pkt = MaplePacketCreator.serverNotice(8, 69, player.getName() + " : " + text);
+                break;
+            case 11:
+                pkt = MaplePacketCreator.sendYellowTip(player.getName() + " : " + text);
+                break;
+            case 12:
+                pkt = MaplePacketCreator.spouseChat(player.getName(), text, 1);
+                break;
+            case 13:
+                pkt = MaplePacketCreator.getChatText(player.getId(), text, true, show);
+                break;
+            default:
+                pkt = MaplePacketCreator.getChatText(player.getId(), text, false, show);
+        }
+        player.getMap().broadcastMessage(pkt);
+        if (player.isJounin()) {
+            for (Clones clone : c.getPlayer().getClones()) {
+                player.getMap().broadcastMessage(MaplePacketCreator.getChatText(clone.getClone().getId(), text, c.getChannelServer().allowGmWhiteText() && player.isJounin(), 1));
+            }
+        }
     }
-    return false;
-    }*/
 }

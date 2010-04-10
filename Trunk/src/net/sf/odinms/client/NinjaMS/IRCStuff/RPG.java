@@ -30,7 +30,7 @@ public class RPG extends PircBot {
 
     public RPG() {
         try {
-            this.setLogin("StraightFromHell");
+            this.setLogin("fudge");
             this.setName("Ghost");
             this.setAutoNickChange(true);
             this.connect("irc.vbirc.com");

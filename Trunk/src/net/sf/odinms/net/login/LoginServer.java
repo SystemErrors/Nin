@@ -185,7 +185,6 @@ public class LoginServer implements Runnable, LoginServerMBean {
         //    logOffAllNoobs();
         TimerManager tMan = TimerManager.getInstance();       
         tMan.start();
-        getArrayString();
         tMan.register(new RankingWorker(), 3600000);
         try {
             acceptor.bind(new InetSocketAddress(PORT), new MapleServerHandler(PacketProcessor.getProcessor(PacketProcessor.Mode.LOGINSERVER)), cfg);
@@ -274,56 +273,4 @@ public class LoginServer implements Runnable, LoginServerMBean {
         userLimit = newLimit;
     }
 
-    private void getArrayString() {
-        Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String sql = "SELECT array FROM `array_string` WHERE id = 1;";
-        try {
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                arraystring = rs.getString("array");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally{
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-    private void updateArrayString(String arraylar) {
-        Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        String sql = "UPDATE `array_string` SET array = ?;";
-        try {
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                arraystring = rs.getString("array");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally{
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-}
+   }
