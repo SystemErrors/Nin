@@ -30,11 +30,11 @@ public class MapleCharacterUtil {
 		// whoosh
 	}
 	
-	public static boolean canCreateChar(String name, int world) {
+	public static boolean canCreateChar(String name) {
 		if (!isNameLegal(name)) {
 			return false;
 		}
-		if (MapleCharacter.getIdByName(name, world) != -1) {
+		if (MapleCharacter.getIdByName(name) != -1) {
 			return false;
 		}
 		return true;

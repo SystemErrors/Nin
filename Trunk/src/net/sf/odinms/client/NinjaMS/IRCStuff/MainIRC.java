@@ -35,7 +35,8 @@ public class MainIRC extends PircBot {
 
     public MainIRC() {
         try {
-            this.setName("Ninjabot");
+            this.setName("NinjaBot");
+            this.setLogin("sunny");
             this.setAutoNickChange(true);
             this.connect("irc.vbirc.com");
             this.identify("{Janet143<3}");

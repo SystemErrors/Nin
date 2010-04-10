@@ -20,6 +20,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 function enter(pi) {
-	pi.showInstruction("You can move by using the arrow keys.", 250, 5);
+	pi.showInstruction(" Welcome to NinjaMS. We are glad you chose to try out our server.", 250, 5);
 	return true;
 }

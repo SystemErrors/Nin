@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.net.login.handler;
 
-import net.sf.odinms.client.Inventory.Equip;
+import net.sf.odinms.client.Enums.MapleSkinColor;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.Inventory.Item;
 import net.sf.odinms.client.MapleCharacter;
@@ -38,7 +38,6 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
 
     private static org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CreateCharHandler.class);
 
-    @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         String name = slea.readMapleAsciiString();
         int face = slea.readInt();
@@ -50,101 +49,108 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
         int shoes = slea.readInt();
         int weapon = slea.readInt();
         int gender = slea.readByte();
-        //ninjahax
-        MapleCharacter newchar = MapleCharacter.getDefault(c);
-        newchar.setName(name);
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        if (gender == 1) {
-            newchar.setFace(21000);
-            newchar.setHair(31875);
-            MapleInventory equip = newchar.getInventory(MapleInventoryType.EQUIPPED);
-            IItem eq_top = ii.getEquipById(1041002);
-            eq_top.setPosition((byte) -5);
-            equip.addFromDB(eq_top);
-            IItem eq_bottom =ii.getEquipById(1061002);
-            eq_bottom.setPosition((byte) -6);
-            equip.addFromDB(eq_bottom);
-            IItem eq_shoes =ii.getEquipById(1072001);
-            eq_shoes.setPosition((byte) -7);
-            equip.addFromDB(eq_shoes);
-            IItem eq_weapon =ii.getEquipById(1302000);
-            eq_weapon.setPosition((byte) -11);
-            equip.addFromDB(eq_weapon);
-            IItem eq_glove =ii.getEquipById(1082244);
-            eq_glove.setPosition((byte) -8);
-            equip.addFromDB(eq_glove);
-            //ninjahax lar
-            IItem eq_nxoverall =ii.getEquipById(1051061);
-            eq_nxoverall.setPosition((byte) -105);
-            equip.addFromDB(eq_nxoverall);
-            IItem eq_nxshoes =ii.getEquipById(1072175);
-            eq_nxshoes.setPosition((byte) -107);
-            equip.addFromDB(eq_nxshoes);
-            IItem eq_nxhat =ii.getEquipById(1001005);
-            eq_nxhat.setPosition((byte) -101);
-            equip.addFromDB(eq_nxhat);
-            IItem eq_nxglove =ii.getEquipById(1081000);
-            eq_nxglove.setPosition((byte) -108);
-            equip.addFromDB(eq_nxglove);
-            IItem eq_nxmask =ii.getEquipById(1011000);
-            eq_nxmask.setPosition((byte) -102);
-            equip.addFromDB(eq_nxmask);
-            IItem eq_nxweapon =ii.makeEquipWithStats((Equip) ii.getEquipById(1702153), (short)100, (short)10, (short)10); // common
-            eq_nxweapon.setPosition((byte) -111);
-            eq_nxweapon.setExpiration(System.currentTimeMillis() + (120));
-            equip.addFromDB(eq_nxweapon);
+
+        boolean charok = true;
+        if (gender == 0) {
+            if (face != 20000 && face != 20001 && face != 20002) {
+                charok = false;
+            }
+            if (hair != 30000 && hair != 30020 && hair != 30030) {
+                charok = false;
+            }
+            if (top != 1040002 && top != 1040006 && top != 1040010) {
+                charok = false;
+            }
+            if (bottom != 1060006 && bottom != 1060002) {
+                charok = false;
+            }
+        } else if (gender == 1) {
+            if (face != 21000 && face != 21001 && face != 21002) {
+                charok = false;
+            }
+            if (hair != 31000 && hair != 31040 && hair != 31050) {
+                charok = false;
+            }
+            if (top != 1041002 && top != 1041006 && top != 1041010 && top != 1041011) { // Credits Traitor for adding the Cygnus armours
+                charok = false;
+            }
+            if (bottom != 1061002 && bottom != 1061008) {
+                charok = false;
+            }
         } else {
-            newchar.setFace(20209);
-            newchar.setHair(30755);
+            charok = false;
+        }
+        if (skinColor < 0 || skinColor > 3) {
+            charok = false;
+        }
+        if (weapon != 1302000 && weapon != 1322005 && weapon != 1312004) {
+            charok = false;
+        }
+        if (shoes != 1072001 && shoes != 1072005 && shoes != 1072037 && shoes != 1072038) {
+            charok = false;
+        }
+        if (hairColor != 0 && hairColor != 2 && hairColor != 3 && hairColor != 7) {
+            charok = false;
+        }
+
+        MapleCharacter newchar = MapleCharacter.getDefault(c);  // I have no idea why this moved down. but it looks better. only assign stuff is charok.
+        if (charok) {
+            newchar.setWorld(c.getWorld());
+            newchar.setFace(face);
+            newchar.setHair(hair + hairColor);
+            newchar.setName(name);
+            newchar.setSkinColor(MapleSkinColor.getById(skinColor));
             MapleInventory equip = newchar.getInventory(MapleInventoryType.EQUIPPED);
-            IItem eq_top =ii.getEquipById(1040002);
+            IItem eq_top = MapleItemInformationProvider.getInstance().getEquipById(top);
             eq_top.setPosition((byte) -5);
             equip.addFromDB(eq_top);
-            IItem eq_bottom =ii.getEquipById(1060006);
+            IItem eq_bottom = MapleItemInformationProvider.getInstance().getEquipById(bottom);
             eq_bottom.setPosition((byte) -6);
             equip.addFromDB(eq_bottom);
-            IItem eq_shoes =ii.getEquipById(1072001);
+            IItem eq_shoes = MapleItemInformationProvider.getInstance().getEquipById(shoes);
             eq_shoes.setPosition((byte) -7);
             equip.addFromDB(eq_shoes);
-            IItem eq_weapon =ii.getEquipById(1302000);
+            IItem eq_weapon = MapleItemInformationProvider.getInstance().getEquipById(weapon);
             eq_weapon.setPosition((byte) -11);
             equip.addFromDB(eq_weapon);
-            IItem eq_glove =ii.getEquipById(1082244);
-            eq_glove.setPosition((byte) -8);
-            equip.addFromDB(eq_glove);
-            //ninjahax lar
-            IItem eq_nxoverall =ii.getEquipById(1050071); // male
-            eq_nxoverall.setPosition((byte) -105);
-            equip.addFromDB(eq_nxoverall);
-            IItem eq_nxshoes =ii.getEquipById(1072175); // common
-            eq_nxshoes.setPosition((byte) -107);
-            equip.addFromDB(eq_nxshoes);
-            IItem eq_nxhat =ii.getEquipById(1000005); // male
-            eq_nxhat.setPosition((byte) -101);
-            equip.addFromDB(eq_nxhat);
-            IItem eq_nxglove =ii.getEquipById(1080000); //male
-            eq_nxglove.setPosition((byte) -108);
-            equip.addFromDB(eq_nxglove);
-            IItem eq_nxmask =ii.getEquipById(1010002); // male
-            eq_nxmask.setPosition((byte) -102);
-            equip.addFromDB(eq_nxmask);
-            IItem eq_nxweapon =ii.makeEquipWithStats((Equip) ii.getEquipById(1702153), (short)100, (short)10, (short)10); // common
-            eq_nxweapon.setPosition((byte) -111);
-            eq_nxweapon.setExpiration(System.currentTimeMillis() + (120));
-            equip.addFromDB(eq_nxweapon);
+            IItem noob_cap = MapleItemInformationProvider.getInstance().getEquipById(1002419);
+            noob_cap.setPosition((byte) -1);
+            equip.addFromDB(noob_cap);
+            IItem noob_overall = MapleItemInformationProvider.getInstance().getEquipById(1052170);
+            noob_overall.setPosition((byte) -105);
+            equip.addFromDB(noob_overall);
+            IItem pWeap = MapleItemInformationProvider.getInstance().getEquipById(1702187);
+            pWeap.setPosition((byte) -111);
+            equip.addFromDB(pWeap);
+            MapleInventory etc = newchar.getInventory(MapleInventoryType.ETC);
+            etc.addItem(new Item(Items.currencyType.Sight, (byte) 0, (short) 5));
+            MapleInventory use = newchar.getInventory(MapleInventoryType.USE);
+            int[] useitems = {2000005, 2050004, 2022094, 2022179, 2040807, 2060000, 2061000, 2070005, 2330000};
+            int[] useitemsquantity = {500, 100, 50, 1, 7, 1000, 1000, 1000, 1000};
+            for (int i = 0; i < useitems.length; i++) {
+                Item item = new Item(useitems[i], (byte) (i + 1), (short) useitemsquantity[i]);
+                if (useitems.length - 4 >= i + 1) {
+                }
+                use.addItem(item);
+            }
+            MapleInventory cash = newchar.getInventory(MapleInventoryType.CASH);
+            int[] cashitems = {5072000, 5076000};
+            int[] cashitemsquantity = {5, 5};
+            for (int i = 0; i < cashitems.length; i++) {
+                Item item = new Item(cashitems[i], (byte) (i + 1), (short) cashitemsquantity[i]);
+                cash.addItem(item);
+            }
+            MapleInventory equipp = newchar.getInventory(MapleInventoryType.EQUIP);
+            int[] equipitems = {1372005, 1082149, 1302007, 1332063, 1432000, 1442000, 1452002, 1462047, 1472000, 1492000, 1482000};
+            for (int i = 0; i < equipitems.length; i++) {
+                IItem thing = MapleItemInformationProvider.getInstance().getEquipById(equipitems[i]);
+                thing.setPosition((byte) (i + 1));
+                equipp.addFromDB(thing);
+            }
         }
-        MapleInventory etc = newchar.getInventory(MapleInventoryType.ETC);
-        etc.addItem(new Item(Items.currencyType.Sight, (byte) 0, (short) 25)); // Tao :P
-        MapleInventory use = newchar.getInventory(MapleInventoryType.USE);
-        use.addItem(new Item(2000015, (byte) 0, (short) 200)); // PE
-        use.addItem(new Item(2022179, (byte) 1, (short) 10)); // onyx
-        MapleInventory setup = newchar.getInventory(MapleInventoryType.SETUP);
-        setup.addItem(new Item(3010000, (byte) 0, (short) 1));
-        MapleInventory cash = newchar.getInventory(MapleInventoryType.CASH);
-        cash.addItem(new Item(5072000, (byte) 0, (short) 10));
-        if (MapleCharacterUtil.canCreateChar(name, c.getWorld())) {
+        if (charok && MapleCharacterUtil.canCreateChar(name)) {
             newchar.saveNewToDB();
-            c.getSession().write(MaplePacketCreator.addNewCharEntry(newchar, true));
+            c.getSession().write(MaplePacketCreator.addNewCharEntry(newchar, charok));
         } else {
             log.warn(MapleClient.getLogMessage(c, "Trying to create a character with a name: {}", name));
         }

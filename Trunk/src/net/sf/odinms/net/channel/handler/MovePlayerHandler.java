@@ -49,24 +49,25 @@ public class MovePlayerHandler extends AbstractMovementPacketHandler {
         // TODO more validation of input data
         if (res != null) {
             if (slea.available() != 18) {
-             //   log.warn("slea.available != 18 (movement parsing error)");
+                //   log.warn("slea.available != 18 (movement parsing error)");
                 return;
             }
             MapleCharacter player = c.getPlayer();
-            
-            if(player.getJobId() == 900 || player.getJobId() == 910 ){
-                if(!player.isJounin() && player.getMapId() != 100000000){                    
+
+            if (player.getJobId() == 900 || player.getJobId() == 910) {
+                if (!player.isJounin() && player.getMapId() != 100000000) {
                     player.changeJobById(0);
                     player.goHome();
                 }
-                
             }
-
-            if(!player.isChunin() && SpecialStuff.getInstance().isDojoMap(player.getMapId()) && (player.getGMSMode() < 1)){
+            if (player.getMapId() != 0 && player.getReborns() == 0 && player.getLevel() < 10) {
+                player.goHome();
+            }
+            if (!player.isChunin() && SpecialStuff.getInstance().isDojoMap(player.getMapId()) && (player.getGMSMode() < 1)) {
                 player.goHome();
                 player.dropMessage("You can only be in Dojo if you are in GMS mode");
             }
-            
+
             if (!player.isHidden()) {
                 MaplePacket packet = MaplePacketCreator.movePlayer(player.getId(), res);
                 c.getPlayer().getMap().broadcastMessage(player, packet, false);
@@ -91,5 +92,4 @@ public class MovePlayerHandler extends AbstractMovementPacketHandler {
             }
         }
     }
-    
 }

@@ -530,6 +530,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ret.hp = 50;
         ret.mp = 50;
         ret.map = null;
+        ret.str = 69;
+        ret.dex = 69;
+        ret.luk = 69;
+        ret.int_ = 69;
         ret.exp.set(0);
         ret.job = MapleJob.BEGINNER;
         ret.meso.set(2000000000);
@@ -588,8 +592,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void saveNewToDB() {
-           initialSpawnPoint = 0;                
-            mapid = map.getId();
+        initialSpawnPoint = 0;
+        mapid = 0;
         // else, begin the hell!
         Connection con = DatabaseConnection.getConnection();
         PreparedStatement ps = null;
@@ -645,7 +649,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
                 ps.executeBatch();
             }
-            deleteWhereCharacterId(con, "DELETE FROM inventoryitems WHERE characterid = ?");
+            // deleteWhereCharacterId(con, "DELETE FROM inventoryitems WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO inventoryitems (characterid, itemid, inventorytype, position, quantity, owner, uniqueid, expiredate, petindex) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             PreparedStatement pse = con.prepareStatement("INSERT INTO inventoryequipment VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             for (MapleInventory iv : inventory) {
@@ -657,18 +661,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     ps.setInt(5, item.getQuantity());
                     ps.setString(6, item.getOwner());
                     ps.setInt(7, item.getUniqueId());
-                    ps.setLong(8, item.getExpiration());
-                    byte xx = -1;
-                    if (item.getUniqueId() > 0) {
-                        for (byte i = 0; i < pets.length; i++) {
-                            if (pets[i] != null) {
-                                if (item.getUniqueId() == pets[i].getUniqueId()) {
-                                    xx = i;
-                                }
-                            }
-                        }
-                    }
-                    ps.setByte(9, xx);
+                    ps.setLong(8, item.getExpiration());                    
+                    ps.setByte(9, (byte)-1);
                     ps.executeUpdate();
                     rs = ps.getGeneratedKeys();
                     int itemid;
@@ -706,18 +700,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
             }
             pse.close();
-                deleteWhereCharacterId(con, "DELETE FROM keymap WHERE characterid = ?");
-                ps = con.prepareStatement("INSERT INTO keymap (characterid, `key`, `type`, `action`) VALUES (?, ?, ?, ?)");
-                ps.setInt(1, id);
-                for (Entry<Integer, MapleKeyBinding> keybinding : keymap.entrySet()) {
-                    ps.setInt(2, keybinding.getKey());
-                    ps.setInt(3, keybinding.getValue().getType());
-                    ps.setInt(4, keybinding.getValue().getAction());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
+            //   deleteWhereCharacterId(con, "DELETE FROM keymap WHERE characterid = ?");
+            ps = con.prepareStatement("INSERT INTO keymap (characterid, `key`, `type`, `action`) VALUES (?, ?, ?, ?)");
+            ps.setInt(1, id);
+            for (Entry<Integer, MapleKeyBinding> keybinding : keymap.entrySet()) {
+                ps.setInt(2, keybinding.getKey());
+                ps.setInt(3, keybinding.getValue().getType());
+                ps.setInt(4, keybinding.getValue().getAction());
+                ps.addBatch();
+            }
+            ps.executeBatch();
 
-            deleteWhereCharacterId(con, "DELETE FROM savedlocations WHERE characterid = ?");
+            //   deleteWhereCharacterId(con, "DELETE FROM savedlocations WHERE characterid = ?");
             ps = con.prepareStatement("INSERT INTO savedlocations (characterid, `locationtype`, `map`, `portal`) VALUES (?, ?, ?, ?)");
             ps.setInt(1, id);
             for (SavedLocationType savedLocationType : SavedLocationType.values()) {
@@ -729,7 +723,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
             }
             ps.executeBatch();
-            deleteWhereCharacterId(con, "DELETE FROM buddies WHERE characterid = ? AND pending = 0");
+            //  deleteWhereCharacterId(con, "DELETE FROM buddies WHERE characterid = ? AND pending = 0");
             ps = con.prepareStatement("INSERT INTO buddies (characterid, `buddyid`, `group`, `pending`) VALUES (?, ?, ?, 0)");
             ps.setInt(1, id);
             for (BuddylistEntry entry : buddylist.getBuddies()) {
@@ -739,7 +733,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     ps.addBatch();
                 }
             }
-            ps.executeBatch();           
+            ps.executeBatch();
             ps = con.prepareStatement("UPDATE accounts SET `cardNX` = ?, `maplePoints` = ?, `paypalNX` = ?, `village` = ?, `ninjatensu` = ?, `dpoints` = ?, `damount` = ?, `jqfinished` = ?, `jqpoints` = ?, `lastjq` = ? WHERE id = ?");
             ps.setInt(1, cardNX);
             ps.setInt(2, maplePoints);
@@ -777,9 +771,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             } catch (SQLException e) {
                 log.error(MapleClient.getLogMessage(this, "[charsave] Error going back to autocommit mode"), e);
             }
-        }
-        if (ChannelServer.getServerPlayerStorage().getCharacters().containsKey(id)) {
-            ChannelServer.getServerPlayerStorage().removePlayerFromWorldStorage(id);
         }
     }
 
@@ -1107,21 +1098,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         client.getSession().write(MaplePacketCreator.completeQuest(this, (short) quest.getQuest().getId()));
     }
 
-    public static int getIdByName(String name, int world) {
+    public static int getIdByName(String name) {
         Connection con = DatabaseConnection.getConnection();
         PreparedStatement ps;
-
         try {
-            ps = con.prepareStatement("SELECT id FROM characters WHERE name = ? AND world = ?");
+            ps = con.prepareStatement("SELECT id FROM characters WHERE name = ?");
             ps.setString(1, name);
-            ps.setInt(2, world);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
                 rs.close();
                 ps.close();
                 return -1;
             }
-
             int id = rs.getInt("id");
             rs.close();
             ps.close();
@@ -1129,7 +1117,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         } catch (SQLException e) {
             log.error("ERROR", e);
         }
-
         return -1;
     }
 
@@ -6065,4 +6052,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     public void setTextColour(Byte textColour) {
         this.textColour = textColour;
     }
+
+
 }
