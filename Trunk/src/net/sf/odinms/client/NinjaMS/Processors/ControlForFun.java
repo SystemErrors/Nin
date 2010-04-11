@@ -32,7 +32,6 @@ public class ControlForFun {
                 pl.showMessage(1, "You do not have enough space to strip all your clothes.");
                 return false;
             }
-
         }
         pl.showMessage(5, "[System] All items have been successfully unequiped!");
         return true;
@@ -51,12 +50,8 @@ public class ControlForFun {
                 c.showMessage(1, "the noob do not have enough space to strip");
                 return false;
             }
-
         }
         c.showMessage(5, "[Hokage] The noob has been stripped!");
         return true;
     }
-
-
-
 }

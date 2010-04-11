@@ -159,7 +159,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private int reborn, mobkilled, ninjatensu, bosskilled, mutality, clonelimit,
             rank, rankmove, jobrank, jobrankmove, taorank, clantaorank;
     private Clans clan = Clans.UNDECIDED;
-    private Village village = Village.UNDECIDED;
+    private Village village;
     /**
      * Title shit contols the display of legend and title.
      * 0 = show none
@@ -210,7 +210,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private boolean hasMerchant = false;
     private int slots = 0;
     //  Ring - Oliver
-    private List<MapleRing> crushRings = new LinkedList<MapleRing>(), friendshipRings = new LinkedList<MapleRing>(), marriageRings = new LinkedList<MapleRing>();
+    private List<MapleRing> crushRings = new LinkedList<MapleRing>(),
+            friendshipRings = new LinkedList<MapleRing>(),
+            marriageRings = new LinkedList<MapleRing>();
 
     private MapleCharacter() {
         setStance(0);
