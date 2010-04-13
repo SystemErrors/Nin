@@ -1,5 +1,6 @@
 package net.sf.odinms.server.constants;
 
+import net.sf.odinms.client.Enums.Village;
 import net.sf.odinms.client.Inventory.Equip;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.MapleCharacter;
@@ -301,5 +302,34 @@ public class SpecialStuff {
             return false;
         }
         return true;
+    }
+
+    public boolean canLoot(MapleCharacter player, int itemid){
+        if(player.isAdmin()){
+            return true;
+        }
+        int i = 0;
+         switch(itemid){
+            case 4000241:
+                i = 1;
+                break;
+            case 4000332:
+                i = 2;
+                break;
+            case 4000131:
+                i = 3;
+                break;
+            case 4001063:
+                i = 4;
+                break;
+            case 4000415:
+                i = 5;
+                break;
+        }
+         if(i == 0){
+             return true;
+         } else {
+             return player.getVillage().equals(Village.getVillageByItem(itemid));
+         }
     }
 }

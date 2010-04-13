@@ -62,6 +62,7 @@ import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MaplePortal;
 import net.sf.odinms.server.MapleStatEffect;
 import net.sf.odinms.server.TimerManager;
+import net.sf.odinms.server.constants.Items;
 import net.sf.odinms.server.constants.Rates;
 import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.server.life.MapleMonster;
@@ -263,7 +264,7 @@ public class MapleMap {
         if (checkForExcess()) {
             return;
         }
-        
+
         int maxDrops;
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         final boolean isBoss = monster.isBoss();
@@ -272,7 +273,7 @@ public class MapleMap {
         } else {
             maxDrops = Rates.getDropRate(dropOwner); // mob droprate
         }
-        
+
         List<Integer> toDrop = new ArrayList<Integer>();
         for (int i = 0; i < maxDrops; i++) {
             toDrop.add(monster.getDrop());
@@ -302,11 +303,20 @@ public class MapleMap {
         /*
          * To make sure it drops Dragon Jewel for Magic scales Quest
          */
-        if ((Math.random() * 100000) < 5 && !dropOwner.haveItem(1812006, 1, true, true) && !dropOwner.haveItem(4031679, 1)) {
+   /*     if ((Math.random() * 100000) < 5 && !dropOwner.haveItem(1812006, 1, true, true) && !dropOwner.haveItem(4031679, 1)) {
             toDrop.add(4031679);
             broadcastMessage(MaplePacketCreator.serverNotice(5,
                     "[The Elite Ninja Gang] Huong has used her magical powers and rewarded you with a mysterious drop in your map."
                     + "Talk to NPC Cloy to find out more about the item"));
+        }*/
+        if (Math.random() * 100 < 2) {
+            toDrop.add(dropOwner.getVillage().getVillageItem());
+        }        
+        if (dropOwner.getGMSMode() > 0 && monster.getMaxHp() > 10000000) {
+            int chix = (int) Math.floor(Math.random() * 3);
+            for (int i = 0; i < chix; i++) {
+                toDrop.add(Items.currencyType.Sight);
+            }
         }
         if (SpecialStuff.getInstance().isDojoMap(getId())) {
             int fuck = (int) Math.floor(Math.random() * 3);

@@ -39,6 +39,7 @@ import net.sf.odinms.net.world.MaplePartyCharacter;
 import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.constants.Items;
+import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.server.maps.MapleMapItem;
 import net.sf.odinms.server.maps.MapleMapObject;
 import net.sf.odinms.tools.MaplePacketCreator;
@@ -146,6 +147,10 @@ public class ItemPickupHandler extends AbstractMaplePacketHandler {
                                 }
                                 MapleInventoryManipulator.addById(c, mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), null, petId);
                                 removeItem(c.getPlayer(), mapitem, ob);
+                            } else if (!SpecialStuff.getInstance().canLoot(c.getPlayer(), oid)) {
+                                c.getSession().write(MaplePacketCreator.getInventoryFull());
+                                c.getSession().write(MaplePacketCreator.getShowInventoryFull());
+                                return;
                             } else if (MapleInventoryManipulator.addFromDrop(c, mapitem.getItem())) {
                                 removeItem(c.getPlayer(), mapitem, ob);
                             } else {

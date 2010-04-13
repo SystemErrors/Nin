@@ -4,6 +4,9 @@
  */
 package net.sf.odinms.client.Enums;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  *
  * @author Owner
@@ -158,7 +161,7 @@ public enum Village {
         return i;
     }
 
-    public int villageItem(){
+    public int getVillageItem(){
         int i = 0;
         switch(id){
             case 0:
@@ -180,5 +183,36 @@ public enum Village {
                 break;
         }
         return i;
+    }
+
+    public static Village getVillageByItem(int itemid){
+        int i = 0;
+        switch(itemid){
+            case 4000241:
+                i = 1;
+                break;
+            case 4000332:
+                i = 2;
+                break;
+            case 4000131:
+                i = 3;
+                break;
+            case 4001063:
+                i = 4;
+                break;
+            case 4000415:
+                i = 5;
+                break;
+        }
+        return getById(i);
+    }
+    public static List<Integer> villageItems(){
+        List<Integer> itemss = new LinkedList<Integer>();
+        itemss.add(4000241);
+        itemss.add(4000332);
+        itemss.add(4000131);
+        itemss.add(4001063);
+        itemss.add(4000415);
+        return itemss;
     }
 }

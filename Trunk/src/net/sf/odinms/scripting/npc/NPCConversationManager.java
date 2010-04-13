@@ -837,4 +837,8 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
         sendOk("You need to be in GMS mode " + lol + ". Talk to NPC duru in henesys to go into GMS mode");
         dispose();
     }
+
+    public int getAccountId(){
+        return getPlayer().getAccountID();
+    }
 }
