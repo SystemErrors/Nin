@@ -66,7 +66,7 @@ public abstract class AbstractDealDamageHandler extends AbstractMaplePacketHandl
         byte fuck = 2;
         byte msi = player.getMaxStatItems();
         if (msi >= 1) {
-            fuck = (byte) ((msi / 2) + 1);
+            fuck = (byte) ((msi / 2) + 2);
         }
         if (player.getMapId() == 280030000) {
         }

@@ -43,7 +43,7 @@ public class CashItemFactory {
         } else {
             try {
                 Connection con = DatabaseConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement("SELECT * from `ninjams`.`cash_commodity_data` WHERE serial_number = ?");
+                PreparedStatement ps = con.prepareStatement("SELECT * from `cash_commodity_data` WHERE serial_number = ?");
                 ps.setInt(1, sn);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {

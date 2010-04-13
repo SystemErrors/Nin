@@ -260,6 +260,10 @@ public class MapleMap {
          * drop logic: decide based on monster what the max drop count is get drops (not allowed: multiple mesos,
          * multiple items of same type exception: event drops) calculate positions
          */
+        if (checkForExcess()) {
+            return;
+        }
+        
         int maxDrops;
         MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
         final boolean isBoss = monster.isBoss();
@@ -268,6 +272,7 @@ public class MapleMap {
         } else {
             maxDrops = Rates.getDropRate(dropOwner); // mob droprate
         }
+        
         List<Integer> toDrop = new ArrayList<Integer>();
         for (int i = 0; i < maxDrops; i++) {
             toDrop.add(monster.getDrop());
@@ -291,11 +296,9 @@ public class MapleMap {
                 }
             }
         }
-
         if (toDrop.size() > maxDrops) {
             toDrop = toDrop.subList(0, maxDrops);
         }
-
         /*
          * To make sure it drops Dragon Jewel for Magic scales Quest
          */
@@ -305,7 +308,6 @@ public class MapleMap {
                     "[The Elite Ninja Gang] Huong has used her magical powers and rewarded you with a mysterious drop in your map."
                     + "Talk to NPC Cloy to find out more about the item"));
         }
-
         if (SpecialStuff.getInstance().isDojoMap(getId())) {
             int fuck = (int) Math.floor(Math.random() * 3);
             int[] pots = {2022430, 2022431, 2022432};
@@ -314,7 +316,6 @@ public class MapleMap {
         Point[] toPoint = new Point[toDrop.size()];
         int shiftDirection = 0;
         int shiftCount = 0;
-
         int curX = Math.min(Math.max(monster.getPosition().x - 25 * (toDrop.size() / 2), footholds.getMinDropX() + 25),
                 footholds.getMaxDropX() - toDrop.size() * 25);
         int curY = Math.max(monster.getPosition().y, footholds.getY1());
@@ -1969,5 +1970,14 @@ public class MapleMap {
     }
     }
     }*/
+    public boolean checkForExcess() { // Cred: Oliboo
+        if (mapobjects.size() - characters.size() > 15000) {
+            broadcastMessage(MaplePacketCreator.serverNotice(5, "Due to the maps' high amount of items, they have been cleared and monsters be killed!"));
+            clearDrops();
+            killAllMonsters(false);
+            return true;
+        }
+        return false;
+    }
 }
 

@@ -36,7 +36,7 @@ public class ViciousHammerHandler extends AbstractMaplePacketHandler {
 
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        if (c.getPlayer().getHammerSlot() == null) {
+      /*  if (c.getPlayer().getHammerSlot() == null) {
             c.disconnect();
             return;
         }
@@ -50,5 +50,7 @@ public class ViciousHammerHandler extends AbstractMaplePacketHandler {
         c.getSession().write(MaplePacketCreator.sendHammerEnd());
         c.getSession().write(MaplePacketCreator.updateHammerItem(item));
         c.getPlayer().setHammerSlot(null);
+   */
+    c.showMessage("You cannot hammer any Item in NinjaMS. hammers are used for Item forging");
     }
 }

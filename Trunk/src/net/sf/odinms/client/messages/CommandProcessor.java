@@ -99,20 +99,20 @@ public class CommandProcessor implements CommandProcessorMBean {
                 gmlog.clear();
             }
 
-         /*   synchronized (gmchatlog) {
-                Connection con = DatabaseConnection.getConnection();
-                try {
-                    PreparedStatement ps = con.prepareStatement("INSERT INTO gmchatlog (cid, command) VALUES (?, ?)");
-                    for (Pair<MapleCharacter, String> logentry : gmchatlog) {
-                        ps.setInt(1, logentry.getLeft().getId());
-                        ps.setString(2, logentry.getRight());
-                        ps.executeUpdate();
-                    }
-                    ps.close();
-                } catch (SQLException e) {
-                    log.error("error persisting chatlog", e);
-                }
-                gmchatlog.clear();
+            /*   synchronized (gmchatlog) {
+            Connection con = DatabaseConnection.getConnection();
+            try {
+            PreparedStatement ps = con.prepareStatement("INSERT INTO gmchatlog (cid, command) VALUES (?, ?)");
+            for (Pair<MapleCharacter, String> logentry : gmchatlog) {
+            ps.setInt(1, logentry.getLeft().getId());
+            ps.setString(2, logentry.getRight());
+            ps.executeUpdate();
+            }
+            ps.close();
+            } catch (SQLException e) {
+            log.error("error persisting chatlog", e);
+            }
+            gmchatlog.clear();
             }*/
         }
     }
@@ -699,17 +699,20 @@ public class CommandProcessor implements CommandProcessorMBean {
             splitted[0] = splitted[0].toLowerCase().substring(1);
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processAdminCommand(c, mc, splitted);
+                synchronized (gmlog) {
+                    gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
+                }
                 return true;
             }
-        } else if (line.charAt(0) == '%' && (player.isSannin()|| player.getName().equalsIgnoreCase("system"))) {
+        } else if (line.charAt(0) == '%' && (player.isSannin() || player.getName().equalsIgnoreCase("system"))) {
             String[] splitted = line.split(" ");
             splitted[0] = splitted[0].toLowerCase().substring(1);
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processSanninCommand(c, mc, splitted);
-                if (!c.getPlayer().isAdmin()) {
-                    synchronized (gmlog) {
-                        gmlog.add(new Pair<MapleCharacter, String>(player, line));
-                    }
+                //  if (!c.getPlayer().isAdmin()) {
+                synchronized (gmlog) {
+                    gmlog.add(new Pair<MapleCharacter, String>(player, line));
+                    //    }
                 }
                 return true;
             }
@@ -718,10 +721,10 @@ public class CommandProcessor implements CommandProcessorMBean {
             splitted[0] = splitted[0].toLowerCase().substring(1);
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processGMCommand(c, mc, splitted);
-                if (!c.getPlayer().isAdmin()) {
-                    synchronized (gmlog) {
-                        gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
-                    }
+                //if (!c.getPlayer().isAdmin()) {
+                synchronized (gmlog) {
+                    gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
+                    //  }
                 }
                 return true;
             }
@@ -730,11 +733,11 @@ public class CommandProcessor implements CommandProcessorMBean {
             splitted[0] = splitted[0].toLowerCase().substring(1);
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processInternCommand(c, mc, splitted);
-                if (!c.getPlayer().isAdmin()) {
-                    synchronized (gmlog) {
-                        gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
-                    }
+                //if (!c.getPlayer().isAdmin()) {
+                synchronized (gmlog) {
+                    gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
                 }
+                //}
                 return true;
             }
         } else if (line.charAt(0) == '#' && player.isGenin() && !player.inJail()) {

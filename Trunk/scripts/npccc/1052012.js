@@ -1,4 +1,5 @@
 var status = 0;
+var x = 10;
     var hats1 = Array (1000000, 1000001, 1000002, 1000003, 1000004, 1000005, 1000006, 1000007, 1000008,
         1000009, 1000010, 1000011, 1000012, 1000013, 1000014, 1000015, 1000016, 1000017, 1000018,
         1000019, 1000020, 1000021, 1000022, 1000023, 1000025, 1000026, 1000027, 1000029, 1000030,   
@@ -97,7 +98,6 @@ var status = 0;
         1002950, 1002951, 1002952, 1002953, 1002956, 1002961, 1002968, 1002978, 1002979, 1002984, 
         1002995);
 
-		var x = 20;
 function start() {
 	status = -1;
 	action(1, 0, 0);
@@ -116,7 +116,7 @@ function action(mode, type, selection) {
 		else
 			status--;
 		if (status == 0) {
-			cm.sendOk("Hello there #h #. I'm Hat Seller of NinjaMS who sell every available hat in NinjaMS For you. Ofcourse for a small fee. Are you ready to go shopping with me? note : All items will cost you 20 tao each and every item will be tagged with your name :)");
+			cm.sendOk("Hello there #h #. I'm Hat Seller of NinjaMS who sell every available hat in NinjaMS For you. Ofcourse for a small fee. Are you ready to go shopping with me? \r\n\r\n#rNote : All items will cost you "+x+" tao each and every item will be tagged with your name :)");
 		} else if (status == 1){
 			if (!cm.getPlayer().haveSight(x)) {
 				cm.sendOk("Seems like you are a bit low on funds . Sorry, I dont do charity");

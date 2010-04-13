@@ -4311,6 +4311,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void doReborn(boolean changejob) {
+        if(getMapId() < 4){
+            dropMessage("You cannot rebirth from training camp");
+            return;
+        }
         this.reborn++;
         this.level = 1;
         this.setExp(0);
@@ -4636,8 +4640,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         if (isRebirthing()) {
             return;
         }
-        if (getReborns() >= 10 && getClan().equals(Clans.UNDECIDED)) {
-            dropMessage("You need to be in a clan to rebirth. Talk to Shadrion in Henesys");
+        if (getReborns() >= 10 && getVillage().equals(Village.UNDECIDED)) {
+            dropMessage("You need to be in a Village to rebirth.");
             return;
         }
         if (getLevel() < getMaxLevel()) {
@@ -6045,6 +6049,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public Village getVillage() {
         return village;
+    }
+
+    public void setVillage(byte lol){
+        this.village = Village.getById(lol);
     }
 
     public Byte getTextColour() {

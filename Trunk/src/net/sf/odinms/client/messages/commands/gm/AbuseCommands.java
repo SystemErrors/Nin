@@ -12,7 +12,6 @@ import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.remote.WorldLocation;
-import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.constants.Items.MegaPhoneType;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
@@ -26,13 +25,11 @@ public class AbuseCommands implements GMCommand {
     public GMCommandDefinition[] getDefinition() {
         return new GMCommandDefinition[]{
                     new GMCommandDefinition("kill", "ign", "kills the person la"),
-                    new GMCommandDefinition("haxrb", "amount", "set your RB"),
-                    new GMCommandDefinition("smega", "msg", "send smega with your name . "),
                     new GMCommandDefinition("torture", "<ign> <reason>", "world tour command. Dont abuse this bishes"),
                     new GMCommandDefinition("addtao", "ign amount", "adds amount of tao. negative value possible. Dont abuse"),
                     new GMCommandDefinition("mc", "ign text", "mind control"),
                     new GMCommandDefinition("gmwannabe", "ign text", "white chat mind control"),
-                    new GMCommandDefinition("strip", "ign", "strips the person"),};
+                   };
     }
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {

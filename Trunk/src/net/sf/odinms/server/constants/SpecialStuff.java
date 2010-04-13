@@ -175,16 +175,7 @@ public class SpecialStuff {
         if (player.isChunin()) {
             return false;
         }
-        if ((mapId == 910000014 || mapId == 910000013) && player.getReborns() > 10) {
-            return true;
-        }
-        if ((mapId > 910000002 && mapId < 910000006) && player.getReborns() > 100) {
-            return true;
-        }
-        if ((mapId >= 910000006 && mapId < 910000010) && player.getReborns() < 50) {
-            return true;
-        }
-        if (mapId == 910000006 && player.getReborns() >= 1000) {
+        if (mapId < 40000 && player.getReborns() > 1) {
             return true;
         }
         return false;
@@ -194,14 +185,7 @@ public class SpecialStuff {
         if (player.isChunin()) {
             return false;
         }
-        if ((mapId == 910000014 || mapId == 910000013) && player.getReborns() > 10) {
-            return true;
-        }
-
-        if ((mapId > 910000002 && mapId < 910000006) && player.getReborns() > 100) {
-            return true;
-        }
-        if ((mapId >= 910000006 && mapId < 910000010) && player.getReborns() < 50) {
+        if (mapId < 40000) {
             return true;
         }
         return false;
@@ -316,7 +300,6 @@ public class SpecialStuff {
             player.showMessage(1, "You cannot drop items here!");
             return false;
         }
-
         return true;
     }
 }

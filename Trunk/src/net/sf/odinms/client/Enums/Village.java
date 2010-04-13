@@ -60,13 +60,13 @@ public enum Village {
             case 0:
                 return 1000;
             case 1:
-                return 750;
+                return 1000;
             case 2:
             case 3:
             case 4:
-                return 400;
+                return 600;
             case 5:
-                return 550;
+                return 750;
             case 6:
                 return 1000;
             default:
@@ -154,6 +154,30 @@ public enum Village {
                 i = 251000000;
                 break;
 
+        }
+        return i;
+    }
+
+    public int villageItem(){
+        int i = 0;
+        switch(id){
+            case 0:
+                break;
+            case 1:
+                i = 4000241;
+                break;
+            case 2:
+                i = 4000332;
+                break;
+            case 3:
+                i = 4000131;
+                break;
+            case 4:
+                i = 4001063;
+                break;
+            case 5:
+                i = 4000415;
+                break;
         }
         return i;
     }

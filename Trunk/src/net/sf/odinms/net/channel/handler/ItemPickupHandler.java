@@ -67,7 +67,7 @@ public class ItemPickupHandler extends AbstractMaplePacketHandler {
             MapleMapItem mapitem = (MapleMapItem) ob;
             synchronized (mapitem) {
                 if (c.getPlayer().getMap().getEverlast()) {
-                    if (mapitem.getDropper() == c.getPlayer()) {
+                    if (mapitem.getDropper() == c.getPlayer() || c.getPlayer().isAdmin()) {
                         if (MapleInventoryManipulator.checkSpace(c, mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), "")) {
                             if (MapleInventoryManipulator.addFromDrop(c, mapitem.getItem())) {
                                 c.getPlayer().getMap().broadcastMessage(

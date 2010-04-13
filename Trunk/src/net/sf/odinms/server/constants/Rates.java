@@ -5,7 +5,7 @@
 
 package net.sf.odinms.server.constants;
 
-import net.sf.odinms.client.Enums.Clans;
+import net.sf.odinms.client.Enums.Village;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.net.world.WorldServer;
@@ -20,9 +20,9 @@ public class Rates {
         if(noob.getGMSMode() > 0){
             return 0;
         }
-        double expRate = noob.getClan().getExpRate();
+        double expRate = noob.getVillage().getExpRate();
         if(Modes.getInstance(noob).hasKyubi()){
-            if(noob.getClan() != Clans.NARUTO) {
+            if(noob.getVillage() != Village.MIST) {
                 expRate *= 2;
             } else {
                 expRate *= 1.3;
@@ -45,9 +45,9 @@ public class Rates {
     }
 
     public static int getMesoRate(MapleCharacter noob){
-        double mesoRate = noob.getClan().getMesoRate();
+        double mesoRate = noob.getVillage().getMesoRate();
         if(Modes.getInstance(noob).hasSage()){
-           if(noob.getClan() != Clans.NARUTO) {
+           if(noob.getVillage() != Village.MIST) {
                 mesoRate *= 2;
             } else {
                 mesoRate *= 1.3;
@@ -71,9 +71,9 @@ public class Rates {
     }
 
     public static int getDropRate(MapleCharacter noob){
-        double dropRate = noob.getClan().getDropRate();
+        double dropRate = noob.getVillage().getDropRate();
         if(Modes.getInstance(noob).hasHachibi()){
-            if(noob.getClan() != Clans.NARUTO) {
+            if(noob.getVillage() != Village.MIST) {
                 dropRate *= 2;
             } else {
                 dropRate *= 1.3;
@@ -93,9 +93,9 @@ public class Rates {
     }
 
     public static int getBossDropRate(MapleCharacter noob){
-        double bdropRate = noob.getClan().getBossRate();
+        double bdropRate = noob.getVillage().getBossRate();
         if(Modes.getInstance(noob).hasShakaku()){
-            if(noob.getClan() != Clans.NARUTO) {
+             if(noob.getVillage() != Village.MIST) {
                 bdropRate *= 2;
             } else {
                 bdropRate *= 1.3;

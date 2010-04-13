@@ -109,7 +109,7 @@ public class InventoryManipulationCommands implements PlayerCommand {
                 player.setMeso(2000000000);
                 player.updateSingleStat(MapleStat.MESO, 2000000000);
             }
-        }
+        } 
     }
 
     public PlayerCommandDefinition[] getDefinition() {

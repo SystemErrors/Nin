@@ -135,6 +135,22 @@ public class FunCommands implements DonatorCommand {
             }
         } else if (splitted[0].equalsIgnoreCase("rebuff")){
             player.rebuff();
+        } else if (splitted[0].equalsIgnoreCase("text")){
+            byte[] txts = {0,3,4,5,6,8,9,13};
+            byte sel = -1;
+            String[] lol = {"normal","buddy","party","guild","alliance","pink","blue","spouse"};
+            for(byte i = 0; i < txts.length; i++){
+                if(splitted[1].equalsIgnoreCase(lol[i])){
+                    sel = i;
+                    break;
+                }
+            }
+            if(sel == -1){
+                mc.dropMessage(" please read the commands for syntax. ");
+                return;
+            }
+            player.setTextColour(txts[sel]);
+            mc.dropMessage("your text colour set to  " + lol[sel]);
         }
     }
 
@@ -149,6 +165,8 @@ public class FunCommands implements DonatorCommand {
                     new DonatorCommandDefinition("retardcure", "ign", " sures Retardness. hopefully"),
                     new DonatorCommandDefinition("rebuff", "", " Rebuffs you"),
                    // new DonatorCommandDefinition("legend", "on/off", " turns on and off legend"),
-                    new DonatorCommandDefinition("namechange", "newign", "Changes your nick name for a fee"),};
+                    new DonatorCommandDefinition("namechange", "newign", "Changes your nick name for a fee"),
+                    new DonatorCommandDefinition("text", "[normal/buddy/party/guild/alliance/pink/blue/spouse]", "text colour")
+        };
     }
 }

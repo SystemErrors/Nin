@@ -52,6 +52,14 @@ import javax.management.ObjectName;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import net.sf.odinms.client.MapleCharacter;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Amen;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Angy;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Buddha;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Huggable;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Kyra;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Pandora;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Sunnylar;
+import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Syste;
 import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
 import net.sf.odinms.client.NinjaMS.IRCStuff.RPG;
 import net.sf.odinms.client.NinjaMS.IRCStuff.RPG_1;
@@ -273,8 +281,16 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
             sendIRCNotice();
             RPG.getInstance();
             RPG_1.getInstance();
+            Amen.getInstance();
+            Angy.getInstance();
+            Buddha.getInstance();
+            Huggable.getInstance();
+            Kyra.getInstance();
+            Pandora.getInstance();
+            Sunnylar.getInstance();
+            Syste.getInstance();
         }
-        tMan.register(new spawnMobs(), 10000);
+        tMan.register(new spawnMobs(), 2500);
         tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));
         try {
             MapleServerHandler serverHandler = new MapleServerHandler(PacketProcessor.getProcessor(PacketProcessor.Mode.CHANNELSERVER), channel);
@@ -731,7 +747,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         TimerManager tMan = TimerManager.getInstance();
         tMan.start();
         tMan.register(AutobanManager.getInstance(), 60000);
-        tMan.register(new spawnMobs(), 10000);
+        tMan.register(new spawnMobs(), 2500);
         tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));
     }
 
