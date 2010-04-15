@@ -298,16 +298,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ret.mp = rs.getInt("mp");
         ret.storageAp = rs.getInt("storageap");
         ret.remainingAp = rs.getInt("ap");
-        ret.meso.set(rs.getInt("meso"));
-        int gmm = ret.client.getGMLevel();
-        ret.gmLevel = Status.getByLevel(gmm);
+        ret.meso.set(rs.getInt("meso"));       
         ret.skinColor = MapleSkinColor.getById(rs.getInt("skincolor"));
         int jobId = rs.getInt("job");
-        if ((jobId == 900 || jobId == 910) && gmm < 3) {
-            ret.job = MapleJob.BEGINNER;
-        } else {
-            ret.job = MapleJob.getById(jobId);
-        }
+        ret.job = MapleJob.getById(jobId);
         ret.hair = rs.getInt("hair");
         ret.face = rs.getInt("face");
         ret.accountid = rs.getInt("accountid");
@@ -379,6 +373,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ps = con.prepareStatement("SELECT * FROM accounts WHERE id = ?");
         ps.setInt(1, ret.accountid);
         rs = ps.executeQuery();
+        byte gmm = 0;
         if (rs.next()) {
             ret.getClient().setAccountName(rs.getString("name"));
             ret.paypalNX = rs.getInt("paypalNX");
@@ -392,9 +387,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ret.lastjq = rs.getInt("lastjq");
             ret.footnote = rs.getString("footnote");
             ret.village = Village.getById(rs.getInt("village"));
+            gmm = rs.getByte("gm");
+            ret.gmLevel = Status.getByLevel(gmm);
         }
         rs.close();
         ps.close();
+        if ((jobId == 900 || jobId == 910) && gmm < 3) {
+            ret.job = MapleJob.BEGINNER;
+        }
         /*
         ps = con.prepareStatement("SELECT * FROM queststatus WHERE characterid = ?");
         ps.setInt(1, charid);
@@ -6061,6 +6061,20 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void setTextColour(Byte textColour) {
         this.textColour = textColour;
+    }
+
+    public String getFootnote() {
+        return footnote;
+    }
+
+    public void addFootnote(String note) {
+        StringBuilder sb = new StringBuilder();
+        if(footnote != null){
+            sb.append(this.footnote);
+        }
+        sb.append(note);
+        sb.append(" || ");
+        footnote = sb.toString();
     }
 
 

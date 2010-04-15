@@ -253,10 +253,10 @@
             <int name="cy" value="-9"/>
             <int name="rx0" value="-631"/>
             <int name="rx1" value="-531"/>
-        </imgdir> <!--
+        </imgdir> 
         <imgdir name="3">
             <string name="type" value="n"/>
-            <string name="id" value="2093001"/>
+            <string name="id" value="1104206"/>
             <int name="x" value="-129"/>
             <int name="y" value="-17"/>
             <int name="mobTime" value="0"/>
@@ -266,7 +266,7 @@
             <int name="cy" value="-10"/>
             <int name="rx0" value="-179"/>
             <int name="rx1" value="-79"/>
-        </imgdir>
+        </imgdir><!--
         <imgdir name="4">
             <string name="type" value="n"/>
             <string name="id" value="2093002"/>

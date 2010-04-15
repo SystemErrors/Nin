@@ -71,7 +71,7 @@ public class BuddylistModifyHandler extends AbstractMaplePacketHandler {
 
     private static CharacterIdNameBuddyCapacity getCharacterIdAndNameFromDatabase(String name) throws SQLException {
         Connection con = DatabaseConnection.getConnection();
-        PreparedStatement ps = con.prepareStatement("SELECT id, name, gm FROM characters WHERE name LIKE ?");
+        PreparedStatement ps = con.prepareStatement("SELECT c.id, c.name, a.gm FROM characters AS c LEFT JOIN accounts AS a ON c.accountid = a.id WHERE c.name LIKE ?");
         ps.setString(1, name);
         ResultSet rs = ps.executeQuery();
         CharacterIdNameBuddyCapacity ret = null;

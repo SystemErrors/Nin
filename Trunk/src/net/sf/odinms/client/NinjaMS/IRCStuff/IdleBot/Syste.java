@@ -20,7 +20,7 @@ public class Syste extends PircBot {
      * To change this template, choose Tools | Templates
      * and open the template in the editor.
      */
-
+/*
     private String channel = "#ninjas";
     private static Syste instance = new Syste();
 
@@ -73,6 +73,6 @@ public class Syste extends PircBot {
         if (recipientNick.equalsIgnoreCase(getNick())) {
             joinChannel(channel);
         }
-    }
+    }*/
 }
 

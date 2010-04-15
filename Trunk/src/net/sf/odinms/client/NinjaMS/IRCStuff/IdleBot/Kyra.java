@@ -20,7 +20,7 @@ public class Kyra extends PircBot {
      * To change this template, choose Tools | Templates
      * and open the template in the editor.
      */
-
+/*
     private String channel = "#ninjas";
     private static Kyra instance = new Kyra();
 
@@ -74,5 +74,5 @@ public class Kyra extends PircBot {
             joinChannel(channel);
         }
     }
-}
+*/}
 

@@ -71,7 +71,7 @@ function action(mode, type, selection) {
                 status = 220;
             }
         } else if (status == 211){
-            if (cm.getC().getChannel() == 3) {                
+            if (cm.getC().getChannel() == 3) {
                 cm.startJQ((cm.getLastJQ() + 1));
                 cm.dispose();
             } else {

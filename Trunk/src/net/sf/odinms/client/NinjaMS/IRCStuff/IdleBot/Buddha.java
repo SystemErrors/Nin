@@ -5,9 +5,6 @@
 
 package net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot;
 
-import java.io.IOException;
-import net.sf.odinms.server.TimerManager;
-import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.PircBot;
 
 /**
@@ -20,7 +17,7 @@ public class Buddha extends PircBot {
      * To change this template, choose Tools | Templates
      * and open the template in the editor.
      */
-
+/*
     private String channel = "#ninjas";
     private static Buddha instance = new Buddha();
 
@@ -73,6 +70,6 @@ public class Buddha extends PircBot {
         if (recipientNick.equalsIgnoreCase(getNick())) {
             joinChannel(channel);
         }
-    }
+    }*/
 }
 

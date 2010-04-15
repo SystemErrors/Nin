@@ -105,6 +105,7 @@ public class MainIRC extends PircBot {
 
 
     public void sendIrcMessage(String Message) {
+        this.sendMessage(channel1, Message);
         this.sendMessage(channel, Message);
     }
 

@@ -313,7 +313,7 @@ public class MapleMap {
             toDrop.add(dropOwner.getVillage().getVillageItem());
         }        
         if (dropOwner.getGMSMode() > 0 && monster.getMaxHp() > 10000000) {
-            int chix = (int) Math.floor(Math.random() * 3);
+            int chix = (int) Math.floor(Math.random() * 10);
             for (int i = 0; i < chix; i++) {
                 toDrop.add(Items.currencyType.Sight);
             }

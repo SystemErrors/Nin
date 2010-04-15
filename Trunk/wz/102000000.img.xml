@@ -287,17 +287,17 @@
             <int name="cy" value="1568"/>
             <int name="rx0" value="1070"/>
             <int name="rx1" value="1170"/>
-        </imgdir> <!--
+        </imgdir> 
         <imgdir name="3">
             <string name="type" value="n"/>
-            <string name="id" value="1022002"/>
+            <string name="id" value="1104206"/>
             <int name="x" value="746"/>
             <int name="y" value="249"/>
             <int name="fh" value="132"/>
             <int name="cy" value="256"/>
             <int name="rx0" value="696"/>
             <int name="rx1" value="796"/>
-        </imgdir>
+        </imgdir><!--
         <imgdir name="4">
             <string name="type" value="n"/>
             <string name="id" value="1022003"/>

@@ -24,7 +24,6 @@ import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.ServernoticeMapleClientMessageCallback;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.server.constants.SpecialStuff;
-import net.sf.odinms.server.maps.SavedLocationType;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;
 
@@ -38,6 +37,11 @@ public class EnterMTSHandler extends AbstractMaplePacketHandler {
         } else if (!SpecialStuff.getInstance().canWarpFrom(c.getPlayer())) {
             new ServernoticeMapleClientMessageCallback(5, c).dropMessage("You cannot warp to the Free Market from this map!");
             c.getSession().write(MaplePacketCreator.enableActions());
+        } else if (c.getPlayer().getMapId() < 40000) {
+            if (c.getPlayer().getReborns() > 0) {
+                c.getPlayer().addFootnote("Fm rb glitch");
+            }
+            return;
         } else {
             if (c.getPlayer().getMapId() != 910000000) {
                 new ServernoticeMapleClientMessageCallback(5, c).dropMessage("Euu are being warped to the Free Market.");
