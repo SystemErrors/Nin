@@ -43,7 +43,7 @@ public class BanningCommands implements GMCommand {
         ChannelServer cserv = c.getChannelServer();
         if (splitted[0].equals("ban") || splitted[0].equals("assasinate")) {
             if (splitted.length < 3) {
-                mc.dropMessage("why are you even a GM when you don't know how to use ban command?");
+                mc.dropMessage("[Anbu] Why are you even a GM when you don't know how to use ban command?");
             }
             String originalReason = StringUtil.joinStringFrom(splitted, 2);
             String reason = c.getPlayer().getName() + " banned " + splitted[1] + ": " + originalReason;
@@ -53,14 +53,14 @@ public class BanningCommands implements GMCommand {
                 String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
                 reason += " (IP: " + ip + ")";
                 target.ban(reason);
-                mc.dropMessage("Banned " + readableTargetName + " ipban for " + ip + " reason: " + originalReason);
-                c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[Akatsuki] The noob retarded rookie and international criminal " + readableTargetName + "has been assasinated by " + c.getPlayer().getName() + " in a 1337 Ninja Way For " + originalReason));
+                mc.dropMessage("[Anbu] Banned " + readableTargetName + " ipban for " + ip + " reason: " + originalReason);
+                c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[Akatsuki] The retarded rookie ninja " + readableTargetName + " has been assasinated by " + c.getPlayer().getName() + " in a 1337 Ninja Way. Reason : " + originalReason));
             } else {
                 if (MapleCharacter.ban(splitted[1], reason, false)) {
-                    mc.dropMessage("Offline Banned " + splitted[1]);
-                    c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[Akatsuki] The noob retarded rookie and international criminal " + splitted[1] + "has been assasinated offline by " + c.getPlayer().getName() + " in a 1337 Ninja Way For " + originalReason));
+                    mc.dropMessage("[Anbu] Offline Banned " + splitted[1]);
+                    c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[Akatsuki] The retarded rookie ninja " + splitted[1] + " has been assasinated offline by " + c.getPlayer().getName() + " in a 1337 Ninja Way. Reason :  " + originalReason));
                 } else {
-                    mc.dropMessage("Failed to ban " + splitted[1]);
+                    mc.dropMessage("[Anbu] Failed to ban " + splitted[1]);
                 }
             }
         } else if (splitted[0].equals("tempban")) {
@@ -82,7 +82,7 @@ public class BanningCommands implements GMCommand {
             int gReason = getNamedIntArg(splitted, 1, "r", 7);
             String reason = c.getPlayer().getName() + " tempbanned " + splitted[1] + ": " + originalReason;
             if (gReason > 14) {
-                mc.dropMessage("You have entered an incorrect ban reason ID, please try again.");
+                mc.dropMessage("[Anbu] You have entered an incorrect ban reason ID, please try again.");
                 return;
             }
             DateFormat df = DateFormat.getInstance();
@@ -95,10 +95,10 @@ public class BanningCommands implements GMCommand {
             if (victim == null) {
                 int accId = MapleClient.findAccIdForCharacterName(splitted[1]);
                 if (accId >= 0 && MapleCharacter.tempban(reason, tempB, gReason, accId)) {
-                    mc.dropMessage("The character " + splitted[1] + " has been successfully offline-tempbanned till " +
+                    mc.dropMessage("[Anbu] The character " + splitted[1] + " has been successfully offline-tempbanned till " +
                             df.format(tempB.getTime()) + ".");
                 } else {
-                    mc.dropMessage("There was a problem offline banning character " + splitted[1] + ".");
+                    mc.dropMessage("[Anbu] There was a problem offline banning character " + splitted[1] + ".");
                 }
             } else {
                 victim.tempban(reason, tempB, gReason);

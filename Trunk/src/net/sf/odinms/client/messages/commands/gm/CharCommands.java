@@ -24,13 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import net.sf.odinms.client.Enums.MapleStat;
 import static net.sf.odinms.client.messages.CommandProcessor.getOptionalIntArg;
-import net.sf.odinms.client.Inventory.IItem;
-import net.sf.odinms.client.Inventory.Item;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.Inventory.MapleInventoryType;
-import net.sf.odinms.client.Inventory.MaplePet;
-import net.sf.odinms.client.SkillFactory;
 import net.sf.odinms.client.messages.GMCommand;
 import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.IllegalCommandSyntaxException;
@@ -38,17 +33,30 @@ import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.client.messages.ServernoticeMapleClientMessageCallback;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.remote.WorldLocation;
-import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MapleItemInformationProvider;
-import net.sf.odinms.server.MapleShop;
-import net.sf.odinms.server.MapleShopFactory;
-import net.sf.odinms.server.constants.Skills;
-import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.Pair;
 
 public class CharCommands implements GMCommand {
 
+    @Override
+    public GMCommandDefinition[] getDefinition() {
+        return new GMCommandDefinition[]{
+                    new GMCommandDefinition("lowhp", "", ""),
+                    new GMCommandDefinition("heal", "", "heals you"),
+                    //  new GMCommandDefinition("skill", "", ""),
+                    new GMCommandDefinition("ap", "", ""),
+                    new GMCommandDefinition("job", "", ""),
+                    new GMCommandDefinition("whereami", "", ""),
+                    new GMCommandDefinition("levelup", "", ""),
+                    new GMCommandDefinition("level", "<ign> <level>", " ign is optional. if you don't know what it does, go bang a wall"),
+                    new GMCommandDefinition("statreset", "", ""),
+                    new GMCommandDefinition("mesos", "", ""),
+                    new GMCommandDefinition("setstat", "<str/dex/luk/int/ap> <ign> <amount>", "sets "),
+                    new GMCommandDefinition("maxstat", "", " maxxes all your stats"),
+                    new GMCommandDefinition("setclan", "undecided/earth/wind/naruto/fire/lightning", " sets Clan")
+                };
+    }
     private MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
 
     @Override
@@ -226,24 +234,5 @@ public class CharCommands implements GMCommand {
                 mc.dropMessage(splitted[1] + " has been set to" + splitted[2] + " clan");
             }
         }
-    }
-
-    @Override
-    public GMCommandDefinition[] getDefinition() {
-        return new GMCommandDefinition[]{
-                    new GMCommandDefinition("lowhp", "", ""),
-                    new GMCommandDefinition("heal", "", "heals you"),
-                    //  new GMCommandDefinition("skill", "", ""),
-                    new GMCommandDefinition("ap", "", ""),
-                    new GMCommandDefinition("job", "", ""),
-                    new GMCommandDefinition("whereami", "", ""),
-                    new GMCommandDefinition("levelup", "", ""),
-                    new GMCommandDefinition("level", "<ign> <level>", " ign is optional. if you don't know what it does, go bang a wall"),
-                    new GMCommandDefinition("statreset", "", ""),
-                    new GMCommandDefinition("mesos", "", ""),
-                    new GMCommandDefinition("setstat", "<str/dex/luk/int/ap> <ign> <amount>", "sets "),
-                    new GMCommandDefinition("maxstat", "", " maxxes all your stats"),
-                    new GMCommandDefinition("setclan", "undecided/earth/wind/naruto/fire/lightning", " sets Clan")
-                };
     }
 }

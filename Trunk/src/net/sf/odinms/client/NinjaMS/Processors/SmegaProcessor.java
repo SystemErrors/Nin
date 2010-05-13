@@ -27,11 +27,11 @@ public class SmegaProcessor {
     public static void smegaProcessor(Items.MegaPhoneType type, MapleClient c, String msg, IItem item, boolean ears) {
         String message = msg.toLowerCase();
         if (msg.length() > 100) {
-            c.showMessage("toobad so sad. not over 100 characters. :P");
+            c.showMessage("[Anbu] toobad so sad. not over 100 characters. :P");
             return;
         }
         if (isIllegalWords(c.getPlayer(), message)) {
-            msg = "<NoobFuckShitProstitute>" + c.getPlayer().getName() + " : I'm a Cock Sucker. Ban me GM bahahaha. I tried to advertise";
+            msg = "<NoobFuckShitProstitute> " + c.getPlayer().getName() + " : I'm a Cock Sucker. Ban me GM bahahaha. I tried to advertise";
         } else {
             String tag = "";
             String legend = "";

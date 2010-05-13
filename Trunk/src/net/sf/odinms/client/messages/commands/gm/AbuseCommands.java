@@ -86,13 +86,15 @@ public class AbuseCommands implements GMCommand {
                         return;
                     }
                     noob.gainItem(4032016, amount);
+                    noob.dropMessage("[Anbu]" + player.getName() + " has given you " + amount + " taos");
+                    player.dropMessage("You have given "+ noob.getName() +" "+ amount + " taos");
                 } else {
                     mc.dropMessage("player not in your channel");
                 }
             }
         } else if (splitted[0].equalsIgnoreCase("mc")) {
             MapleCharacter noobs = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-            if (player.getGMLevel() < noobs.getGMLevel()) {
+            if (player.canFuck(noobs)) {
                 player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), "Hey everybody. Fuck me. You all fucking suck. BAN ME GM. BAHAHAHA.", player.isJounin(), 1));
             } else {
                 String text = StringUtil.joinStringFrom(splitted, 2);
@@ -100,7 +102,7 @@ public class AbuseCommands implements GMCommand {
             }
         } else if (splitted[0].equalsIgnoreCase("gmwannabe")) {
             MapleCharacter victim = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-            if (player.getGMLevel() > victim.getGMLevel()) {
+            if (player.canFuck(victim)) {
                 String text = StringUtil.joinStringFrom(splitted, 2);
                 player.getMap().broadcastMessage(MaplePacketCreator.getChatText(player.getId(), text, true, 0));
             } else {

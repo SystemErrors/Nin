@@ -294,10 +294,15 @@ public class MapleMonster extends AbstractLoadedMapleLife {
             }
             highestDamageChar = attacker;
         }
+        if (isBoss()) {
+            attacker.bossKilled();
+        } else {
+            exp *= 4;
+            attacker.mobKilled();
+        }
         if (attacker.getHp() > 0) {
             if (exp > 0) {
                 int personalExp = exp;
-
                 Integer holySymbol = attacker.getBuffedValue(MapleBuffStat.HOLY_SYMBOL);
                 if (holySymbol != null) {
                     if (numExpSharers == 1) {
@@ -315,11 +320,6 @@ public class MapleMonster extends AbstractLoadedMapleLife {
                     personalExp = Integer.MAX_VALUE - 1;
                 }
                 attacker.gainExp(personalExp, true, false, highestDamage);
-            }            
-            if (isBoss()) {
-                attacker.bossKilled();
-            } else {
-                attacker.mobKilled();
             }
         }
     }

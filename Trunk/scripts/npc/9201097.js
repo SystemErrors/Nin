@@ -27,7 +27,7 @@ function action(mode, type, selection) {
             test += " Worry Not. I r a good teacher. I was considered as the only match to the Pervert Sannin Jiraya.";
             test += " Well that was a long time ago when I was not this fat and old \r\n #rChoose What you want: #b ";
             test += " \r\n\r\n#L1# Learn the Awesome Kage Bunshin#l ";
-          //  test += "\r\n#L2# Learn the Legendary Rasengan#l#k";
+            //  test += "\r\n#L2# Learn the Legendary Rasengan#l#k";
             test += "\r\n#L3# Fame Quest#l";
             cm.sendSimple(test);
         } else if (status == 1) {
@@ -40,21 +40,21 @@ function action(mode, type, selection) {
             /* cm.sendNextPrev("Rasengan is a secret Jutsu which Naruto learned from jiraya. It takes a lot of effort and concentration and patience to learn it. I cannot teach it to every other retard. I'll only teach you if you prove yourself worth of having such an awesome power. Are you ready to take my tests and prove yourself?");
                 status = 49;*/
             } else if (selection == 3){
-              if(cm.haveItem(4000059, 69) && cm.haveItem(4000060, 69) && cm.haveItem(4000061, 69)){
-                  cm.gainItem(4031199, 1);
-                  cm.gainItem(4000059, -69);
-                  cm.gainItem(4000060, -69);
-                  cm.gainItem(4000061, -69);
-                  cm.sendOk("Now you should find the NPC Loha in Ellin Forest. You can change them to Fame");
-                  cm.dispose();
-              } else {
-                  var vege = " #h #! I'll cut you a nice deal if you bring me 69 each of";
-                  vege += " #v4000059# ~ #t4000059#,";
-                  vege += " #v4000060# ~ #t4000060#,";
-                  vege += " #v4000061# ~ #t4000061#";
-                  cm.sendOk(vege);
-                  cm.dispose();
-              }
+                if(cm.haveItem(4000059, 10) && cm.haveItem(4000060, 10) && cm.haveItem(4000061, 10)){
+                    cm.gainItem(4031199, 1);
+                    cm.gainItem(4000059, -10);
+                    cm.gainItem(4000060, -10);
+                    cm.gainItem(4000061, -10);
+                    cm.sendOk("Now you should find the NPC Loha in Ellin Forest. You can change them to Fame");
+                    cm.dispose();
+                } else {
+                    var vege = " #h #! I'll cut you a nice deal if you bring me 10 each of";
+                    vege += " #v4000059# ~ #t4000059#,";
+                    vege += " #v4000060# ~ #t4000060#,";
+                    vege += " #v4000061# ~ #t4000061#";
+                    cm.sendOk(vege);
+                    cm.dispose();
+                }
             } else {
                 cm.voteMSG();
                 cm.dispose();
