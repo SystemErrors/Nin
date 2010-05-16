@@ -1,6 +1,10 @@
 var status = 0;
 
-function start() {    
+function start() {
+    if (cm.getPlayer().getGMSMode() != 1){
+        cm.needGMSModeMsg(1);
+        return;
+    }
     status = -1;
     action(1, 0, 0);
 }
@@ -31,7 +35,7 @@ function action(mode, type, selection) {
         } else if (status == 1){
             if (selection == 1){
                 if (cm.getPlayer().getReborns() < 10){
-                    cm.sendOk("Jq is available only for those who have passed 10 Rebirths. Go to the training grounds near your village. It takes barely 15 minutes");
+                    cm.sendOk("Jq is available only for those who have passed 10 Rebirths. Head to Room 13/ 14 to RB faster. It takes barely 15 minutes");
                     cm.dispose();
                 } else {
                     cm.sendSimple("So you are interested in JQ? Please behave and do not hack. Jq is only available for those above 10 Rebirths and only in channel 3. Select what you want to do #b\r\n#L0#Start a JQ#l\r\n#L1#Claim rewards#l\r\n#k");

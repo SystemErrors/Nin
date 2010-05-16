@@ -7,7 +7,6 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == -1) {
-        cm.voteMSG();
         cm.dispose();
     } else {
         if (status >= 0 && mode == 0) {
@@ -41,7 +40,8 @@ function action(mode, type, selection) {
                 }
             } else {
                 cm.sendOk("oh you have been a bad kid. I'm a very kind hearted person so I will give you a headband of your village");
-                var ban = Array(0, 1002067, 1002014, 1002068, 1002066, 1002069);               
+                var ban = Array(0, 1002067, 1002014, 1002068, 1002066, 1002069);
+               
                 cm.gainStatItem(ban[it], 69, 10, 10);
             }
             cm.dispose();
