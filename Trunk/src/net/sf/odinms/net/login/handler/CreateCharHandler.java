@@ -92,7 +92,6 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
         if (hairColor != 0 && hairColor != 2 && hairColor != 3 && hairColor != 7) {
             charok = false;
         }
-
         MapleCharacter newchar = MapleCharacter.getDefault(c);  // I have no idea why this moved down. but it looks better. only assign stuff is charok.
         if (charok) {
             newchar.setWorld(c.getWorld());
@@ -113,7 +112,7 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
             IItem eq_weapon = MapleItemInformationProvider.getInstance().getEquipById(weapon);
             eq_weapon.setPosition((byte) -11);
             equip.addFromDB(eq_weapon);
-            IItem noob_cap = MapleItemInformationProvider.getInstance().getEquipById(1002419);
+      /*      IItem noob_cap = MapleItemInformationProvider.getInstance().getEquipById(1002419);
             noob_cap.setPosition((byte) -1);
             equip.addFromDB(noob_cap);
             IItem noob_overall = MapleItemInformationProvider.getInstance().getEquipById(1052170);
@@ -121,9 +120,9 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
             equip.addFromDB(noob_overall);
             IItem pWeap = MapleItemInformationProvider.getInstance().getEquipById(1702187);
             pWeap.setPosition((byte) -111);
-            equip.addFromDB(pWeap);
+            equip.addFromDB(pWeap);*/
             MapleInventory etc = newchar.getInventory(MapleInventoryType.ETC);
-            etc.addItem(new Item(Items.currencyType.Sight, (byte) 0, (short) 5));
+            etc.addItem(new Item(Items.currencyType.Sight, (byte) 0, (short) 10));
             MapleInventory use = newchar.getInventory(MapleInventoryType.USE);
             int[] useitems = {2000005, 2050004, 2022094, 2022179, 2040807, 2060000, 2061000, 2070005, 2330000};
             int[] useitemsquantity = {500, 100, 50, 1, 7, 1000, 1000, 1000, 1000};
@@ -135,7 +134,7 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
             }
             MapleInventory cash = newchar.getInventory(MapleInventoryType.CASH);
             int[] cashitems = {5072000, 5076000};
-            int[] cashitemsquantity = {5, 5};
+            int[] cashitemsquantity = {10, 5};
             for (int i = 0; i < cashitems.length; i++) {
                 Item item = new Item(cashitems[i], (byte) (i + 1), (short) cashitemsquantity[i]);
                 cash.addItem(item);

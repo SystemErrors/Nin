@@ -1,0 +1,133 @@
+May 15, 2010 10:59:38 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 FF 01
+».h...ÿ.
+May 15, 2010 10:59:38 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 03 01
+».f.....
+May 15, 2010 10:59:38 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 FF 00
+».i...ÿ.
+May 15, 2010 10:59:40 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 03 FF
+».d....ÿ
+May 15, 2010 10:59:40 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 2C 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 D2 00 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..,..®.|..... ..Ò..®.|.®.|.
+May 15, 2010 10:59:42 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 FF 01
+».g...ÿ.
+May 15, 2010 10:59:42 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 16 D2 00 00 AE 0E 7C 00 00 00 00 00 20 00 04 2C 01 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..Ò..®.|..... ..,..®.|.®.|.
+May 15, 2010 10:59:44 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 FF 01
+».i...ÿ.
+May 15, 2010 10:59:44 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 FF 01
+».h...ÿ.
+May 15, 2010 10:59:45 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCTalkHandler (10) 39 00 68 00 00 00 9F 0E 7C 00
+9.h....|.
+May 15, 2010 10:59:46 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 02 00
+».d.....
+May 15, 2010 10:59:47 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 02 FF
+».f....ÿ
+May 15, 2010 10:59:47 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 02 FF
+».g....ÿ
+May 15, 2010 10:59:48 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCMoreTalkHandler (8) 3B 00 04 01 02 00 00 00
+;.......
+May 15, 2010 10:59:49 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 02 01
+».i.....
+May 15, 2010 10:59:50 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 FF 01
+».h...ÿ.
+May 15, 2010 10:59:50 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 E0 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 1E 00 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..à..®.|..... .....®.|.®.|.
+May 15, 2010 10:59:50 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 03 FF
+».g....ÿ
+May 15, 2010 10:59:51 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 16 86 01 00 AE 0E 7C 00 00 00 00 00 20 00 04 78 00 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ....®.|..... ..x..®.|.®.|.
+May 15, 2010 10:59:52 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCMoreTalkHandler (13) 3B 00 02 01 07 00 31 30 30 32 33 35 37
+;.....1002357
+May 15, 2010 10:59:52 AM net.sf.odinms.scripting.npc.NPCScriptManager action
+SEVERE: Error executing NPC script.
+java.lang.reflect.UndeclaredThrowableException
+	at $Proxy3.action(Unknown Source)
+	at net.sf.odinms.scripting.npc.NPCScriptManager.action(NPCScriptManager.java:92)
+	at net.sf.odinms.net.channel.handler.NPCMoreTalkHandler.handlePacket(NPCMoreTalkHandler.java:44)
+	at net.sf.odinms.net.MapleServerHandler.messageReceived(MapleServerHandler.java:153)
+	at org.apache.mina.common.support.AbstractIoFilterChain$TailFilter.messageReceived(AbstractIoFilterChain.java:570)
+	at org.apache.mina.common.support.AbstractIoFilterChain.callNextMessageReceived(AbstractIoFilterChain.java:299)
+	at org.apache.mina.common.support.AbstractIoFilterChain.access$1100(AbstractIoFilterChain.java:53)
+	at org.apache.mina.common.support.AbstractIoFilterChain$EntryImpl$1.messageReceived(AbstractIoFilterChain.java:648)
+	at org.apache.mina.filter.codec.support.SimpleProtocolDecoderOutput.flush(SimpleProtocolDecoderOutput.java:58)
+	at org.apache.mina.filter.codec.ProtocolCodecFilter.messageReceived(ProtocolCodecFilter.java:180)
+	at org.apache.mina.common.support.AbstractIoFilterChain.callNextMessageReceived(AbstractIoFilterChain.java:299)
+	at org.apache.mina.common.support.AbstractIoFilterChain.access$1100(AbstractIoFilterChain.java:53)
+	at org.apache.mina.common.support.AbstractIoFilterChain$EntryImpl$1.messageReceived(AbstractIoFilterChain.java:648)
+	at org.apache.mina.filter.executor.ExecutorFilter.processEvent(ExecutorFilter.java:220)
+	at org.apache.mina.filter.executor.ExecutorFilter$ProcessEventsRunnable.run(ExecutorFilter.java:264)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at org.apache.mina.util.NamePreservingRunnable.run(NamePreservingRunnable.java:51)
+	at java.lang.Thread.run(Thread.java:619)
+Caused by: java.security.PrivilegedActionException: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: ReferenceError: "taocount" is not defined. (<Unknown source>#314) in <Unknown source> at line number 314
+	at java.security.AccessController.doPrivileged(Native Method)
+	at com.sun.script.util.InterfaceImplementor$InterfaceImplementorInvocationHandler.invoke(InterfaceImplementor.java:49)
+	... 19 more
+Caused by: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: ReferenceError: "taocount" is not defined. (<Unknown source>#314) in <Unknown source> at line number 314
+	at com.sun.script.javascript.RhinoScriptEngine.invoke(RhinoScriptEngine.java:184)
+	at com.sun.script.javascript.RhinoScriptEngine.invokeFunction(RhinoScriptEngine.java:142)
+	at com.sun.script.util.InterfaceImplementor$InterfaceImplementorInvocationHandler$1.run(InterfaceImplementor.java:52)
+	... 21 more
+May 15, 2010 10:59:53 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 03 01
+».f.....
+May 15, 2010 10:59:53 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 4A 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 B4 00 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..J..®.|..... ..´..®.|.®.|.
+May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 FF 01
+».i...ÿ.
+May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 16 F0 00 00 AE 0E 7C 00 00 00 00 00 20 00 04 0E 01 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..ð..®.|..... .....®.|.®.|.
+May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 02 01
+».h.....
+May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 FF 00
+».g...ÿ.
+May 15, 2010 10:59:56 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 02 00
+».d.....
+May 15, 2010 10:59:57 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 B4 00 00 AE 0E 7C 00 00 00 00 00 20 00 16 4A 01 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..´..®.|..... ..J..®.|.®.|.
+May 15, 2010 10:59:59 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 03 00
+».f.....
+May 15, 2010 11:00:00 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (38) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 01 00 AE 0E 7C 00 00 00 00 00 20 00 04 FE 01 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..þ..®.|.®.|.
+May 15, 2010 11:00:00 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 02 01
+».i.....
+May 15, 2010 11:00:01 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 02 01
+».h.....
+May 15, 2010 11:00:01 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 FF 01
+».g...ÿ.
+May 15, 2010 11:00:01 AM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 C2 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 3C 00 00 AE 0E 7C 00 AE 0E 7C 00
+¡.........®.|...®.|..... ..Â..®.|..... ..<..®.|.®.|.

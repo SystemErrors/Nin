@@ -7,6 +7,8 @@
 var status = 0;
 var fee = 0;
 importPackage (net.sf.odinms.client);
+var tao = tao;
+
 function start() {
     if(cm.getPlayer().getEventInstance() != null){
         cm.sendOk("You cannot do this from inside Event Maps");
@@ -30,7 +32,7 @@ function action(mode, type, selection) {
             var tex = "I'm Shadrion, the awesome #bClan and Path Manager#k of NinjaMs.";
             tex += "Choose what you need help with :";
             tex += "\r\n#L1#Change to KOC#l\r\n#L2#Change To Adventurer#l";
-            //  tex += "\r\n#L3#Rate Management#l\r\n#L4#Mode Management#l";
+            tex += /* "\r\n#L3#Rate Management#l */ "\r\n#L4#Mode Management#l";
             cm.sendSimple(tex);
         } else if (status == 1){
             if (selection == 1){
@@ -61,24 +63,12 @@ function action(mode, type, selection) {
                 } else {
                     fee = 10;
                 }
-                var txtt = "#rChoose What you want : \r\n#b";
-                switch (cm.getClan()) {
-                    case 1 :
-                        txtt += "\r\n#L1#Kyubi - Exp rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
-                        break;
-                    case 2:
-                        txtt += "\r\n#L2#Sage - Meso rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
-                        break;
-                    case 3:
-                        txtt += "\r\n#L3#Hachibi - Drop rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao of Sight)#b#l";
-                        break;
-                    case 4:
-                        txtt += "\r\n#L4#Shakaku - Boss drop rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
-                        break;
-                    case 5:
-                        txtt += "\r\n#L5#All 4 modes - Turns on all the modes#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l"
-                        break;
-                }
+                var txtt = "#rChoose What you want : \r\n#b";             
+                txtt += "\r\n#L1#Kyubi - Exp rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
+                txtt += "\r\n#L2#Sage - Meso rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
+                txtt += "\r\n#L3#Hachibi - Drop rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao of Sight)#b#l";
+                txtt += "\r\n#L4#Shakaku - Boss drop rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
+                txtt += "\r\n#L5#All 4 modes - Turns on all the modes#r(25 dragon heart #v4031449# and "+(fee * 5)+" Tao Of Sight)#b#l"
                 txtt += "\r\n#L6#No thanks. I'm fine cya later#l\r\n";
                 cm.sendSimple(txtt);
                 status = 99;
@@ -110,7 +100,7 @@ function action(mode, type, selection) {
         } else if (status == 3){
             if(cm.getClan() == 0){
                 if (cm.getPlayer().haveSight(5)){
-                    cm.getPlayer().gainItem(4032016, -5);
+                    cm.getPlayer().gainItem(tao, -5);
                     cm.setClan(selection);
                     var texte = "Now officially " + cm.showClan();
                     cm.sendOk(texte);
@@ -120,7 +110,7 @@ function action(mode, type, selection) {
                 }
             } else {
                 if (cm.getPlayer().haveSight(2000) && cm.haveItem(4005004, 5) && cm.haveItem(4021005, 5) && cm.haveItem(4021000, 5) && cm.haveItem(4021003, 5)){
-                    cm.gainItem(4032016, -2000);
+                    cm.gainItem(tao, -2000);
                     cm.gainItem(4005004, -5);
                     cm.gainItem(4021005, -5);
                     cm.gainItem(4021000, -5);
@@ -145,67 +135,73 @@ function action(mode, type, selection) {
                 4011008); // lidium
             if (selection == 1){
                 var curexp = cm.getPlayer().getExpBoost();
-                if (curexp < 10){
-                    if(cm.haveItem(plates[0], 2) && cm.getPlayer().haveSight(50)){
-                        cm.gainItem(plates[0], -2);
-                        cm.gainItem(4032016, -50);
+                if (curexp <= 15){
+                    if(cm.haveItem(plates[0], 1) && cm.getPlayer().haveSight(25)){
+                        cm.gainItem(plates[0], -1);
+                        cm.gainItem(tao, -25);
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
-                        cm.sendOk("You have gained 3% exp boost");
+                        cm.getPlayer().addExpBoost();
+                        cm.getPlayer().addExpBoost();
+                        cm.sendOk("You have gained 5% exp boost");
                     } else {
-                        cm.sendNext("Bring me 2 #v"+plates[0]+"# and 50 tao of sight");
+                        cm.sendNext("Bring me 1 #v"+plates[0]+"# and 25 tao of sight");
                         cm.dispose();
                     }
-                } else if (curexp < 30){
-                    if(cm.haveItem(plates[1], 3) && cm.getPlayer().haveSight(100)){
-                        cm.gainItem(plates[1], -3);
-                        cm.gainItem(4032016, -150);
+                } else if (curexp <= 30){
+                    if(cm.haveItem(plates[1], 2) && cm.getPlayer().haveSight(50)){
+                        cm.gainItem(plates[1], -2);
+                        cm.gainItem(tao, -50);
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
-                        cm.sendOk("You have gained 3% exp boost");
+                        cm.getPlayer().addExpBoost();
+                        cm.getPlayer().addExpBoost();
+                        cm.sendOk("You have gained 5% exp boost");
                     }else {
-                        cm.sendNext("Bring me 3 #v"+plates[1]+"# and 100 tao of sight");
+                        cm.sendNext("Bring me 2 #v"+plates[1]+"# and 50 tao of sight");
                         cm.dispose();
                     }
-                } else if (curexp < 50){
-                    if(cm.haveItem(plates[2], 5) && cm.getPlayer().haveSight(150)){
-                        cm.gainItem(plates[2], -5);
-                        cm.gainItem(4032016, -150);
+                } else if (curexp <= 50){
+                    if(cm.haveItem(plates[2], 3) && cm.getPlayer().haveSight(75)){
+                        cm.gainItem(plates[2], -3);
+                        cm.gainItem(tao, -75);
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
-                        cm.sendOk("You have gained 3% exp boost");
+                        cm.getPlayer().addExpBoost();
+                        cm.getPlayer().addExpBoost();
+                        cm.sendOk("You have gained 5% exp boost");
                     }else {
-                        cm.sendNext("Bring me 5 #v"+plates[2]+"# and 150 tao of sight");
+                        cm.sendNext("Bring me 3 #v"+plates[2]+"# and 75 tao of sight");
                         cm.dispose();
                     }
-                } else if (curexp < 75){
-                    if(cm.haveItem(plates[3], 5) && cm.haveItem(plates[4], 5) && cm.getPlayer().haveSight(500)){
-                        cm.gainItem(plates[3], -10);
-                        cm.gainItem(plates[4], -10);
-                        cm.gainItem(4032016, -500);
+                } else if (curexp <= 75){
+                    if(cm.haveItem(plates[3], 3) && cm.haveItem(plates[4], 3) && cm.getPlayer().haveSight(100)){
+                        cm.gainItem(plates[3], -3);
+                        cm.gainItem(plates[4], -3);
+                        cm.gainItem(tao, -100);
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
-                        cm.sendOk("You have gained 3% exp boost");
+                        cm.getPlayer().addExpBoost();
+                        cm.getPlayer().addExpBoost();
+                        cm.sendOk("You have gained 5% exp boost");
                     }else {
-                        cm.sendNext("Bring me 5 #v"+plates[3]+"# and 5 #v"+plates[4]+"# and 500 Tao Of Sight");
+                        cm.sendNext("Bring me 3 #v"+plates[3]+"# and 3 #v"+plates[4]+"# and 100 Tao Of Sight");
                         cm.dispose();
                     }
                 } else if(curexp < 100){
                     if(cm.haveItem(plates[8], 5) && cm.getPlayer().haveSight(1000)){
                         cm.gainItem(plates[8], -5);
-                        cm.gainItem(4032016, -1000);
+                        cm.gainItem(tao, -1000);
+                        cm.getPlayer().addExpBoost();                        
                         cm.getPlayer().addExpBoost();
-                        if (curexp < 97){
-                            cm.getPlayer().addExpBoost();
-                        }
-                        if(curexp < 98){
-                            cm.getPlayer().addExpBoost();
-                        }
-                        cm.sendOk("You have gained 3% exp boost");
+                        cm.getPlayer().addExpBoost();
+                        cm.getPlayer().addExpBoost();
+                        cm.getPlayer().addExpBoost();
+                        cm.sendOk("You have gained 5% exp boost");
                     } else {
                         cm.sendNext("Bring me 5 #v"+plates[8]+"# and 1000 Tao Of Sight");
                         cm.dispose();
@@ -239,13 +235,14 @@ function action(mode, type, selection) {
                 var reqitem = drops[ii];
                 var reqitemamt = 1;
                 reqitemamt += curmeso;
-                reqitemamt *= 3;
                 if (curmeso < 100){
                     if(cm.haveItem(reqitem, reqitemamt) && cm.getPlayer().haveSight(reqitemamt)){
                         cm.gainItem(reqitem, - reqitemamt);
-                        cm.gainItem(4032016, - reqitemamt);
+                        cm.gainItem(tao, - reqitemamt);
                         cm.getPlayer().addMesoBoost();
-                        cm.sendOk("You have gained 1% meso boost");
+                        cm.getPlayer().addMesoBoost();
+                        cm.getPlayer().addMesoBoost();
+                        cm.sendOk("You have gained 3% meso boost");
                         cm.getPlayer().dropMessage("Your Meso boost rate now is : "+ cm.getPlayer().getMesoBoost() + "% " );
                     } else {
                         cm.sendNext("Bring me "+reqitemamt+" #v"+reqitem+"# And "+reqitemamt+" Tao Of Sight");
@@ -279,11 +276,11 @@ function action(mode, type, selection) {
                 var reqitemm = drop[iii];
                 var amt = 1;
                 amt += curdrop;
-                amt *= 5;
+                amt *= 3;
                 if (curdrop < 100){
                     if(cm.haveItem(reqitemm, amt) && cm.getPlayer().haveSight(amt)){
                         cm.gainItem(reqitemm, -amt);
-                        cm.gainItem(4032016, -amt);
+                        cm.gainItem(tao, -amt);
                         cm.getPlayer().addDropBoost();
                         cm.sendOk("You have gained 1% Drop boost");
                         cm.getPlayer().dropMessage("Your Drop boost rate now is : "+ cm.getPlayer().getDropBoost() + "% " );
@@ -329,12 +326,12 @@ function action(mode, type, selection) {
                 }
                 var reqitemmm = core[iiii];
                 var amnt = 1;
-                amnt += curbdrop;
-                amnt *= 5;
+                amnt += curbdrop / 2 ;
+
                 if (curbdrop < 100){
                     if(cm.haveItem(reqitemmm, amnt) && cm.getPlayer().haveSight(amnt)){
                         cm.gainItem(reqitemmm, -amnt);
-                        cm.gainItem(4032016, -amnt);
+                        cm.gainItem(tao, -amnt);
                         cm.getPlayer().addBossDropBoost();
                         cm.sendOk("You have gained 1% Boss Drop boost");
                         cm.getPlayer().dropMessage("Your Boss Drop boost rate now is : "+ cm.getPlayer().getBossDropBoost() + "% " );
@@ -354,7 +351,7 @@ function action(mode, type, selection) {
             if (selection > 0 && selection < 5){
                 if (cm.haveItem(4031449, 5) && cm.getPlayer().haveSight(fee)){
                     cm.gainItem(4031449, -5);
-                    cm.gainItem(4032016, -fee);
+                    cm.gainItem(tao, -fee);
                     cm.setModeOn(selection);
                     cm.sendOk("Remember : The modes will be cancelled if you change channel or log off");
                     cm.dispose();
@@ -365,7 +362,7 @@ function action(mode, type, selection) {
             } else if(selection == 5){
                 if (cm.haveItem(4031449, 5) && cm.getPlayer().haveSight(fee)){
                     cm.gainItem(4031449, -5);
-                    cm.gainItem(4032016, -(fee));
+                    cm.gainItem(tao, -(fee));
                     cm.setModeOn(selection);
                     cm.sendOk("Remember : The modes will be cancelled if you change channel or log off");
                     cm.dispose();

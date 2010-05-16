@@ -152,6 +152,7 @@ public class SearchProcessor {
                         retMobs.add(mobPair.getRight() + " - 1 in " + chance + " chance per drop.");
                     }
                 }
+                mobPairList.clear();
             }
             rs.close();
             ps.close();

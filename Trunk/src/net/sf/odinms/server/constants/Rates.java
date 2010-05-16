@@ -17,7 +17,7 @@ import net.sf.odinms.net.world.WorldServer;
 public class Rates {  
         
     public static int getExpRate(MapleCharacter noob){
-        if(noob.getGMSMode() > 0){
+        if(noob.getGMSMode() > 0 && !noob.isJounin()){
             return 0;
         }
         double expRate = noob.getVillage().getExpRate();

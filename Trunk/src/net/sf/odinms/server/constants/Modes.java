@@ -33,11 +33,7 @@ public class Modes {
     }
 
     // Set Modes on
-    public void setKyubi() {
-        if (chr.getReborns() <= 10 || (chr.getClan() != Clans.EARTH && chr.getClan() != Clans.NARUTO)) {
-            chr.dropMessage("You need to have atleast 10 Rebirths before you can unleash the Kyubi inside you");
-            return;
-        }
+    public void setKyubi() {        
         chr.setNoHide(true);
         cancelKyubi();
         chr.cancelAllBuffs();
@@ -46,11 +42,7 @@ public class Modes {
         chr.dropMessage(5, "[Sarutobi]You are now in Kyubi Mode");
     }
 
-    public void setSage() {
-        if (chr.getReborns() <= 10 || (chr.getClan() != Clans.WIND && chr.getClan() != Clans.NARUTO)) {
-            chr.dropMessage("[Jiraya]You need to have atleast 10 Rebirths before you can use the Chakra of the environment to go in Sage mode");
-            return;
-        }
+    public void setSage() {       
         chr.setNoHide(true);
         cancelSage();
         chr.cancelAllBuffs();
@@ -59,11 +51,7 @@ public class Modes {
         chr.dropMessage(5, "[Jiraya]You are now in Sage mode");
     }
 
-    public void setHachibi() {
-        if (chr.getReborns() <= 10 || (chr.getClan() != Clans.WATER && chr.getClan() != Clans.NARUTO)) {
-            chr.dropMessage("[KillerBee]You need to have atleast 10 Rebirths before you can unleash the power of Hachibi");
-            return;
-        }
+    public void setHachibi() {        
         chr.setNoHide(true);
         cancelHachibi();
         chr.cancelAllBuffs();
@@ -72,11 +60,7 @@ public class Modes {
         chr.dropMessage(5, "[KillerBee]You are now in Hachibi Mode");
     }
 
-    public void setShakaku() {
-        if (chr.getReborns() <= 10 || (chr.getClan() != Clans.FIRE && chr.getClan() != Clans.NARUTO)) {
-            chr.dropMessage("[Gaara]You need to have atleast 10 Rebirths before you can use the Chakra of the Shakaku");
-            return;
-        }
+    public void setShakaku() {        
         chr.setNoHide(true);
         cancelShakaku();
         chr.cancelAllBuffs();

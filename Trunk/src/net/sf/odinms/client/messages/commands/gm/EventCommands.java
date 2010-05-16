@@ -123,28 +123,31 @@ public class EventCommands implements GMCommand {
         } else if (splitted[0].equalsIgnoreCase("prolevel")) {
             MapleCharacter noob = c.getPlayer();
             if (splitted.length < 2) {
-                while (noob.getLevel() < 200) {
+                while (noob.getLevel() <= noob.getMaxLevel()) {
                     noob.levelUp();
                 }
+                mc.dropMessage("[Anbu] You have been Proleveled.");
+                return;
             }
             noob = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
             if (noob != null) {
-                while (noob.getLevel() < 200) {
+                while (noob.getLevel() <= noob.getMaxLevel()) {
                     noob.levelUp();
                 }
-                mc.dropMessage("Why would you do that??????");
+                noob.dropMessage("[Anbu] You have been Proleveled.");
+                mc.dropMessage("[Anbu] " + noob.getName() + " was pro leveled by you. Why would you do that?????? ");
             } else {
                 mc.dropMessage("The Player is not in your channel or does not exist.");
             }
         } else if (splitted[0].equals("clock")) {
             c.getPlayer().getMap().broadcastMessage(MaplePacketCreator.getClock(getOptionalIntArg(splitted, 1, 60)));
-        } else if (splitted[0].equalsIgnoreCase("mutemap")){
+        } else if (splitted[0].equalsIgnoreCase("mutemap")) {
             for (MapleCharacter noob : c.getPlayer().getMap().getCharacters()) {
                 if (!noob.isChunin()) {
                     noob.mute(1);
                 }
             }
-        } else if (splitted[0].equalsIgnoreCase("unmutemap")){
+        } else if (splitted[0].equalsIgnoreCase("unmutemap")) {
             for (MapleCharacter noob : c.getPlayer().getMap().getCharacters()) {
                 if (!noob.isChunin()) {
                     noob.unMute();
@@ -171,6 +174,6 @@ public class EventCommands implements GMCommand {
                     new GMCommandDefinition("mutemap", "", "mutes the map for event"),
                     new GMCommandDefinition("unmutemap", "", "umutes event muted Map"),
                     new GMCommandDefinition("youlose", "", "warps out all the dead players from your map")
-        };
+                };
     }
 }

@@ -30,22 +30,19 @@ public class CharInfoProcessor {
     public static List<String> getNinjaGlare(MapleCharacter other) {
         List<String> sb = new LinkedList<String>();
         if (other != null) {
-            sb.add("--------------- Player Name : " + other.getName()
-                    + " (CharacterId :" + other.getId() + ")"
-                    + " Created on : " + other.getCreateDate());
+            sb.add(" Name of the Player : " + other.getName());
+            sb.add(" CharacterId :" + other.getId());
+            sb.add(" Created on : " + other.getCreateDate());
             if (!other.isJounin()) {
-                sb.add("Rebirth Ranking: "
-                        + "Overall Rank : #" + other.getRank()
-                        + GameConstants.getCardinal(other.getRank())
-                        + " Rebirths : " + other.getReborns());
-                sb.add("Wealth Ranking: #"
-                        + "Overall Rank : #" + other.getTaorank()
-                        + GameConstants.getCardinal(other.getTaorank())
-                        + " Tao Amount : " + other.getTaoOfSight());
+                sb.add("Rebirth Ranking: ");
+                sb.add(" Overall Rank : #" + other.getRank());
+                sb.add(" Rebirths : " + other.getReborns());
+                sb.add("Wealth Ranking: #");
+                sb.add(" Overall Rank : #" + other.getTaorank());
+                sb.add(" Tao Amount : " + other.getTaoOfSight());
             }
-            sb.add("MapleStory Job: "
-                    + GameConstants.getJobName(other.getJob().getId())
-                    + " ... Clan: " + other.getClan().getName());
+            sb.add("MapleStory Job: " + GameConstants.getJobName(other.getJob().getId()));
+            sb.add(" Village: " + other.getVillage().getName());
             if (other.getPreviousNames() != null) {
                 if (other.getPreviousNames().length() < 3) {
                     sb.add(other.getName() + " has also been known as..." + other.getPreviousNames());
@@ -372,5 +369,70 @@ public class CharInfoProcessor {
             System.out.println("SQL Exception: " + e);
             c.showMessage(5, "[SQL Checker] Character not found");
         }
+    }
+
+    public static String getNPCNinjaGlare(MapleCharacter other) {
+        StringBuilder sb = new StringBuilder();
+        if (other != null) {
+            sb.append(" #d#e General info #n\r\n");
+            sb.append("\r\n#b Name of the Player : #r" + other.getName());
+            sb.append("\r\n #bCharacterId : #r" + other.getId());
+            sb.append("\r\n #bCreated on : #r" + other.getCreateDate());
+            if (!other.isJounin()) {
+                sb.append("\r\n\r\n#d#e Rebirth Ranking: #n\r\n");
+                sb.append(" #bOverall Rank :#r #" + other.getRank());
+                sb.append(" #gRebirths : #r" + other.getReborns());
+                sb.append("\r\n #d#eWealth Ranking: #n\r\n");
+                sb.append(" #bOverall Rank :#r #" + other.getTaorank());
+                sb.append(" #gTao Amount : #r" + other.getTaoOfSight());
+            }
+            sb.append("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(other.getJob().getId()));
+            sb.append("\r\n #bVillage: #r" + other.getVillage().getName());
+            if (other.getPreviousNames() != null) {
+                if (other.getPreviousNames().length() < 3) {
+                    sb.append(other.getName() + " has also been known as..." + other.getPreviousNames());
+                }
+            }
+            sb.append(" Str : " + other.getStr()
+                    + " Dex : " + other.getDex()
+                    + " Int : " + other.getInt()
+                    + " Luk : " + other.getLuk()
+                    + " Remaining AP : "
+                    + other.getRemainingAp() + " StorageAp : " + other.getStorageAp());
+            sb.append(" TStr : " + other.getStr()
+                    + " TDex : " + other.getDex()
+                    + " TInt : " + other.getInt()
+                    + " TLuk : " + other.getLuk()
+                    + " WA : " + other.getTotalWatk());
+            sb.append(" MobKilled : " + other.getMobKilled()
+                    + " BossKilled : " + other.getBossKilled()
+                    + " level : " + other.getLevel()
+                    + " Mesos : " + other.getMeso()
+                    + " ShurikenItems : " + other.getMaxStatItems());
+            sb.append(" PvP Kills : " + other.getPvpKills()
+                    + " PvP Deaths : " + other.getPvpDeaths()
+                    + " NinjaTensu : " + other.getNinjaTensu()
+                    + " DojoPoints : " + other.getDojoPoints()
+                    + " BQPoints : " + other.getBossPoints()
+                    + " JQFinished : " + other.getJqFinished()
+                    + " JQPoints : " + other.getJqpoints());
+            sb.append("Rasengan Quest Level : " + other.getRasengan()
+                    + "Exp/meso/drop/bossdrop boost :" + other.getExpBoost()
+                    + " / " + other.getMesoBoost()
+                    + " / " + other.getDropBoost()
+                    + " / " + other.getBossDropBoost()
+                    + " Total Exp/meso/drop/bossdrop rates : "
+                    + +Rates.getExpRate(other)
+                    + " / " + Rates.getMesoRate(other)
+                    + " / " + Rates.getDropRate(other)
+                    + " / " + Rates.getBossDropRate(other));
+            sb.append(" This Player is : " + other.getGMStatus().getTitle()
+                    + " Player's Legend : " + other.getLegend() + " Player's GMS mode : " + other.getGMSMode());
+            if (other.getDAmount() > 0) {
+                sb.append("Donated Amount : " + other.getDAmount() + " Dpoints : " + other.getDPoints());
+            }
+
+        }        
+        return sb.toString();
     }
 }
