@@ -4,22 +4,28 @@
  */
 package net.sf.odinms.client.NinjaMS.Processors;
 
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.sf.odinms.client.Enums.Status;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.database.DatabaseConnection;
+import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.channel.OliveroMatic.RBRankingInfo;
 import net.sf.odinms.net.channel.OliveroMatic.RankingWorker;
 import net.sf.odinms.net.channel.OliveroMatic.TaoRankingInfo;
+import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.constants.GameConstants;
 import net.sf.odinms.server.constants.Rates;
+import net.sf.odinms.tools.StringUtil;
 
 /**
  *
@@ -371,68 +377,131 @@ public class CharInfoProcessor {
         }
     }
 
+    public static String getNPCNinjaGlare(MapleClient c, String name) {
+        try {
+            WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(name);
+            MapleCharacter player = c.getPlayer();
+            if (loc != null) {
+                MapleCharacter noob = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(name);
+                if (noob != null) {
+                    if (player.canFuck(noob)) {
+                        return getNPCNinjaGlare(noob);
+                    } else {
+                        return "The ninja " + name + " is too 1337 for you";
+                    }
+                } else {
+                    return "A ninja named : " + name + " does not exist or is offline.";
+                }
+            } else {
+                return "A ninja named : " + name + " does not exist or is offline.";
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(CharInfoProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "UNKNOWN ERROR";
+    }
+
     public static String getNPCNinjaGlare(MapleCharacter other) {
         StringBuilder sb = new StringBuilder();
         if (other != null) {
-            sb.append(" #d#e General info #n\r\n");
+            sb.append(" #d#e [General information] #n\r\n");
             sb.append("\r\n#b Name of the Player : #r" + other.getName());
-            sb.append("\r\n #bCharacterId : #r" + other.getId());
             sb.append("\r\n #bCreated on : #r" + other.getCreateDate());
-            if (!other.isJounin()) {
-                sb.append("\r\n\r\n#d#e Rebirth Ranking: #n\r\n");
-                sb.append(" #bOverall Rank :#r #" + other.getRank());
-                sb.append(" #gRebirths : #r" + other.getReborns());
-                sb.append("\r\n #d#eWealth Ranking: #n\r\n");
-                sb.append(" #bOverall Rank :#r #" + other.getTaorank());
-                sb.append(" #gTao Amount : #r" + other.getTaoOfSight());
-            }
-            sb.append("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(other.getJob().getId()));
+            sb.append("\r\n #bCharacterId : #r" + other.getId());
+            sb.append("\r\n#b Ninja Rank : #r" + other.getGMStatus().getTitle());
             sb.append("\r\n #bVillage: #r" + other.getVillage().getName());
+
+            sb.append("\r\n\r\n#e#d[STATS]#n\r\n #bWA : #r" + other.getTotalWatk());
+            sb.append("\r\n #bStr : #r" + other.getStr()
+                    + "; #bDex : #r" + other.getDex()
+                    + "; #bInt : #r" + other.getInt()
+                    + "; #bLuk : #r" + other.getLuk());
+            sb.append("\r\n #bTStr : #r" + other.getStr()
+                    + "; #bTDex : #r" + other.getDex()
+                    + "; #bTInt : #r" + other.getInt()
+                    + "; #bTLuk : #r" + other.getLuk());
+            sb.append("\r\n #bRemaining AP : " + other.getRemainingAp()
+                    + "; #bStorageAp : #r" + other.getStorageAp());
+
+            sb.append("#b" + getMissionStatus(other) + "\r\n");
+            if (!other.isJounin()) {
+                sb.append("\r\n\r\n#d#e Rebirth Ranking : #n\r\n");
+                sb.append(" #bOverall Rank :#r #" + other.getRank());
+                sb.append(" #dRebirths : #r" + other.getReborns());
+                sb.append("\r\n\r\n #d#eWealth Ranking : #n\r\n");
+                sb.append(" #bOverall Rank :#r #" + other.getTaorank());
+                sb.append(" #dTao Amount : #r" + other.getTaoOfSight());
+            }
+            sb.append("\r\n #bMobKilled : #r" + other.getMobKilled()
+                    + "; #bBossKilled : #r" + other.getBossKilled());
+            sb.append("\r\n #bPvP Kills : #r" + other.getPvpKills()
+                    + "; #bPvP Deaths : #r" + other.getPvpDeaths());
+            sb.append("\r\n#b Fame : #r" + other.getFame());
+            sb.append("\r\n #blevel : #r" + other.getLevel()
+                    + "; #bMesos : #r" + other.getMeso());
+            sb.append("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(other.getJob().getId()));
+            sb.append("\r\n#b Player's Legend : #r" + other.getLegend());
+            sb.append("\r\n #bShurikenItems : #r" + other.getMaxStatItems());
+
             if (other.getPreviousNames() != null) {
-                if (other.getPreviousNames().length() < 3) {
-                    sb.append(other.getName() + " has also been known as..." + other.getPreviousNames());
+                if (other.getPreviousNames().length() > 4) {
+                    sb.append("\r\n #d" + other.getName() + " has also been known as..." + other.getPreviousNames());
                 }
             }
-            sb.append(" Str : " + other.getStr()
-                    + " Dex : " + other.getDex()
-                    + " Int : " + other.getInt()
-                    + " Luk : " + other.getLuk()
-                    + " Remaining AP : "
-                    + other.getRemainingAp() + " StorageAp : " + other.getStorageAp());
-            sb.append(" TStr : " + other.getStr()
-                    + " TDex : " + other.getDex()
-                    + " TInt : " + other.getInt()
-                    + " TLuk : " + other.getLuk()
-                    + " WA : " + other.getTotalWatk());
-            sb.append(" MobKilled : " + other.getMobKilled()
-                    + " BossKilled : " + other.getBossKilled()
-                    + " level : " + other.getLevel()
-                    + " Mesos : " + other.getMeso()
-                    + " ShurikenItems : " + other.getMaxStatItems());
-            sb.append(" PvP Kills : " + other.getPvpKills()
-                    + " PvP Deaths : " + other.getPvpDeaths()
-                    + " NinjaTensu : " + other.getNinjaTensu()
-                    + " DojoPoints : " + other.getDojoPoints()
-                    + " BQPoints : " + other.getBossPoints()
-                    + " JQFinished : " + other.getJqFinished()
-                    + " JQPoints : " + other.getJqpoints());
-            sb.append("Rasengan Quest Level : " + other.getRasengan()
-                    + "Exp/meso/drop/bossdrop boost :" + other.getExpBoost()
-                    + " / " + other.getMesoBoost()
-                    + " / " + other.getDropBoost()
-                    + " / " + other.getBossDropBoost()
-                    + " Total Exp/meso/drop/bossdrop rates : "
-                    + +Rates.getExpRate(other)
-                    + " / " + Rates.getMesoRate(other)
-                    + " / " + Rates.getDropRate(other)
-                    + " / " + Rates.getBossDropRate(other));
-            sb.append(" This Player is : " + other.getGMStatus().getTitle()
-                    + " Player's Legend : " + other.getLegend() + " Player's GMS mode : " + other.getGMSMode());
+
+            sb.append("\r\n #bNinjaTensu : #r" + other.getNinjaTensu()
+                    + "\r\n #bDojoPoints : #r" + other.getDojoPoints()
+                    + "\r\n #bBQPoints : #r" + other.getBossPoints()
+                    + "\r\n #bJQFinished : #r" + other.getJqFinished()
+                    + "; #bJQPoints : #r" + other.getJqpoints());
+            sb.append("\r\n\r\n#d#e[Rates]#n");
+            sb.append("\r\n #bExprate : #r" + other.getExpBoost()
+                    + "#b ; Mesorate : #r" + other.getMesoBoost()
+                    + "#b\r\n Droprate : #r" + other.getDropBoost()
+                    + "#b ; Boss Droprate : #r" + other.getBossDropBoost()
+                    + "#b\r\n #b Total Exprate : #r" + Rates.getExpRate(other)
+                    + "#b ; Total Mesorate : #r" + Rates.getMesoRate(other)
+                    + "#b\r\n Total Droprate : #r" + Rates.getDropRate(other)
+                    + "#b ; Total BossDroprate : #r" + Rates.getBossDropRate(other));
+            if (other.getGMSMode() == 0) {
+                sb.append("\r\n\r\n #b#eThis player is not in GMS mode#n");
+            } else {
+                sb.append("\r\n\r\n #b#ePlayer's GMS mode : #r" + other.getGMSMode() + "#n");
+            }
+            sb.append("\r\n\r\n #bRasengan Quest Level : #r" + other.getRasengan());
             if (other.getDAmount() > 0) {
-                sb.append("Donated Amount : " + other.getDAmount() + " Dpoints : " + other.getDPoints());
+                sb.append("\r\n#b Donated Amount : #r" + other.getDAmount() + "#b Dpoints : #r" + other.getDPoints());
             }
 
-        }        
+        }
         return sb.toString();
+    }
+
+    public static String getMissionStatus(MapleCharacter pl) {
+        String s = "\r\n";
+        if (pl.getMission() <= 0) {
+            s = " This player is Yet to start any mission";
+        } else if (pl.getMission() < 5) {
+            s = " This player has completed " + pl.getMission() + " Rank D missions";
+        } else if (pl.getMission() == 5) {
+            s = " This player has completed all Rank D missions";
+        } else if (pl.getMission() < 10) {
+            s = " This player has completed " + (pl.getMission() - 5) + " Rank C missions";
+        } else if (pl.getMission() == 10) {
+            s = " This player has completed all Rank C missions";
+        } else if (pl.getMission() < 15) {
+            s = " This player has completed " + (pl.getMission() - 10) + " Rank B missions";
+        } else if (pl.getMission() == 15) {
+            s = " This player has completed all Rank B missions";
+        } else if (pl.getMission() < 20) {
+            s = " This player has completed " + (pl.getMission() - 15) + " Rank A missions";
+        } else if (pl.getMission() == 20) {
+            s = " This player has completed all Rank A missions";
+        } else if (pl.getMission() < 25) {
+            s = " This player has completed " + (pl.getMission() - 20) + " Rank S missions";
+        } else if (pl.getMission() == 25) {
+            s = " This player has completed All Rank S missions";
+        }
+        return s;
     }
 }

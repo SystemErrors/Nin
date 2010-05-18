@@ -152,9 +152,9 @@ public class Rebirths {
             pl.dropMessage("You should start doing mission D quests available from Chunji in your Town.");
         } else if ((reborns < 500) && (reborns % 10 == 0) && pl.getMission() < 10) {
             pl.dropMessage("You should start doing mission C quests available from a NPC deep in Ellin forest where the fairies live.");
-        } else if ((reborns < 750) && (reborns % 10 == 0) && pl.getMission() < 10) {
+        } else if ((reborns < 750) && (reborns % 10 == 0) && pl.getMission() < 15) {
             pl.dropMessage("You should start doing mission B quests available from a NPC who keeps the records.");
-        } else if ((reborns < 1000) && (reborns % 10 == 0) && pl.getMission() < 10) {
+        } else if ((reborns < 1000) && (reborns % 10 == 0) && pl.getMission() < 20) {
             pl.dropMessage("You should start doing mission A quests available from a NPC who is located in the dangerous land of the scorpions.");
         }
     }

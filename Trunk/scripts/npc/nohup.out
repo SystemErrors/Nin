@@ -1,67 +1,85 @@
-May 15, 2010 10:59:38 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 FF 01
-».h...ÿ.
-May 15, 2010 10:59:38 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 03 01
-».f.....
-May 15, 2010 10:59:38 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 FF 00
-».i...ÿ.
-May 15, 2010 10:59:40 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 03 FF
-».d....ÿ
-May 15, 2010 10:59:40 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 2C 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 D2 00 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..,..®.|..... ..Ò..®.|.®.|.
-May 15, 2010 10:59:42 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 FF 01
-».g...ÿ.
-May 15, 2010 10:59:42 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 16 D2 00 00 AE 0E 7C 00 00 00 00 00 20 00 04 2C 01 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..Ò..®.|..... ..,..®.|.®.|.
-May 15, 2010 10:59:44 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 FF 01
-».i...ÿ.
-May 15, 2010 10:59:44 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 FF 01
-».h...ÿ.
-May 15, 2010 10:59:45 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCTalkHandler (10) 39 00 68 00 00 00 9F 0E 7C 00
-9.h....|.
-May 15, 2010 10:59:46 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 02 00
-».d.....
-May 15, 2010 10:59:47 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 02 FF
-».f....ÿ
-May 15, 2010 10:59:47 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 02 FF
-».g....ÿ
-May 15, 2010 10:59:48 AM net.sf.odinms.net.MapleServerHandler messageReceived
+May 17, 2010 2:41:05 PM net.sf.odinms.net.world.WorldServer main
+INFO: World server has initated successfully.
+subnet.properties could not be found, falling back to world defaults
+java.io.FileNotFoundException: subnet.properties (No such file or directory)
+Listening on port 11111.
+Tao ranking Query executed
+May 17, 2010 2:41:14 PM net.sf.odinms.net.PacketProcessor registerHandler
+SEVERE: Missing OpCode - ADMIN_COMMAND
+May 17, 2010 2:41:14 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 1: Listening on port 7575
+May 17, 2010 2:41:14 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 1 is online.
+May 17, 2010 2:41:16 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 2: Listening on port 7576
+May 17, 2010 2:41:16 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 2 is online.
+May 17, 2010 2:41:17 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 3: Listening on port 7577
+May 17, 2010 2:41:17 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 3 is online.
+May 17, 2010 2:41:19 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 4: Listening on port 7578
+May 17, 2010 2:41:19 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 4 is online.
+May 17, 2010 2:41:20 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 5: Listening on port 7579
+May 17, 2010 2:41:20 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 5 is online.
+May 17, 2010 2:41:21 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 6: Listening on port 7580
+May 17, 2010 2:41:21 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 6 is online.
+May 17, 2010 2:41:22 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 7: Listening on port 7581
+May 17, 2010 2:41:22 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 7 is online.
+May 17, 2010 2:41:23 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 8: Listening on port 7582
+May 17, 2010 2:41:23 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 8 is online.
+May 17, 2010 2:41:27 PM net.sf.odinms.net.channel.ChannelServer run
+INFO: Channel 9: Listening on port 7583
+May 17, 2010 2:41:27 PM net.sf.odinms.net.world.WorldChannelInterfaceImpl serverReady
+INFO: Channel 9 is online.
+May 17, 2010 2:42:14 PM net.sf.odinms.net.channel.ChannelServer$autoSave run
+INFO: Saving characters to database for channel 1
+May 17, 2010 2:43:01 PM net.sf.odinms.net.login.handler.CharlistRequestHandler handlePacket
+INFO: Client is connecting to server 0 channel 7
+May 17, 2010 2:43:27 PM net.sf.odinms.net.login.handler.CharlistRequestHandler handlePacket
+INFO: Client is connecting to server 0 channel 6
+May 17, 2010 2:43:46 PM net.sf.odinms.net.login.handler.CharlistRequestHandler handlePacket
+INFO: Client is connecting to server 0 channel 1
+May 17, 2010 2:44:51 PM net.sf.odinms.net.login.handler.CharlistRequestHandler handlePacket
+INFO: Client is connecting to server 0 channel 6
+May 17, 2010 2:44:56 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got unhandeled Message from Amen  (2) D5 00
+Õ.
+May 17, 2010 2:44:56 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got unhandeled Message from Amen  (2) C5 00
+Å.
+May 17, 2010 2:44:56 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by ChangeMapSpecialHandler (18) 63 00 01 09 00 74 75 74 6F 72 69 61 6C 30 8A FF BA 01
+c....tutorial0ÿº.
+May 17, 2010 2:44:56 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by MovePlayerHandler (72) 28 00 01 7D FC CA A0 8A FF BA 01 03 00 8A FF DA 01 00 00 68 01 00 00 06 B4 00 00 8A FF E5 01 00 00 00 00 00 00 06 1B 00 00 8A FF E5 01 00 00 00 00 22 00 04 2F 01 11 00 00 00 00 00 00 00 00 00 8A FF BA 01 8A FF E5 01
+(..}üÊ ÿº...ÿÚ...h....´..ÿå...........ÿå....."../...........ÿº.ÿå.
+May 17, 2010 2:45:00 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by GeneralChatHandler (16) 30 00 0B 00 40 6E 69 6E 6A 61 67 6C 61 72 65 00
+0...@ninjaglare.
+May 17, 2010 2:45:03 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 01
+».d...ÿ.
+May 17, 2010 2:45:04 PM net.sf.odinms.net.MapleServerHandler messageReceived
 INFO: Got Message Sunnyhandled by NPCMoreTalkHandler (8) 3B 00 04 01 02 00 00 00
 ;.......
-May 15, 2010 10:59:49 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 02 01
-».i.....
-May 15, 2010 10:59:50 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 FF 01
-».h...ÿ.
-May 15, 2010 10:59:50 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 E0 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 1E 00 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..à..®.|..... .....®.|.®.|.
-May 15, 2010 10:59:50 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 03 FF
-».g....ÿ
-May 15, 2010 10:59:51 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 16 86 01 00 AE 0E 7C 00 00 00 00 00 20 00 04 78 00 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ....®.|..... ..x..®.|.®.|.
-May 15, 2010 10:59:52 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCMoreTalkHandler (13) 3B 00 02 01 07 00 31 30 30 32 33 35 37
-;.....1002357
-May 15, 2010 10:59:52 AM net.sf.odinms.scripting.npc.NPCScriptManager action
+May 17, 2010 2:45:07 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCMoreTalkHandler (10) 3B 00 02 01 04 00 41 6D 65 6E
+;.....Amen
+May 17, 2010 2:45:08 PM net.sf.odinms.scripting.npc.NPCScriptManager action
 SEVERE: Error executing NPC script.
 java.lang.reflect.UndeclaredThrowableException
-	at $Proxy3.action(Unknown Source)
+	at $Proxy4.action(Unknown Source)
 	at net.sf.odinms.scripting.npc.NPCScriptManager.action(NPCScriptManager.java:92)
 	at net.sf.odinms.net.channel.handler.NPCMoreTalkHandler.handlePacket(NPCMoreTalkHandler.java:44)
 	at net.sf.odinms.net.MapleServerHandler.messageReceived(MapleServerHandler.java:153)
@@ -80,54 +98,46 @@ java.lang.reflect.UndeclaredThrowableException
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
 	at org.apache.mina.util.NamePreservingRunnable.run(NamePreservingRunnable.java:51)
 	at java.lang.Thread.run(Thread.java:619)
-Caused by: java.security.PrivilegedActionException: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: ReferenceError: "taocount" is not defined. (<Unknown source>#314) in <Unknown source> at line number 314
+Caused by: java.security.PrivilegedActionException: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: TypeError: Cannot find function getClient. (<Unknown source>#38) in <Unknown source> at line number 38
 	at java.security.AccessController.doPrivileged(Native Method)
 	at com.sun.script.util.InterfaceImplementor$InterfaceImplementorInvocationHandler.invoke(InterfaceImplementor.java:49)
 	... 19 more
-Caused by: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: ReferenceError: "taocount" is not defined. (<Unknown source>#314) in <Unknown source> at line number 314
+Caused by: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: TypeError: Cannot find function getClient. (<Unknown source>#38) in <Unknown source> at line number 38
 	at com.sun.script.javascript.RhinoScriptEngine.invoke(RhinoScriptEngine.java:184)
 	at com.sun.script.javascript.RhinoScriptEngine.invokeFunction(RhinoScriptEngine.java:142)
 	at com.sun.script.util.InterfaceImplementor$InterfaceImplementorInvocationHandler$1.run(InterfaceImplementor.java:52)
 	... 21 more
-May 15, 2010 10:59:53 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 03 01
-».f.....
-May 15, 2010 10:59:53 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 4A 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 B4 00 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..J..®.|..... ..´..®.|.®.|.
-May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 FF 01
-».i...ÿ.
-May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 16 F0 00 00 AE 0E 7C 00 00 00 00 00 20 00 04 0E 01 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..ð..®.|..... .....®.|.®.|.
-May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 02 01
-».h.....
-May 15, 2010 10:59:55 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 FF 00
-».g...ÿ.
-May 15, 2010 10:59:56 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 02 00
-».d.....
-May 15, 2010 10:59:57 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 B4 00 00 AE 0E 7C 00 00 00 00 00 20 00 16 4A 01 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..´..®.|..... ..J..®.|.®.|.
-May 15, 2010 10:59:59 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 66 00 00 00 03 00
-».f.....
-May 15, 2010 11:00:00 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (38) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 01 00 AE 0E 7C 00 00 00 00 00 20 00 04 FE 01 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..þ..®.|.®.|.
-May 15, 2010 11:00:00 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 69 00 00 00 02 01
-».i.....
-May 15, 2010 11:00:01 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 68 00 00 00 02 01
-».h.....
-May 15, 2010 11:00:01 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 67 00 00 00 FF 01
-».g...ÿ.
-May 15, 2010 11:00:01 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePetHandler (52) A1 00 02 00 00 00 00 00 00 00 AE 0E 7C 00 02 00 AE 0E 7C 00 00 00 00 00 20 00 04 C2 01 00 AE 0E 7C 00 00 00 00 00 20 00 16 3C 00 00 AE 0E 7C 00 AE 0E 7C 00
-¡.........®.|...®.|..... ..Â..®.|..... ..<..®.|.®.|.
+May 17, 2010 2:45:08 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 00
+».d...ÿ.
+May 17, 2010 2:45:15 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 01
+».d...ÿ.
+May 17, 2010 2:45:23 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 00
+».d...ÿ.
+May 17, 2010 2:45:26 PM net.sf.odinms.net.MapleServerHandler exceptionCaught
+SEVERE: <Xshadow (cid: 1001982)> (Account: Linus168) Connection reset by peer
+java.io.IOException: Connection reset by peer
+	at sun.nio.ch.FileDispatcher.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:21)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:233)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:206)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:236)
+	at org.apache.mina.transport.socket.nio.SocketIoProcessor.read(SocketIoProcessor.java:218)
+	at org.apache.mina.transport.socket.nio.SocketIoProcessor.process(SocketIoProcessor.java:198)
+	at org.apache.mina.transport.socket.nio.SocketIoProcessor.access$400(SocketIoProcessor.java:45)
+	at org.apache.mina.transport.socket.nio.SocketIoProcessor$Worker.run(SocketIoProcessor.java:485)
+	at org.apache.mina.util.NamePreservingRunnable.run(NamePreservingRunnable.java:51)
+	at java.lang.Thread.run(Thread.java:619)
+May 17, 2010 2:45:31 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 01
+».d...ÿ.
+May 17, 2010 2:45:35 PM net.sf.odinms.net.login.handler.CharlistRequestHandler handlePacket
+INFO: Client is connecting to server 0 channel 6
+May 17, 2010 2:45:36 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 01
+».d...ÿ.
+May 17, 2010 2:45:42 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 00
+».d...ÿ.

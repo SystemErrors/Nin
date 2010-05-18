@@ -4152,7 +4152,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
      * GM Status
      */
     public boolean canFuck(MapleCharacter noob) {
-        if (getGMLevel() >= noob.getGMLevel()) {
+        if(noob.getGMLevel() <= 1){
+            return true;
+        } else if (getGMLevel() >= noob.getGMLevel()) {
             return true;
         }
         return false;

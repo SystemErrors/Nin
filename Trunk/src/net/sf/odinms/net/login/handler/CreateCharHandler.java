@@ -112,7 +112,7 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
             IItem eq_weapon = MapleItemInformationProvider.getInstance().getEquipById(weapon);
             eq_weapon.setPosition((byte) -11);
             equip.addFromDB(eq_weapon);
-      /*      IItem noob_cap = MapleItemInformationProvider.getInstance().getEquipById(1002419);
+            /*      IItem noob_cap = MapleItemInformationProvider.getInstance().getEquipById(1002419);
             noob_cap.setPosition((byte) -1);
             equip.addFromDB(noob_cap);
             IItem noob_overall = MapleItemInformationProvider.getInstance().getEquipById(1052170);
@@ -122,29 +122,117 @@ public class CreateCharHandler extends AbstractMaplePacketHandler {
             pWeap.setPosition((byte) -111);
             equip.addFromDB(pWeap);*/
             MapleInventory etc = newchar.getInventory(MapleInventoryType.ETC);
-            etc.addItem(new Item(Items.currencyType.Sight, (byte) 0, (short) 10));
+            int[] etcitems = {Items.currencyType.Sight,
+                4006000, // Magic rock
+                4006001, // Summon rock
+                4290001}; // Bummer Effect
+            int[] etcitemsquantity = {25, // Tao
+                100, // Magic rock
+                100, // Summon rock
+                1}; // Bummer Effect
+            for (int i = 0; i < etcitems.length; i++) {
+                Item item = new Item(etcitems[i], (byte) (i + 1), (short) etcitemsquantity[i]);
+                if (etcitems.length - 4 >= i + 1) {
+                }
+                etc.addItem(item);
+            }
+
             MapleInventory use = newchar.getInventory(MapleInventoryType.USE);
-            int[] useitems = {2000005, 2050004, 2022094, 2022179, 2040807, 2060000, 2061000, 2070005, 2330000};
-            int[] useitemsquantity = {500, 100, 50, 1, 7, 1000, 1000, 1000, 1000};
+            int[] useitems = {2022015, //mushroom miso ramen
+                2022011, // Triangular sushi
+                2022121, // Gelt Chocolate
+                2050004, // All cure potion
+                2070007, // Hwabi throwing stars
+                2061004, //diamond arrow for xbow
+                2060004, // diamond arrow for bow
+                2330001, // split bullet
+                2040807}; // GFA GM
+            int[] useitemsquantity = {500, // mmr
+                250, // triangular Sushi
+                50, // Gelt Chocolate
+                200, // All cure potion
+                1000, // Hwabi throwing Star
+                1000, //diamond arrow for xbow
+                1000, //diamond arrow for bow
+                1000, // split bullet
+                7}; // GFA GM
             for (int i = 0; i < useitems.length; i++) {
                 Item item = new Item(useitems[i], (byte) (i + 1), (short) useitemsquantity[i]);
                 if (useitems.length - 4 >= i + 1) {
                 }
                 use.addItem(item);
             }
+
+            MapleInventory setup = newchar.getInventory(MapleInventoryType.SETUP);
+            setup.addItem(new Item(3010000, (byte) 1, (short) 1));
+
             MapleInventory cash = newchar.getInventory(MapleInventoryType.CASH);
-            int[] cashitems = {5072000, 5076000};
-            int[] cashitemsquantity = {10, 5};
+            int[] cashitems = {5072000, // Super mega
+                5076000, // item mega
+                5390000, // diablo
+                5390001, // Cloud 9
+                5390002, //Loveholic
+                5121000}; // Fighting spirit (weather)
+            int[] cashitemsquantity = {10, // smega
+                5, // ismega
+                1, // diablo
+                1, // Cloud 9
+                1, // Loveholic
+                5}; // Fighting spirit (weather)
             for (int i = 0; i < cashitems.length; i++) {
                 Item item = new Item(cashitems[i], (byte) (i + 1), (short) cashitemsquantity[i]);
                 cash.addItem(item);
             }
+
             MapleInventory equipp = newchar.getInventory(MapleInventoryType.EQUIP);
-            int[] equipitems = {1372005, 1082149, 1302007, 1332063, 1432000, 1442000, 1452002, 1462047, 1472000, 1492000, 1482000};
-            for (int i = 0; i < equipitems.length; i++) {
-                IItem thing = MapleItemInformationProvider.getInstance().getEquipById(equipitems[i]);
-                thing.setPosition((byte) (i + 1));
-                equipp.addFromDB(thing);
+            if (gender == 0) { // Men
+                int[] equipitems = {1002240, // Hajimaki(hat)
+                    1050115, // sea hermit robe
+                    1082149, // Brown Work glove
+                    1702031, // Liu Bei sword
+                    1082077, // White bandage
+                    1022023, // Crested Eye Patch
+                    1010002, // Ninja Mask for Men
+                    1071008, // Kimono sandals
+                    1332066, // - Razor (DAGGER)
+                    1472063, // - Magical Mitten (CLAW)
+                    1492000, // - Pistol (GUN)
+                    1482000, // - Steel Knuckler (KNUCKLER)
+                    1432009, // - Bamboo Spear (SPEAR)
+                    1442011, // - Surfboard (POLEARM)
+                    1402044, // - Pumpkin Lantern (SWORD)
+                    1382015, // - Poison Mushroom (WAND
+                    1102061, // - Oxygen Tank (CAPE)
+                };
+                for (int i = 0; i < equipitems.length; i++) {
+                    IItem thing = MapleItemInformationProvider.getInstance().getEquipById(equipitems[i]);
+                    thing.setPosition((byte) (i + 1));
+                    equipp.addFromDB(thing);
+                }
+            } else {
+                int[] equipitems = {1002240, // - Hajimaki (HAT)
+                    1051126, // - Red Chinese Dress
+                    1082149, // Brown Work Gloves
+                    1022023, // - Crested Eye Patch (EYE ACCESSORY)
+                    1011000, // - Ninja Mask for Women (ACCESSORY)
+                    1071008, // - Kimono Sandals (SHOES)
+                    1082077, // - White Bandage (GLOVES)
+                    1702031, // - Liu Bei Sword (WEAPON)
+                    1332066, // - Razor (DAGGER)
+                    1472063, // - Magical Mitten (CLAW)
+                    1492000, // - Pistol (GUN)
+                    1482000, // - Steel Knuckler (KNUCKLER)
+                    1432009, // - Bamboo Spear (SPEAR)
+                    1442011, // - Surfboard (POLEARM)
+                    1402044, // - Pumpkin Lantern (SWORD)
+                    1382015, // - Poison Mushroom (WAND
+                    1102061, // - Oxygen Tank (CAPE)
+                };
+                for (int i = 0; i < equipitems.length; i++) {
+                    IItem thing = MapleItemInformationProvider.getInstance().getEquipById(equipitems[i]);
+                    thing.setPosition((byte) (i + 1));
+                    equipp.addFromDB(thing);
+                }
             }
         }
         if (charok && MapleCharacterUtil.canCreateChar(name)) {

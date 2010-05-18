@@ -25,24 +25,7 @@ public class InfoCommands implements PlayerCommand {
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         MapleCharacter player = c.getPlayer();
-        if (splitted[0].equalsIgnoreCase("ninjaglare")) {
-            MapleCharacter other = c.getPlayer();
-            if (splitted.length == 2) {
-                try {
-                    WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
-                    if (loc != null) {
-                        other = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    } else {
-                        mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
-                        return;
-                    }
-                } catch (Exception e) {
-                    mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
-                    return;
-                }
-            }
-            CharInfoProcessor.getNinjaGlare(mc, other);
-        } else if (splitted[0].equalsIgnoreCase("connected")) {
+        if (splitted[0].equalsIgnoreCase("connected")) {
             try {
                 Map<Integer, Integer> connected = c.getChannelServer().getWorldInterface().getConnected();
                 StringBuilder conStr = new StringBuilder("Connected Clients: ");
@@ -93,8 +76,7 @@ public class InfoCommands implements PlayerCommand {
     }
 
     public PlayerCommandDefinition[] getDefinition() {
-        return new PlayerCommandDefinition[]{
-                    new PlayerCommandDefinition("ninjaglare", "<ign>", "Shows Stats of the person"),
+        return new PlayerCommandDefinition[]{                   
                     new PlayerCommandDefinition("connected", "", "Shows the number of players online"),
                     new PlayerCommandDefinition("ninjatop10", "<start from rank / person name>", "shows rb ranking"),   
                     new PlayerCommandDefinition("taotop10", "<start from rank / person name>", "shows tao ranking"),
