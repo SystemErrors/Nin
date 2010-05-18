@@ -390,10 +390,10 @@ public class CharInfoProcessor {
                         return "The ninja " + name + " is too 1337 for you";
                     }
                 } else {
-                    return "A ninja named : " + name + " does not exist or is offline.";
+                    return getCharInfoOffline(c, name);
                 }
             } else {
-                return "A ninja named : " + name + " does not exist or is offline.";
+                return getCharInfoOffline(c, name);
             }
         } catch (RemoteException ex) {
             Logger.getLogger(CharInfoProcessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -472,7 +472,6 @@ public class CharInfoProcessor {
             if (other.getDAmount() > 0) {
                 sb.append("\r\n#b Donated Amount : #r" + other.getDAmount() + "#b Dpoints : #r" + other.getDPoints());
             }
-
         }
         return sb.toString();
     }
@@ -503,5 +502,94 @@ public class CharInfoProcessor {
             s = " This player has completed All Rank S missions";
         }
         return s;
+    }
+
+    public static String getCharInfoOffline(MapleClient c, String name) {
+        MapleCharacter player = c.getPlayer();
+        StringBuilder sb = new StringBuilder();
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0, gml = 0,
+                    damount = 0, dpoint = 0, level = 0, rasengan = 0, tensu = 0;
+            String previousnames = "", macs = "", accountcreatedate = "", accountname = "", gm = "";
+            int checkmacs = 0;
+            String sql = "SELECT c.`str`, c.`dex`, c.`luk`, c.`int`,"
+                    + " c.`ap`, c.`storageap`, c.`rasengan`, c.`previousnames`,"
+                    + " a.`macs`, a.`name`, a.createdat,"
+                    + " a.`gm`, a.`damount`, a.`dpoints`,"
+                    + " a.`ninjatensu` FROM characters AS c"
+                    + " LEFT JOIN accounts AS a ON"
+                    + " c.accountid = a.id WHERE c.name = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                str = rs.getInt("str");
+                dex = rs.getInt("dex");
+                luk = rs.getInt("luk");
+                int_ = rs.getInt("int");
+                ap = rs.getInt("ap");
+                store = rs.getInt("storageap");
+                rasengan = rs.getByte("rasengan");
+                previousnames = rs.getString("previousnames");
+                if (previousnames == null) {
+                    previousnames = "N/A";
+                }
+                macs = rs.getString("macs");
+                accountname = rs.getString("name");
+                accountcreatedate = rs.getString("createdat");
+                gml = rs.getInt("gm");
+                gm = Status.getByLevel(gml).getTitle();
+                damount = rs.getInt("damount");
+                dpoint = rs.getInt("dpoints");
+                tensu = rs.getInt("ninjatensu");
+            }
+            rs.close();
+            ps.close();
+            if (player.getGMLevel() < gml) {
+                sb.append("The ninja you want to spy is too 1337 for you");
+                return sb.toString();
+            }
+            if (player.isChunin()) {
+                ps = con.prepareStatement("SELECT COUNT(*) FROM accounts WHERE macs = ? LIMIT 10");
+                ps.setString(1, macs);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    checkmacs = rs.getInt(1);
+                }
+                rs.close();
+                ps.close();
+            }
+            RBRankingInfo rbrank = RankingWorker.getInstance().getRBRanksByName().get(name);
+            TaoRankingInfo taorank = RankingWorker.getInstance().getTaoRanksByName().get(name);
+            if (rbrank != null) {
+                c.showMessage(6, "Rebirth Ranking: "
+                        + "Overall Rank : #" + rbrank.getRank()
+                        + GameConstants.getCardinal(rbrank.getRank())
+                        + " Rebirths : " + rbrank.getRB() + " MSI : " + rbrank.getMSI());
+            }
+            if (taorank != null) {
+                c.showMessage(6, "Wealth Ranking: #"
+                        + "Overall Rank : #" + taorank.getRank()
+                        + GameConstants.getCardinal(taorank.getRank())
+                        + " Tao Amount : " + taorank.getTaoCheck());
+            }
+            if (checkmacs > 0 && !macs.equalsIgnoreCase("") && c.getPlayer().isChunin()) {
+                ps = con.prepareStatement("SELECT name FROM characters WHERE accountid in (SELECT id FROM accounts WHERE macs = ?) LIMIT 20");
+                ps.setString(1, macs);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    c.showMessage(5, "This player has a MAC same to another user(s). The IGN is: " + rs.getString(1));
+                }
+                rs.close();
+                ps.close();
+            }
+        } catch (SQLException e) {
+            c.showMessage(5, "Error: " + e);
+        }
+        // search similarities
+
+
+        return sb.toString();
     }
 }
