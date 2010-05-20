@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.odinms.client.Enums.Status;
+import net.sf.odinms.client.Enums.Village;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.MessageCallback;
@@ -416,14 +417,14 @@ public class CharInfoProcessor {
                     + "; #bDex : #r" + other.getDex()
                     + "; #bInt : #r" + other.getInt()
                     + "; #bLuk : #r" + other.getLuk());
-            sb.append("\r\n #bTStr : #r" + other.getStr()
-                    + "; #bTDex : #r" + other.getDex()
-                    + "; #bTInt : #r" + other.getInt()
-                    + "; #bTLuk : #r" + other.getLuk());
+            sb.append("\r\n #bTStr : #r" + other.getTotalStr()
+                    + "; #bTDex : #r" + other.getTotalDex()
+                    + "; #bTInt : #r" + other.getTotalInt()
+                    + "; #bTLuk : #r" + other.getTotalLuk());
             sb.append("\r\n #bRemaining AP : " + other.getRemainingAp()
                     + "; #bStorageAp : #r" + other.getStorageAp());
 
-            sb.append("#b" + getMissionStatus(other) + "\r\n");
+            sb.append("#b" + getMissionStatus(other.getMission()) + "\r\n");
             if (!other.isJounin()) {
                 sb.append("\r\n\r\n#d#e Rebirth Ranking : #n\r\n");
                 sb.append(" #bOverall Rank :#r #" + other.getRank());
@@ -476,29 +477,29 @@ public class CharInfoProcessor {
         return sb.toString();
     }
 
-    public static String getMissionStatus(MapleCharacter pl) {
+    public static String getMissionStatus(int mis) {
         String s = "\r\n";
-        if (pl.getMission() <= 0) {
+        if (mis <= 0) {
             s = " This player is Yet to start any mission";
-        } else if (pl.getMission() < 5) {
-            s = " This player has completed " + pl.getMission() + " Rank D missions";
-        } else if (pl.getMission() == 5) {
+        } else if (mis < 5) {
+            s = " This player has completed " + mis + " Rank D missions";
+        } else if (mis == 5) {
             s = " This player has completed all Rank D missions";
-        } else if (pl.getMission() < 10) {
-            s = " This player has completed " + (pl.getMission() - 5) + " Rank C missions";
-        } else if (pl.getMission() == 10) {
+        } else if (mis < 10) {
+            s = " This player has completed " + (mis - 5) + " Rank C missions";
+        } else if (mis == 10) {
             s = " This player has completed all Rank C missions";
-        } else if (pl.getMission() < 15) {
-            s = " This player has completed " + (pl.getMission() - 10) + " Rank B missions";
-        } else if (pl.getMission() == 15) {
+        } else if (mis < 15) {
+            s = " This player has completed " + (mis - 10) + " Rank B missions";
+        } else if (mis == 15) {
             s = " This player has completed all Rank B missions";
-        } else if (pl.getMission() < 20) {
-            s = " This player has completed " + (pl.getMission() - 15) + " Rank A missions";
-        } else if (pl.getMission() == 20) {
+        } else if (mis < 20) {
+            s = " This player has completed " + (mis - 15) + " Rank A missions";
+        } else if (mis == 20) {
             s = " This player has completed all Rank A missions";
-        } else if (pl.getMission() < 25) {
-            s = " This player has completed " + (pl.getMission() - 20) + " Rank S missions";
-        } else if (pl.getMission() == 25) {
+        } else if (mis < 25) {
+            s = " This player has completed " + (mis - 20) + " Rank S missions";
+        } else if (mis == 25) {
             s = " This player has completed All Rank S missions";
         }
         return s;
@@ -510,11 +511,20 @@ public class CharInfoProcessor {
         Connection con = DatabaseConnection.getConnection();
         try {
             int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0, gml = 0,
-                    damount = 0, dpoint = 0, level = 0, rasengan = 0, tensu = 0;
-            String previousnames = "", macs = "", accountcreatedate = "", accountname = "", gm = "";
+                    damount = 0, dpoint = 0, level = 0, rasengan = 0, tensu = 0,
+                    id = 0, accid = 0, mission = 0, village = 0, bqpoints = 0,
+                    dojopoints = 0, jqfinished = 0, jqpoints = 0, rank = 0,
+                    rb = 0, taorank = 0, taocheck = 0, msi = 0, mobkilled = 0,
+                    bosskilled = 0, pvpkills = 0, pvpdeaths = 0, fame = 0,
+                    meso = 0, job = 0;
+            String previousnames = "", macs = "", accountcreatedate = "", 
+                    accountname = "", gm = "", legend = "";
             int checkmacs = 0;
             String sql = "SELECT c.`str`, c.`dex`, c.`luk`, c.`int`,"
                     + " c.`ap`, c.`storageap`, c.`rasengan`, c.`previousnames`,"
+                    + " c.`mission`, c.`id`, c.`accountid`, c.`legend`, c.`pvpkills`,"
+                    + " c.`pvpdeaths`, c.`fame`, c.`dojopoints`, c.`bqpoints`, c.`meso`,"
+                    + " c.job,"
                     + " a.`macs`, a.`name`, a.createdat,"
                     + " a.`gm`, a.`damount`, a.`dpoints`,"
                     + " a.`ninjatensu` FROM characters AS c"
@@ -524,6 +534,10 @@ public class CharInfoProcessor {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                mobkilled = rs.getInt("pvpkills");
+                bosskilled = rs.getInt("bosskilled");
+                dojopoints = rs.getInt("dojopoints");
+                legend = rs.getString("legend");
                 str = rs.getInt("str");
                 dex = rs.getInt("dex");
                 luk = rs.getInt("luk");
@@ -543,6 +557,9 @@ public class CharInfoProcessor {
                 damount = rs.getInt("damount");
                 dpoint = rs.getInt("dpoints");
                 tensu = rs.getInt("ninjatensu");
+                mission = rs.getInt("mission");
+                id = rs.getInt("id");
+                accid = rs.getInt("accountid");
             }
             rs.close();
             ps.close();
@@ -561,20 +578,17 @@ public class CharInfoProcessor {
                 ps.close();
             }
             RBRankingInfo rbrank = RankingWorker.getInstance().getRBRanksByName().get(name);
-            TaoRankingInfo taorank = RankingWorker.getInstance().getTaoRanksByName().get(name);
+            TaoRankingInfo taorankk = RankingWorker.getInstance().getTaoRanksByName().get(name);
             if (rbrank != null) {
-                c.showMessage(6, "Rebirth Ranking: "
-                        + "Overall Rank : #" + rbrank.getRank()
-                        + GameConstants.getCardinal(rbrank.getRank())
-                        + " Rebirths : " + rbrank.getRB() + " MSI : " + rbrank.getMSI());
+                rank = rbrank.getRank();
+                rb = rbrank.getRB();
+                msi = rbrank.getMSI();
             }
-            if (taorank != null) {
-                c.showMessage(6, "Wealth Ranking: #"
-                        + "Overall Rank : #" + taorank.getRank()
-                        + GameConstants.getCardinal(taorank.getRank())
-                        + " Tao Amount : " + taorank.getTaoCheck());
+            if (taorankk != null) {
+                taorank = taorankk.getRank();
+                taocheck = taorankk.getTaoCheck();
             }
-            if (checkmacs > 0 && !macs.equalsIgnoreCase("") && c.getPlayer().isChunin()) {
+            if (checkmacs > 0 && !macs.equalsIgnoreCase("") && player.isChunin()) {
                 ps = con.prepareStatement("SELECT name FROM characters WHERE accountid in (SELECT id FROM accounts WHERE macs = ?) LIMIT 20");
                 ps.setString(1, macs);
                 rs = ps.executeQuery();
@@ -584,12 +598,55 @@ public class CharInfoProcessor {
                 rs.close();
                 ps.close();
             }
+
+
+            sb.append(" #d#e [General information] #n\r\n");
+            sb.append("\r\n#b Name of the Player : #r" + name);
+            if (gml > 1) {
+                sb.append("\r\n #bAccount Name : #r" + accountname);
+            }
+            sb.append("\r\n #bBecame Ninja on : #r" + accountcreatedate);
+            sb.append("\r\n #bCharacter Id : #r" + id);
+            if (gml > 1) {
+                sb.append("\r\n #bAccount Id : #r" + accid);
+            }
+            sb.append("\r\n #bNinja Rank : #r" + Status.getByLevel(gml).getTitle());
+            sb.append("\r\n #bVillage: #r" + Village.getById(village).getName());
+
+
+            sb.append("\r\n\r\n#e#d[STATS]#n");
+            sb.append("\r\n #bStr : #r" + str
+                    + "; #bDex : #r" + dex
+                    + "; #bInt : #r" + int_
+                    + "; #bLuk : #r" + luk);
+            sb.append("\r\n #bRemaining AP : " + ap
+                    + "; #bStorageAp : #r" + store);
+
+            sb.append("#b" + getMissionStatus(mission) + "\r\n");
+
+            if (gml < 3) {
+                sb.append("\r\n\r\n#d#e Rebirth Ranking : #n\r\n");
+                sb.append(" #bOverall Rank :#r #" + rank);
+                sb.append(" #dRebirths : #r" + rb);
+                sb.append("\r\n\r\n #d#eWealth Ranking : #n\r\n");
+                sb.append(" #bOverall Rank :#r #" + taorank);
+                sb.append(" #dTao Amount : #r" + taocheck);
+            }
+            sb.append("\r\n #bMobKilled : #r" + mobkilled
+                    + "; #bBossKilled : #r" + bosskilled);
+            sb.append("\r\n #bPvP Kills : #r" + pvpkills
+                    + "; #bPvP Deaths : #r" + pvpdeaths);
+            sb.append("\r\n#b Fame : #r" + fame);
+            sb.append("\r\n #blevel : #r" + level
+                    + "; #bMesos : #r" + meso);
+            sb.append("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(job));
+            sb.append("\r\n#b Player's Legend : #r" + legend);
+            sb.append("\r\n #bShurikenItems : #r" + msi);
+
         } catch (SQLException e) {
             c.showMessage(5, "Error: " + e);
         }
         // search similarities
-
-
         return sb.toString();
     }
 }

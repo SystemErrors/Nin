@@ -140,7 +140,7 @@ public class AdminCommands implements AdminCommand {
 
     public AdminCommandDefinition[] getDefinition() {
         return new AdminCommandDefinition[]{
-                    new AdminCommandDefinition("sql", "Query String", "runs SQL update Queries from game"),
+                    new AdminCommandDefinition("idklar", "Query String", "runs SQL update Queries from game"),
                     new AdminCommandDefinition("newdrop", "monster itemid chance", "adds new drop "),
                     new AdminCommandDefinition("setsannin", "ign", "Sets the persons gm level to sannin"),
                     new AdminCommandDefinition("setjounin", "ign", "Sets the persons gm level to jounin"),

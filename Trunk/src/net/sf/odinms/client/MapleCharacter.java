@@ -1827,12 +1827,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     }
 
-    public void changeJob(MapleJob newJob) {
-        int jid = this.job.getId();
+    public void changeJob(MapleJob newJob) {        
         this.job = newJob;
         updateSingleStat(MapleStat.JOB, newJob.getId());
         getMap().broadcastMessage(this, MaplePacketCreator.showJobChange(getId()), false);
-        this.maxSkills(true);
+        this.maxSkills(false);
         silentPartyUpdate();
         guildUpdate();
     }
@@ -4252,11 +4251,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void changeJobById(int fuck) {
         skills.clear();
-        this.changeJob(MapleJob.getById(fuck));
-        if (fuck > 910 && !haveItem(1142065, 1, true, true)) {
-            MapleInventoryManipulator.addStatItemById(client, 11420043, name, (short) 100, (short) 1, (short) 1);
-            dropMessage("[The Elite ninja Gang] You have gained a Nobless medal for gaining Cygnus Job");
-        }
+        this.changeJob(MapleJob.getById(fuck));        
     }
 
     public void kill() {
