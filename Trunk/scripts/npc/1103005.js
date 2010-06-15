@@ -23,19 +23,30 @@ function action(mode, type, selection) {
             var text = " Hello #b#h #!#k I can help you see your stats";
             text += " or spy on some one else'.\r\n#r Choose what you";
             text += " want : #b \r\n #L1# See My Stats#l \r\n";
-            text += " #L2# Spy on some one";
+            text += " #L2# Spy on some one #l";
+            if(cm.getPlayer().isChunin()){
+                text += "#L3# Offline GM Spy #l";
+            }
             cm.sendSimple(text);
         } else if (status == 1){
-            if (selection == 2){
-                cm.sendGetText("Enter the name of the person you want to spy in the box : ");
-            } else {
+            if (selection == 1){
                 text =  CharInfoProcessor.getNPCNinjaGlare(cm.getPlayer());
                 cm.sendOk(text);
                 cm.dispose();
+            } else if (selection == 2){
+                cm.sendGetText("Enter the name of the person you want to spy in the box : ");
+            } else {
+                cm.sendGetText("Enter the name of the person you want to spy in the box : ");
+                status = 9;
             }
         } else if (status == 2){
             var name = cm.getText();
             text =  CharInfoProcessor.getNPCNinjaGlare(cm.getC(), name);
+            cm.sendOk(text);
+            cm.dispose();
+        } else if (status == 10) {
+             var namee = cm.getText();
+            text =  CharInfoProcessor.getCharInfoOffline(cm.getC(), namee);
             cm.sendOk(text);
             cm.dispose();
         } else {

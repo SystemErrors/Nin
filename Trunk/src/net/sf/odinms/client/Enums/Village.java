@@ -217,14 +217,14 @@ public enum Village {
         return itemss;
     }
 
-    public static boolean isOtherVillage(MapleCharacter player) {
+    public static boolean isOtherVillage(MapleCharacter player) {        
         int villageid = player.getVillage().getId();
         int mapid = player.getMapId();
         if ((villageid != 1) && mapid >= 240000000 && mapid < 250000000) {
             return true;
         } else if ((villageid != 2) && mapid >= 260000000 && mapid < 270000000) {
             return true;
-        } else if ((villageid != 3) && mapid >= 101000000 && mapid < 107000000) {
+        } else if ((villageid != 3) && ((mapid >= 101000000 && mapid < 103000000) || mapid == 106000000)) {
             return true;
         } else if ((villageid != 4) && mapid >= 200000000 && mapid < 210000000) {
             return true;
@@ -233,46 +233,5 @@ public enum Village {
         }
         return false;
     }
-
-    public static int getVillageMap(MapleCharacter player, String mob) {
-        mob = mob.toLowerCase();
-        int villageid = player.getVillage().getId();
-        /*case 1:
-        return " LEAF ";
-        case 2:
-        return " SAND ";
-        case 3:
-        return " ROCK ";
-        case 4:
-        return " CLOUD ";
-        case 5:
-        return " MIST ";*/
-        int x = 100000000;
-        int[] manomaps = {240010501, 260020401, 101040002, 200050001, 251010102};
-        int[] azuremaps = {240020400, 260010700, 101040000, 200010100, 251010400};
-        int[] scarletmaps = {240020000, 260010600, 106000000, 200060000, 251010401};
-        int[] hsalfmaps = {240010800, 260010400, 101040003, 200040001, 251010402};
-        int[] crowmaps = {240010100, 0, 102020200};
-        int[] skelemaps = {240040510, 0, 102010000};
-        int[] papmaps = {0, 0, 102020000};
-        int[] anegomaps = {0, 0, 102020100};
-        if (mob.equals("mano")) {
-            x = manomaps[villageid - 1];
-        } else if (mob.equals("azure")) {
-            x = azuremaps[villageid - 1];
-        } else if (mob.equals("hsalf")) {
-            x = hsalfmaps[villageid - 1];
-        } else if (mob.equals("scarlet")) {
-            x = scarletmaps[villageid - 1];
-        }else if (mob.equals("crow")) {
-            x = crowmaps[villageid - 1];
-        }else if (mob.equals("anego")) {
-            x = anegomaps[villageid - 1];
-        }else if (mob.equals("skele")) {
-            x = skelemaps[villageid - 1];
-        }else if (mob.equals("pap")) {
-            x = papmaps[villageid - 1];
-        }
-        return x;
-    }
+    
 }

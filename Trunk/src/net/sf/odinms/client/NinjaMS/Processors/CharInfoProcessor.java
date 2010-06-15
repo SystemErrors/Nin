@@ -516,15 +516,17 @@ public class CharInfoProcessor {
                     dojopoints = 0, jqfinished = 0, jqpoints = 0, rank = 0,
                     rb = 0, taorank = 0, taocheck = 0, msi = 0, mobkilled = 0,
                     bosskilled = 0, pvpkills = 0, pvpdeaths = 0, fame = 0,
-                    meso = 0, job = 0;
+                    meso = 0, job = 0, exprate = 0, mesorate = 0, droprate = 0,
+                    bossrate = 0;
             String previousnames = "", macs = "", accountcreatedate = "", 
-                    accountname = "", gm = "", legend = "";
+                    accountname = "", gm = "", legend = "", maccheck = "";
             int checkmacs = 0;
             String sql = "SELECT c.`str`, c.`dex`, c.`luk`, c.`int`,"
                     + " c.`ap`, c.`storageap`, c.`rasengan`, c.`previousnames`,"
                     + " c.`mission`, c.`id`, c.`accountid`, c.`legend`, c.`pvpkills`,"
                     + " c.`pvpdeaths`, c.`fame`, c.`dojopoints`, c.`bqpoints`, c.`meso`,"
-                    + " c.job,"
+                    + " c.`job`, c.`exprate`, c.`mesorate`, c.`droprate`, c.`bossrate`,"
+                    + " c.bosskilled, c.mobkilled, "
                     + " a.`macs`, a.`name`, a.createdat,"
                     + " a.`gm`, a.`damount`, a.`dpoints`,"
                     + " a.`ninjatensu` FROM characters AS c"
@@ -534,7 +536,7 @@ public class CharInfoProcessor {
             ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                mobkilled = rs.getInt("pvpkills");
+                mobkilled = rs.getInt("mobkilled");
                 bosskilled = rs.getInt("bosskilled");
                 dojopoints = rs.getInt("dojopoints");
                 legend = rs.getString("legend");
@@ -560,6 +562,10 @@ public class CharInfoProcessor {
                 mission = rs.getInt("mission");
                 id = rs.getInt("id");
                 accid = rs.getInt("accountid");
+                exprate = rs.getInt("exprate");
+                mesorate = rs.getInt("mesorate");
+                droprate = rs.getInt("droprate");
+                bossrate = rs.getInt("bossrate");
             }
             rs.close();
             ps.close();
@@ -592,8 +598,10 @@ public class CharInfoProcessor {
                 ps = con.prepareStatement("SELECT name FROM characters WHERE accountid in (SELECT id FROM accounts WHERE macs = ?) LIMIT 20");
                 ps.setString(1, macs);
                 rs = ps.executeQuery();
+                maccheck += "This player has a MAC same to another user(s). The IGNs are : ";
                 while (rs.next()) {
-                    c.showMessage(5, "This player has a MAC same to another user(s). The IGN is: " + rs.getString(1));
+                    maccheck += rs.getString(1);
+                    maccheck += ", ";
                 }
                 rs.close();
                 ps.close();
@@ -612,8 +620,6 @@ public class CharInfoProcessor {
             }
             sb.append("\r\n #bNinja Rank : #r" + Status.getByLevel(gml).getTitle());
             sb.append("\r\n #bVillage: #r" + Village.getById(village).getName());
-
-
             sb.append("\r\n\r\n#e#d[STATS]#n");
             sb.append("\r\n #bStr : #r" + str
                     + "; #bDex : #r" + dex
@@ -621,9 +627,7 @@ public class CharInfoProcessor {
                     + "; #bLuk : #r" + luk);
             sb.append("\r\n #bRemaining AP : " + ap
                     + "; #bStorageAp : #r" + store);
-
             sb.append("#b" + getMissionStatus(mission) + "\r\n");
-
             if (gml < 3) {
                 sb.append("\r\n\r\n#d#e Rebirth Ranking : #n\r\n");
                 sb.append(" #bOverall Rank :#r #" + rank);
@@ -643,10 +647,31 @@ public class CharInfoProcessor {
             sb.append("\r\n#b Player's Legend : #r" + legend);
             sb.append("\r\n #bShurikenItems : #r" + msi);
 
+            if (previousnames != null) {
+                if (previousnames.length() > 4) {
+                    sb.append("\r\n #d" + name + " has also been known as..." + previousnames);
+                }
+            }
+
+            sb.append("\r\n #bNinjaTensu : #r" + tensu
+                    + "\r\n #bDojoPoints : #r" + dojopoints
+                    + "\r\n #bBQPoints : #r" + bqpoints
+                    + "\r\n #bJQFinished : #r" + jqfinished
+                    + "; #bJQPoints : #r" + jqpoints);
+            sb.append("\r\n\r\n#d#e[Rates]#n");
+            sb.append("\r\n #bExprate : #r" + exprate
+                    + "#b ; Mesorate : #r" + mesorate
+                    + "#b\r\n Droprate : #r" + droprate
+                    + "#b ; Boss Droprate : #r" + bossrate);
+            sb.append("\r\n\r\n #bRasengan Quest Level : #r" + rasengan);
+            sb.append("\r\n#b Donated Amount : #r" + damount + "#b Dpoints : #r" + dpoint);
+            sb.append("\r\n\r\n" + maccheck);
         } catch (SQLException e) {
             c.showMessage(5, "Error: " + e);
         }
         // search similarities
         return sb.toString();
     }
+
+     
 }

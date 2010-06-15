@@ -4834,7 +4834,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 i = (int) Math.floor(Math.random() * rareness.length);
                 MapleInventoryManipulator.addById(getClient(), rareness[i], (short) 1);
                 int fucks = chance + chance1 + chance2;
-                showMessage("You have gained " + fucks + " attack post of each kind");
+                showMessage("You have gained " + fucks + " attack pots of each kind");
                 MapleInventoryManipulator.addById(getClient(), 2022245, (short) fucks);
                 MapleInventoryManipulator.addById(getClient(), 2022179, (short) fucks);
                 MapleInventoryManipulator.addById(getClient(), 2022282, (short) fucks);
@@ -4955,6 +4955,13 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         long expiry = minutes * 60 * 1000;
         MapleInventoryManipulator.addById(client, itemid, (short) 1, "", expiry);
         client.getSession().write(MaplePacketCreator.getShowItemGain(itemid, (short) 1, true));
+    }
+
+
+    public void gainStatItem(int id, short stat, short wa, short ma) {
+        MapleInventoryManipulator.addStatItemById(client, id, name, stat, wa, ma);
+        client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
+        dropMessage("You have gained a stat Item. Itemid : " + id + " Stats : " + stat + "WA : " + wa + " MA : " + ma);
     }
 
     public void gainItem(int id, int quantity) {

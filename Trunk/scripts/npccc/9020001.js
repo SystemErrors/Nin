@@ -304,7 +304,7 @@ function rectanglestages (cm) {
                         if (correctCombo) {
                             clear(curMap, eim, cm);
                             var exp = (Math.pow(2, curMap) * 50);
-                            cm.levelPartyToMax(party);
+                            //cm.levelPartyToMax(party);
                             cm.dispose();
                         } else { // Wrong
                             failstage(eim, cm);

@@ -264,7 +264,7 @@ public class AbstractPlayerInteraction {
         boolean x = true;
         for (MaplePartyCharacter chr : party) {
             MapleCharacter other = ChannelServer.getInstance(c.getChannel()).getPlayerStorage().getCharacterByName(chr.getName());
-            if (other.getGMSMode() != mode) {
+            if (other.getGMSMode() != mode && !other.isJounin()) {
                 x = false;
             }
         }
@@ -275,7 +275,7 @@ public class AbstractPlayerInteraction {
         String mnq = "";
         for (MaplePartyCharacter chr : party) {
             MapleCharacter other = ChannelServer.getInstance(c.getChannel()).getPlayerStorage().getCharacterByName(chr.getName());
-            if (other.getGMSMode() != mode) {
+            if (other.getGMSMode() != mode && !other.isJounin()) {
                 mnq += " || " + chr.getName() + " || ";
             }
         }

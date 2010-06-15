@@ -1,30 +1,53 @@
-May 19, 2010 8:28:11 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by HealOvertimeHandler (11) 58 00 00 14 00 00 3C 00 00 00 00
-X.....<....
-May 19, 2010 8:28:14 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 01
-».d...ÿ.
-May 19, 2010 8:28:14 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by GeneralChatHandler (14) 30 00 09 00 21 6A 6F 62 20 31 34 31 31 00
-0...!job 1411.
-May 19, 2010 8:28:14 AM net.sf.odinms.server.MapleInventoryManipulator checkSpace
-SEVERE: SUCK ERROR - FIX ME! - 0 slotMax
-May 19, 2010 8:28:15 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePlayerHandler (62) 28 00 01 7D FC CA A0 8A FF E5 01 04 00 8A FF E5 01 00 00 00 00 22 00 04 E0 01 0A 01 0A 01 00 8A FF E5 01 00 00 00 00 22 00 04 1E 00 11 00 00 00 00 00 00 00 00 00 8A FF E5 01 8A FF E5 01
-(..}üÊ ÿå...ÿå....."..à......ÿå....."..............ÿå.ÿå.
-May 19, 2010 8:28:15 AM net.sf.odinms.net.MapleServerHandler messageReceived
+Jun 13, 2010 2:18:52 PM net.sf.odinms.net.MapleServerHandler messageReceived
 INFO: Got Message Sunnyhandled by HealOvertimeHandler (11) 58 00 00 14 00 00 00 00 03 00 00
 X..........
-May 19, 2010 8:28:15 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePlayerHandler (454) 28 00 01 7D FC CA A0 8A FF E5 01 C8 00 8A FF E5 01 00 00 00 00 22 00 04 2C 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 00 8A FF E5 01 00 00 00 00 22 00 04 D2 00 11 00 00 00 00 00 00 00 00 00 8A FF E5 01 8A FF E5 01
-(..}üÊ ÿå.È.ÿå....."..,..............................................................................................................................................................................................................................................................................................................................................................................................................ÿå....."..Ò...........ÿå.ÿå.
-May 19, 2010 8:28:15 AM net.sf.odinms.net.channel.handler.AbstractMovementPacketHandler parseMovement
-WARNING: numCommands (-56) does not match the number of deserialized movement commands (0)
-May 19, 2010 8:28:16 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got Message Sunnyhandled by MovePlayerHandler (996) 28 00 01 7D FC CA A0 8A FF E5 01 D1 00 8A FF E5 01 00 00 00 00 22 00 04 78 00 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 00 8A FF E5 01 00 00 00 00 22 00 04 68 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 0A 01 00 8A FF E5 01 00 00 00 00 22 00 04 1E 00 11 00 00 00 00 00 00 00 00 00 8A FF E5 01 8A FF E5 01
-(..}üÊ ÿå.Ñ.ÿå....."..x..................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................ÿå....."..h..............................................................................................................................................................................................................................................................................................................................................................................................................ÿå....."..............ÿå.ÿå.
-May 19, 2010 8:28:16 AM net.sf.odinms.net.channel.handler.AbstractMovementPacketHandler parseMovement
-WARNING: numCommands (-47) does not match the number of deserialized movement commands (0)
-May 19, 2010 8:28:18 AM net.sf.odinms.net.MapleServerHandler messageReceived
-INFO: Got unhandeled Message from System  (2) D5 00
-Õ.
+Jun 13, 2010 2:18:56 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 03 00
+».d.....
+Jun 13, 2010 2:18:56 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCTalkHandler (10) 39 00 64 00 00 00 EA FC 2D FF
+9.d...êü-ÿ
+Jun 13, 2010 2:18:56 PM net.sf.odinms.scripting.npc.NPCScriptManager start
+SEVERE: Error executing NPC script.
+java.lang.reflect.UndeclaredThrowableException
+	at $Proxy4.start(Unknown Source)
+	at net.sf.odinms.scripting.npc.NPCScriptManager.start(NPCScriptManager.java:75)
+	at net.sf.odinms.scripting.npc.NPCScriptManager.start(NPCScriptManager.java:47)
+	at net.sf.odinms.net.channel.handler.NPCTalkHandler.handlePacket(NPCTalkHandler.java:56)
+	at net.sf.odinms.net.MapleServerHandler.messageReceived(MapleServerHandler.java:153)
+	at org.apache.mina.common.support.AbstractIoFilterChain$TailFilter.messageReceived(AbstractIoFilterChain.java:570)
+	at org.apache.mina.common.support.AbstractIoFilterChain.callNextMessageReceived(AbstractIoFilterChain.java:299)
+	at org.apache.mina.common.support.AbstractIoFilterChain.access$1100(AbstractIoFilterChain.java:53)
+	at org.apache.mina.common.support.AbstractIoFilterChain$EntryImpl$1.messageReceived(AbstractIoFilterChain.java:648)
+	at org.apache.mina.filter.codec.support.SimpleProtocolDecoderOutput.flush(SimpleProtocolDecoderOutput.java:58)
+	at org.apache.mina.filter.codec.ProtocolCodecFilter.messageReceived(ProtocolCodecFilter.java:180)
+	at org.apache.mina.common.support.AbstractIoFilterChain.callNextMessageReceived(AbstractIoFilterChain.java:299)
+	at org.apache.mina.common.support.AbstractIoFilterChain.access$1100(AbstractIoFilterChain.java:53)
+	at org.apache.mina.common.support.AbstractIoFilterChain$EntryImpl$1.messageReceived(AbstractIoFilterChain.java:648)
+	at org.apache.mina.filter.executor.ExecutorFilter.processEvent(ExecutorFilter.java:220)
+	at org.apache.mina.filter.executor.ExecutorFilter$ProcessEventsRunnable.run(ExecutorFilter.java:264)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)
+	at org.apache.mina.util.NamePreservingRunnable.run(NamePreservingRunnable.java:51)
+	at java.lang.Thread.run(Thread.java:619)
+Caused by: java.security.PrivilegedActionException: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: TypeError: Cannot call method "getMembers" of null (<Unknown source>#49) in <Unknown source> at line number 49
+	at java.security.AccessController.doPrivileged(Native Method)
+	at com.sun.script.util.InterfaceImplementor$InterfaceImplementorInvocationHandler.invoke(InterfaceImplementor.java:49)
+	... 20 more
+Caused by: javax.script.ScriptException: sun.org.mozilla.javascript.internal.EcmaError: TypeError: Cannot call method "getMembers" of null (<Unknown source>#49) in <Unknown source> at line number 49
+	at com.sun.script.javascript.RhinoScriptEngine.invoke(RhinoScriptEngine.java:184)
+	at com.sun.script.javascript.RhinoScriptEngine.invokeFunction(RhinoScriptEngine.java:142)
+	at com.sun.script.util.InterfaceImplementor$InterfaceImplementorInvocationHandler$1.run(InterfaceImplementor.java:52)
+	... 22 more
+Jun 13, 2010 2:19:00 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCMoreTalkHandler (4) 3B 00 00 01
+;...
+Jun 13, 2010 2:19:01 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 FF 00
+».d...ÿ.
+Jun 13, 2010 2:19:02 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by HealOvertimeHandler (11) 58 00 00 14 00 00 00 00 03 00 00
+X..........
+Jun 13, 2010 2:19:07 PM net.sf.odinms.net.MapleServerHandler messageReceived
+INFO: Got Message Sunnyhandled by NPCAnimation (8) BB 00 64 00 00 00 04 01
+».d.....
