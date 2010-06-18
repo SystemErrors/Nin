@@ -61,6 +61,15 @@ public class MainIRC extends PircBot {
         sendMessage(sourceNick, "Stop fingering me bish");
     }
 
+    @Override
+    protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+        if(isStaff(sender)){
+            sendIrcMessage(message);
+        } else {
+            sendIrcMessage("Please don't dsturb me");
+        }
+    }
+
     public User getUser(String sender) {
         User[] onlineusers = getUsers(channel2);
         User senderObj = null;

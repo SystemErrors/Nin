@@ -1756,7 +1756,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     public void addFame(int famechange) {
         this.fame += famechange;
         if (fame > 1337 && !haveItem(1142003, 1, true, true)) {
-            MapleInventoryManipulator.addStatItemById(client, 1142043, name, (short) 1337, (short) 50, (short) 50);
+            MapleInventoryManipulator.addStatItemById(client, 1142003, name, (short) 1337, (short) 50, (short) 50);
             dropMessage("[The Elite ninja Gang] You have gained a Celebrity for reaching 1337 Fame");
         } else if (fame > 13337 && !haveItem(1142006, 1, true, true)) {
             MapleInventoryManipulator.addStatItemById(client, 1142006, name, (short) 13337, (short) 100, (short) 100);
@@ -1834,6 +1834,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         this.maxSkills(false);
         silentPartyUpdate();
         guildUpdate();
+        if (newJob.isA(MapleJob.NOBLESSE)&& !haveItem(1142065, 1, true, true)) {
+                MapleInventoryManipulator.addStatItemById(client, 1142065, name, (short) 69, (short) 1, (short) 1);
+                showMessage(1, "Congratulations on acheiving noblesse Medal!");
+            }
     }
 
     public void gainAp(int ap) {
@@ -3114,7 +3118,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void increaseGuildCapacity() {
-        if (this.haveSight(MapleGuild.CREATE_GUILD_COST)) {
+        if (!this.haveSight(MapleGuild.CREATE_GUILD_COST)) {
             client.getSession().write(MaplePacketCreator.serverNotice(1, "You do not have enough Tao Of Sight."));
             return;
         }
@@ -3128,7 +3132,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             log.error("Error while increasing capacity.", e);
             return;
         }
-        this.gainItem(Items.currencyType.Sight, MapleGuild.CREATE_GUILD_COST);
+        this.gainItem(Items.currencyType.Sight, -MapleGuild.CREATE_GUILD_COST);
     }
 
     public void saveGuildStatus() {
@@ -4960,7 +4964,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void gainStatItem(int id, short stat, short wa, short ma) {
         MapleInventoryManipulator.addStatItemById(client, id, name, stat, wa, ma);
-        client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
+       // client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
         dropMessage("You have gained a stat Item. Itemid : " + id + " Stats : " + stat + "WA : " + wa + " MA : " + ma);
     }
 
@@ -5716,7 +5720,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         int[] belts = {1132000, 1132001, 1132002, 1132003, 1132004};
         int[] stats = {250, 500, 1337, 3337, 13337};
         for (int i = 0; i < beltpoints.length; i++) {
-            if (beltpoints[i] < oldpts && dojoPoints >= beltpoints[i] && !haveItem(belts[i], 1)) {
+            if (beltpoints[i] < oldpts && dojoPoints >= beltpoints[i] && !haveItem(belts[i], 1, true, true)) {
                 MapleInventoryManipulator.addStatItemById(client, belts[i], name, (short) stats[i], (short) 1, (short) 1);
                 showMessage(1, "Congratulations on acheiving a belt!");
             }

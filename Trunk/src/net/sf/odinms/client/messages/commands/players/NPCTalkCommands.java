@@ -13,6 +13,8 @@ public class NPCTalkCommands implements PlayerCommand {
         splitted[0] = splitted[0].toLowerCase();
         if (splitted[0].equalsIgnoreCase("ninjaglare")) {
             NPCScriptManager.getInstance().start(c, 1103005);
+        } else if (splitted[0].equalsIgnoreCase("scroll")) {
+            NPCScriptManager.getInstance().start(c, 2022002);
         } else if (splitted[0].equalsIgnoreCase("shop")) {
             NPCScriptManager.getInstance().start(c, 1032002);
         } else if (splitted[0].equalsIgnoreCase("guide")) {
@@ -29,9 +31,11 @@ public class NPCTalkCommands implements PlayerCommand {
     public PlayerCommandDefinition[] getDefinition() {
         return new PlayerCommandDefinition[]{
                     new PlayerCommandDefinition("ninjaglare", "<ign>", "Shows Stats of the person"),
-                    //new PlayerCommandDefinition("clan", "", "opens NPC MIA the clan manager of NinjaMS"),
+                    new PlayerCommandDefinition("scroll", "", "opens Scroll shop of NinjaMS"),
                     new PlayerCommandDefinition("shop", "", "Opens the All in one shop NPC"),
                     new PlayerCommandDefinition("guide", "", "opens guide NPC"),
-                    new PlayerCommandDefinition("dispose", "", "Use this if the NPCs wont talk to you"),};
+                    new PlayerCommandDefinition("dispose", "", "Use this if the NPCs wont talk to you"),
+
+        };
     }
 }

@@ -5,7 +5,7 @@ var selected = 0;
 var checknumber = 0;
 
 var arrayofitems = new Array(1132000, 1132001, 1132002, 1132003, 1132004);
-var beltpoints = Array(2000, 18000, 40000, 92000, 170000);
+var beltpoints = Array(1000, 8000, 25000, 60000, 120000);
 
 function start() {
     status = -1;
@@ -37,16 +37,16 @@ function action(mode, type, selection) {
                     + "#L2#I want to receive a belt#l\r\n"
                     + "#L3#How many Dojo Points to I have?#l\r\n"
                     + "#L4#What is the Mu Lung Dojo?#l\r\n"
-					+ "#L5#I want to go home#l\r\n\r\n");
+                    + "#L5#I want to go home#l\r\n\r\n");
             } else {
                 if (status == 1) {
                     selected = selection;
                 }
                 if (selected == 0) {
-					if(cm.getPlayer().getGMSMode() < 1){
-						cm.sendOk("Please turn on GMS Mode");
-						cm.dispose();
-					} else if (cm.getPlayer().getDojoStage() > 0) {
+                    if(cm.getPlayer().getGMSMode() < 1){
+                        cm.sendOk("Please turn on GMS Mode");
+                        cm.dispose();
+                    } else if (cm.getPlayer().getDojoStage() > 0) {
                         if (status == 1) {
                             cm.sendYesNo("#eThe last time you took the challenge by yourself, you went up to level " + (cm.getPlayer().getDojoStage() / 100 % 100) + "#n.\r\n\r\n#bI can take you there right now. Do you want to go there?#k\r\n\r\n#e#rNote:#k#n Clicking 'No' will make you restart from the beginning.");
                         } else {
@@ -63,14 +63,15 @@ function action(mode, type, selection) {
                     if (status == 1) {
                         cm.sendYesNo("So, #b#h ##k, are you #band your party#k ready to embark the Dojo and #rface a horrible, twisted death#k?");
                     } else {
-                        var party = cm.getParty().getMembers();						
-						if(!cm.checkPartyGMSMode(5, party)){
-							cm.sendOk("Please get "+membersNotQualified(5, party)+" to turn on GMS Mode 5");
-							cm.dispose();
-						}  else if (party == null || party.getLeader().getId() != cm.getPlayer().getId()) {
+                        var party = cm.getParty();
+                        var ptymem = party.getMembers();
+                        if(!cm.checkPartyGMSMode(5, ptymem)){
+                            cm.sendOk("Please get "+membersNotQualified(5, ptymem)+" to turn on GMS Mode 5");
+                            cm.dispose();
+                        } else if (party == null || party.getLeader().getId() != cm.getPlayer().getId()) {
                             cm.sendNext("Where do you think you're going? #eYou're not even the party leader#n! Go tell your party leader to talk to me.");
                             cm.dispose();
-                        } else if (party.getMembers().size() == 1) {
+                        } else if (ptymem.size() == 1) {
                             cm.dispose();
                             cm.sendNext("You're going to take on the challenge as a one-man party?");
                         } else {
@@ -87,7 +88,7 @@ function action(mode, type, selection) {
                             var selStr = "#eHere are the belts of #rMu Lung Dojo#k!#n";
                             for (var i = 0; i < arrayofitems.length; i++) {
                                 selStr += "\r\n\r\n#v" + arrayofitems[i] + "# - #b#t" + arrayofitems[i] + "##k #e(" + beltpoints[i] + " Dojo Points)";
-								selStr += "They all have Stats added to them :p";
+                                selStr += "They all have Stats added to them :p";
                             }
                             cm.sendOk(selStr);
                         } else {

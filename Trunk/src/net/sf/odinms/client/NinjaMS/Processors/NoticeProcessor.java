@@ -195,6 +195,7 @@ public class NoticeProcessor {
         MaplePacket packet = MaplePacketCreator.sendYellowTip(msg);
         try {
             ChannelServer.getInstance(1).getWorldInterface().broadcastMessage(null, packet.getBytes());
+             MainIRC.getInstance().sendIrcMessage(Colors.BOLD + "#Yellow : " + Colors.RED + msg);
         } catch (RemoteException ex) {
             Logger.getLogger(NoticeProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -35,7 +35,7 @@ class IRCOpCommands {
     static void execute(String sender, String[] splitted, String channel) {
         String command = splitted[0];
         if (command.equalsIgnoreCase("commands")) {
-            ircMsg(channel, sender +"You should bang a wall and get Raped by AJ");
+            ircMsg(channel, sender + "You should bang a wall and get Raped by AJ");
         } else if (command.equalsIgnoreCase("gameban")) {
             if (splitted.length < 3) {
                 ircMsg(channel, "You should be sacked for not knowing the ban command syntax");
@@ -58,7 +58,7 @@ class IRCOpCommands {
                     String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
                     reason += " (IP: " + ip + ")";
                     target.ban(reason);
-                    ircMsg(sender + " Banned " + readableTargetName + " ipban for " + ip + " reason: " + originalReason);
+                    ircMsg(sender + " IP Banned " + readableTargetName + " for " + ip + " reason: " + originalReason);
                 } else {
                     if (MapleCharacter.ban(splitted[1], reason, false)) {
                         ircMsg(channel, sender + " Offline Banned " + splitted[1]);
@@ -87,6 +87,26 @@ class IRCOpCommands {
             } else {
                 ircGlobalMsg(splitted[1] + "'Is not Online or does not exist.");
             }
+        } else if (command.equalsIgnoreCase("torture")) {
+            MapleCharacter target = null;
+            try {
+                WorldLocation loc = ChannelServer.getInstance(1).getWorldInterface().getLocation(splitted[1]);
+                if (loc != null) {
+                    target = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
+                } else {
+                    ircMsg(channel, splitted[1] + "'Is not Online or does not exist.");
+                    return;
+                }
+            } catch (RemoteException ex) {
+                ircMsg(channel, splitted[1] + "'Is not Online or does not exist.");
+                return;
+            }
+            if (target != null) {
+                target.torture();
+                ircGlobalMsg(sender + " has tortured " + splitted[1]);
+            } else {
+                ircGlobalMsg(splitted[1] + "'Is not Online or does not exist.");
+            }
         } else if (command.equalsIgnoreCase("shutdownworld")) {
             for (ChannelServer cserv : ChannelServer.getAllInstances()) {
                 cserv.broadcastPacket(MaplePacketCreator.serverNotice(1, "The Server is Shutting Down For a Reboot in 5 minutes. Please log off safely."));
@@ -96,12 +116,14 @@ class IRCOpCommands {
             ircGlobalMsg("The Game Server is Shutting Down For a Reboot in 2 minutes.");
         } else if (command.equalsIgnoreCase("notice")) {
             NoticeProcessor.sendBlueNoticeWithNotice(StringUtil.joinStringFrom(splitted, 1));
-           // ircMsg(channel, "Your notice has been broadcasted in game");
-        } else if (command.equalsIgnoreCase("rpg")){
-            RPG.getInstance().sendMessage("#ninjas","OMG WTF BBQ");
-        } else if (command.equalsIgnoreCase("nick")){
+            // ircMsg(channel, "Your notice has been broadcasted in game");
+        } else if (command.equalsIgnoreCase("say")) {
+            NoticeProcessor.sendYellowNotice("[" + sender + "] " + StringUtil.joinStringFrom(splitted, 1));
+        } else if (command.equalsIgnoreCase("rpg")) {
+            RPG.getInstance().sendMessage("#ninjas", "OMG WTF BBQ");
+        } else if (command.equalsIgnoreCase("nick")) {
             MainIRC.getInstance().changeNick(splitted[1]);
-        } else if (command.equalsIgnoreCase("login")){
+        } else if (command.equalsIgnoreCase("login")) {
             MainIRC.getInstance().changeLogin(splitted[1]);
         } else {
             processSpecial(sender, splitted, channel);
@@ -111,9 +133,11 @@ class IRCOpCommands {
     private static void ircMsg(String message) {
         MainIRC.getInstance().sendIrcMessage(message);
     }
-private static void ircGlobalMsg(String message) {
+
+    private static void ircGlobalMsg(String message) {
         MainIRC.getInstance().sendGlobalMessage(message);
     }
+
     private static void ircMsg(String target, String message) {
         MainIRC.getInstance().sendMessage(target, message);
     }

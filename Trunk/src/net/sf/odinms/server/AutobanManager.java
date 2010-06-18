@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import net.sf.odinms.client.MapleClient;
+import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
 import net.sf.odinms.tools.MaplePacketCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,10 +114,11 @@ public class AutobanManager implements Runnable {
 				c.getPlayer().ban(banReason.toString());
 				try {
 					c.getChannelServer().getWorldInterface().broadcastMessage(null, 
-						MaplePacketCreator.serverNotice(0, "[Autoban] " + name + " banned by the system (Last reason: " + reason + ")").getBytes());
+						MaplePacketCreator.serverNotice(0, "[Autoban] " + name + " banned by the system (Reason: " + reason + ")").getBytes());
 				} catch (RemoteException e) {
 					c.getChannelServer().reconnectWorld();
 				}
+                                MainIRC.getInstance().sendGlobalMessage("[Autoban] " + name + " banned by the system (Reason: " + reason + ")");
 				log.warn("[h4x] Autobanned player {} (accountid {})", name, acc);
 			}
 			return;

@@ -62,6 +62,8 @@ class IRCCommands {
                 for (String id : ids) {
                     ircMsg(sender, id);
                 }
+            } else {
+                ircMsg(sender, "No such item");
             }
         } else if (command.equalsIgnoreCase("mapid")) {
             List<String> ids = SearchProcessor.getMapId(StringUtil.joinStringFrom(splitted, 1));
@@ -69,6 +71,8 @@ class IRCCommands {
                 for (String id : ids) {
                     ircMsg(sender, id);
                 }
+            } else {
+                ircMsg(sender, "No such Map");
             }
         } else if (command.equalsIgnoreCase("mobid")) {
             List<String> ids = SearchProcessor.getMobId(StringUtil.joinStringFrom(splitted, 1));
@@ -76,6 +80,8 @@ class IRCCommands {
                 for (String id : ids) {
                     ircMsg(sender, id);
                 }
+            } else {
+                ircMsg(sender, "No such Monster");
             }
         } else if (command.equalsIgnoreCase("npcid")) {
             List<String> ids = SearchProcessor.getNPCId(StringUtil.joinStringFrom(splitted, 1));
@@ -83,6 +89,8 @@ class IRCCommands {
                 for (String id : ids) {
                     ircMsg(sender, id);
                 }
+            } else {
+                ircMsg(sender, "No such NPC");
             }
         } else if (command.equalsIgnoreCase("whodrops")) {
             int itemid = Integer.parseInt(splitted[1]);
@@ -92,6 +100,8 @@ class IRCCommands {
                 for (String id : ret) {
                     ircMsg(sender, id);
                 }
+            } else {
+                ircMsg(" No mob drops the specified item or you entered wrong itemid");
             }
         } else if (command.equalsIgnoreCase("roulette")) {
             double lol = Math.random() * 100;

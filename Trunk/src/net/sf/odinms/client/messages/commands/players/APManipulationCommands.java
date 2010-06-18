@@ -226,6 +226,12 @@ public class APManipulationCommands implements PlayerCommand {
             c.getPlayer().autoAp((byte)0);
             mc.dropMessage("You have turned off Auto Ap");
         } else if (splitted[0].equalsIgnoreCase("restoreap")){
+            int store = player.getStorageAp();
+            if(splitted.length < 2){
+                player.dropMessage("Syntax: @restoreap <amount> Example: @restoreap 1337.");
+                player.dropMessage("You have " + store + " ap in your storage");
+                return;
+            }
             if(player.getGMSMode() > 0){
                 player.dropMessage("[KrystleCruz]You cannot claim your AP when you are in GMS mode");
                 return;
@@ -235,7 +241,7 @@ public class APManipulationCommands implements PlayerCommand {
                 amount = Short.parseShort(splitted[1]);
             } catch (NumberFormatException numberFormatException) {
             }
-            if(amount <= player.getStorageAp()) {
+            if(amount <= store) {
                 claimAp(player, amount);
                 mc.dropMessage("You have retreived "+amount+" Ap from your storage");
             } else {

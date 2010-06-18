@@ -470,4 +470,8 @@ public class AbstractPlayerInteraction {
     public void dropMessage(int type, String message) {
         getPlayer().dropMessage(type, message);
     }
+
+    public void giveRebirth(int amount){
+        Rebirths.giveRebirth(p(), amount);
+    }
 }

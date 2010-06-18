@@ -15,8 +15,9 @@ function start() {
     action(1, 0, 0);
 }
 function action(mode, type, selection) {
-    if (mode == 1)        status++;
-    else {
+    if (mode == 1){
+        status++;
+    } else {
         cm.dispose();
         return;
     }
@@ -28,7 +29,7 @@ function action(mode, type, selection) {
         //sel1 += "\r\n #L3#Gacha Ticket Shop #r - (1 tao and 1 snail shell each) #l#b ";
         sel1 += "\r\n #L4#Chair Shop #r - (1 tao each) #l#b ";
         sel1 += "\r\n #L5#Some Special Weapons Shop #r - (5 Tao Each) #l";
-        sel1 += "\r\n\r\n\r\n";
+        sel1 += "\r\n\r\n";
         cm.sendSimple(sel1);
     } else if (status == 1) {
         var sel2= " ";
@@ -54,8 +55,8 @@ function action(mode, type, selection) {
                 sel2 += "#b #L"+i+"##t" +chairs[i]+ "# - #r 1 tao each#l\r\n";
             cm.sendSimple(sel2);
             status = 34;
-        } else {
-            cm.sendOk("Under Construction. Please be patient");
+        } else if (selection == 5){
+            cm.sendOk("Some thing is terribly Wrong. Please SS this and report in the Forums");
             cm.dispose();
         }
     } else if (status == 10) {

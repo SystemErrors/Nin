@@ -21,7 +21,7 @@ import net.sf.odinms.tools.MaplePacketCreator;
 public class MaxStatCommands implements PlayerCommand {
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception, IllegalCommandSyntaxException {
-        mc.dropMessage("Talk to NPC Angy in Henesys to get MSI");
+        mc.dropMessage("[Anbu] Talk to NPC Hokage in Henesys to get MSI");
     }
 
 

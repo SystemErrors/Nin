@@ -1,72 +1,1 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-var setupTask;
-
-function init() {
-    scheduleNew();
-}
-
-function scheduleNew() {
-    var cal = java.util.Calendar.getInstance();
-    cal.set(java.util.Calendar.HOUR, 0);
-    cal.set(java.util.Calendar.MINUTE, 0);
-    cal.set(java.util.Calendar.SECOND, 0);
-    var nextTime = cal.getTimeInMillis();
-    while (nextTime <= java.lang.System.currentTimeMillis())
-        nextTime += 300 * 1000;
-    setupTask = em.scheduleAtTimestamp("start", nextTime);
-}
-
-function cancelSchedule() {
-    setupTask.cancel(true);
-}
-
-function start() {
-    scheduleNew();
-    var Message = new Array("Please refrain from using foul language in this game.", 
-	"Verbal and other forms of abuse will NOT be tolerated. Abusers will be blocked from the game.", 
-	"FM rooms are a great place to train for beginners, go ahead and take a look!",
-"Taos are the new currency of NinjaMS, buy a tao today for 2bil mesos with @buytao.",
-"If you need any help, do not hesitate to smega your questions. We are here to help.",
-"Many features of regular GMS are open, such as dojo, KPQ, and OPQ and LPQ.",
-"To rebirth type @rebirth, but you may need some requirements before you do.",
-"To try to get a max stat item, type @shuriken.",
-"If you want to contribute to the server, donations are always appreciated.",
-"Want to compare yourself to the greatest ninjas? @ninjatop10.",
-"To get item vac, you need all four pet equips along with magic scales.",
-"Kelly Rox Lar",
-"Sunny Sucks lar",
-"You can deny it but you are gay",
-"You will be banned",
-"You are a noob ninja",
-"You did not see this",
-"Thanks to Danner / Danny for Odinteh",
-"Thanks to Odin Team for our awesome source",
-"Thanks to Oliver for many non-negligible stuff ",
-"Welcome to GMS like Server ./end Sarcasm",
-"Type @guide to know more about our Game",
-"You wasted 5.39898989898 seconds by reading this",
-"To get Rasengan (GM roar), talk to Joko in Henesys.",
-"Give a man a fish and he will eat for a day. Teach him how to fish, and he will sit in a boat and drink beer all day",
-"Take my advice. I don't use it anyway");
-    em.getChannelServer().yellowWorldMessage("[NinjaTip] " + Message[Math.floor(Math.random() * Message.length)]);
-}
+/*	This file is part of the OdinMS Maple Story Server    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>		       Matthias Butz <matze@odinms.de>		       Jan Christian Meyer <vimes@odinms.de>    This program is free software: you can redistribute it and/or modify    it under the terms of the GNU Affero General Public License as    published by the Free Software Foundation version 3 as published by    the Free Software Foundation. You may not use, modify or distribute    this program under any other version of the GNU Affero General Public    License.    This program is distributed in the hope that it will be useful,    but WITHOUT ANY WARRANTY; without even the implied warranty of    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the    GNU Affero General Public License for more details.    You should have received a copy of the GNU Affero General Public License    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/var setupTask;function init() {    scheduleNew();}function scheduleNew() {    var cal = java.util.Calendar.getInstance();    cal.set(java.util.Calendar.HOUR, 0);    cal.set(java.util.Calendar.MINUTE, 0);    cal.set(java.util.Calendar.SECOND, 0);    var nextTime = cal.getTimeInMillis();    while (nextTime <= java.lang.System.currentTimeMillis())        nextTime += 300 * 1000;    setupTask = em.scheduleAtTimestamp("start", nextTime);}function cancelSchedule() {    setupTask.cancel(true);}function start() {    scheduleNew();    var Message = new Array("Please refrain from using foul language in this game.","Verbal and other forms of abuse will NOT be tolerated. Abusers will be blocked from the game.","Village Training Grounds are a great place to train for every ninjas, go ahead and take a look by clicking NPC Regular Cab!","Taos are the currency of NinjaMS, buy a tao today for 2bil mesos with @buytao.","If you need any help, do not hesitate to smega your questions. We are here to help.","Many features of regular GMS are open, such as dojo, KPQ.","Boss PQ is available now by clicking Stirgeman in New Leaf City.","Check out Charles in Henesys to claim your ninjatensu (vote points)!","Check out ninjams.info to get access to NinjaMS IRC and talk to other players, GMs and admin.","To start Kagebunshin (shadow clones) & Fame quest, talk to Joko in Dead Man Gorge/Ellinia.","To rebirth type @rebirth, but you may need some requirements before you do.","To try to get a max stat item, talk to Hokage in Henesys.","If you want to contribute to the server, donations are always appreciated.","Want to compare yourself to the greatest ninjas? @ninjatop10/@taotop10","Looking for missions? Check out Chun Ji in your village.","Village etc is needed for certain quests, be sure not to throw it away.","Want to show off your jumping skills? Talk to Fiona in Channel 3 Dead Man Gorge.","Talk to Ria in Ellinia to join the Great Ninja Shiken. Make sure you are in GMS Mode 4.","Rates will be cut into half if you are training in different villages.","To get item vac, you need all four pet equips along with magic scales.","Check out Channel 3 Free Market Room 1 for PVP.","Buying a pet? Talk to Doofus in Henesys Market.","You can get Meso Magnet & Item Pouch by exchanging your vote points.","Type @guide and @help to know more about our Game","Type @ninjaglare to know more info about a ninja.","Type @buynx to get 5k NX for 1 tao or spend a ninja tensu at Charles to get 50k NX.","Check out iDolly shops in Henesys today!","Talk to Charles is the only way to get a meso magnet and item pouch for your pet.","PVP Field is situated in Free Market Room 1 Channel 3.","When you are stucked in game, type 'fixme' as password.","Mano drops Rainbow Snail Shell which allow you to transform into a snail.","Lohd is the job advancer in NinjaMS, type @home to find him.","Click Duru, the NPC in your village to get into/cancel GMS Mode.","Type @restoreap to restore your AP.","Remember to type @saveadv/gms/kockb to prevent loss of skills.","Drum Bunny, the monster that drops Dull Crystal, is located in Ludibrium Eos Tower.","Master Robo, the monster that drops Special Battery, is located in Ludibrium Toy Factory.","Taurospear, the monster that drops Taurospear Spirit Rock, is located in Sleepywood Dungeon Sanctuary Entrance.","There are 3 different sets of keyboards in NinjaMS. You can type @saveadv/koc/gmskb to save it or @loadadv/koc/gms to load it.");    em.getChannelServer().yellowWorldMessage("[NinjaTip] " + Message[Math.floor(Math.random() * Message.length)]);}

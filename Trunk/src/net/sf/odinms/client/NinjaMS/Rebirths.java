@@ -77,6 +77,7 @@ public class Rebirths {
         }
         if ((reborn % 25) == 0) {
             pl.goHome();
+            pl.dropMessage("You are being warped home");
         }
     }
 
