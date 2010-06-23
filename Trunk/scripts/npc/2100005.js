@@ -1,3 +1,10 @@
+/**
+ * @npc : Shati - Hair Stylist
+ * @id : 2100005
+ * @location : All home towns
+ * @author : System of NinjaMS
+ * @function : hair/ skin/ Eye style NPC
+ */
 var status = 0;
 var beauty = 0;
 var haircolor = Array();
@@ -33,10 +40,10 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == -1) {
-        cm.dispose();
+        cm.voteMSG();
     } else {
         if (mode == 0 && status == 0) {
-            cm.dispose();
+            cm.voteMSG();
             return;
 
         }
@@ -55,7 +62,7 @@ function action(mode, type, selection) {
                     break;
                 }
             }
-            cm.sendSimple("Hello there, #b#h ##k, I am the  #eStylist#n of NinjaMS.\r\n\r\nI #bprovide skin changes, eye changes and hair changes...#efor free#n#k!\r\n\r\n" +
+            cm.sendSimple("Hello Elite ninja #b#h ##k, I am the  #eStylist#n of NinjaMS.\r\n\r\nI #bprovide skin changes, eye changes and hair changes...#efor free#n#k!\r\n\r\n" +
                 "Please select your area of interest.\r\n\r\n#b"
                 + "#L1#Men's Styles#l\r\n"
                 + "#L2#Women's Styles#l\r\n");
@@ -185,7 +192,6 @@ function action(mode, type, selection) {
             }
         } else {
             cm.voteMSG();
-            cm.dispose();
         }
     }
 }

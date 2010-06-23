@@ -1,3 +1,10 @@
+/**
+ * @npc : Neinheart
+ * @id : 1103005
+ * @location : Command @ninjaglare
+ * @author : System of NinjaMS
+ * @function : NinjaGlare NPC.
+ */
 var status = 0;
 importPackage (net.sf.odinms.client.NinjaMS.Processors);
 importPackage (net.sf.odinms.client);
@@ -9,10 +16,10 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == -1) {
-        cm.dispose();
+        cm.voteMSG();
     } else {
         if (status >= 0 && mode == 0) {
-            cm.dispose();
+            cm.voteMSG();
             return;
         }
         if (mode == 1)
@@ -25,7 +32,7 @@ function action(mode, type, selection) {
             text += " want : #b \r\n #L1# See My Stats#l \r\n";
             text += " #L2# Spy on some one #l";
             if(cm.getPlayer().isChunin()){
-                text += "#L3# Offline GM Spy #l";
+                text += "\r\n#L3# Offline GM Spy #l";
             }
             cm.sendSimple(text);
         } else if (status == 1){
@@ -50,8 +57,7 @@ function action(mode, type, selection) {
             cm.sendOk(text);
             cm.dispose();
         } else {
-            cm.sendOk("Under construction");
-            cm.dispose();
+            cm.voteMSG();
         }
     }
 }

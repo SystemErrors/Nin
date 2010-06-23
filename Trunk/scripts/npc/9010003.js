@@ -10,7 +10,7 @@ function action(mode, type, selection) {
         cm.dispose();
     } else {
         if (cm.getChar().getMapId() != 101000000) {
-            cm.sendOk("You can enter NinjaShiken Only From henesys");
+            cm.sendOk("You can enter NinjaShiken Only From Ellinia");
             cm.dispose();
             return;
         }
@@ -29,7 +29,7 @@ function action(mode, type, selection) {
             if (em == null || !em.getProperty("entryPossible").equals("true")) {
                 cm.sendOk("Sorry, but #rNinja Shiken#k is currently closed.");
             } else if (cm.getPlayer().getGMSMode() != 4){
-                cm.sendOk("You need to be in GMS mode 4 to be able to enter Ninja Shiken");
+                cm.sendOk("You need to be in GMS mode 4 to be able to enter Ninja Shiken. Talk to NPC duru to turn on GMS mode");
             } else {
                 em.getInstance("lolcastle5").registerPlayer(cm.getChar());
             }

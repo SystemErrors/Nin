@@ -41,6 +41,7 @@ import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.Inventory.MaplePet;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.server.constants.Items;
+import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.tools.MaplePacketCreator;
 
 import org.slf4j.Logger;
@@ -184,7 +185,7 @@ public class MapleInventoryManipulator {
         removeFromSlot(c, type, slot, quantity, fromDrop, false);
     }
 
-    public static void removeFromSlot(MapleClient c, MapleInventoryType type, byte slot){
+    public static void removeFromSlot(MapleClient c, MapleInventoryType type, byte slot) {
         IItem item = c.getPlayer().getInventory(type).getItem(slot);
         c.getPlayer().getInventory(type).removeItem(slot, item.getQuantity(), false);
         c.getSession().write(MaplePacketCreator.clearInventoryItem(type, item.getPosition(), true));
@@ -379,18 +380,10 @@ public class MapleInventoryManipulator {
         }
         Point dropPos = new Point(c.getPlayer().getPosition());
         //dropPos.y -= 99;
-        if (type == MapleInventoryType.EQUIPPED || type == MapleInventoryType.EQUIP) {
-            Equip equip = (Equip) source;
-            if (equip.getLevel() == 69) {
-                c.showMessage("You cannot drop a Stat Item. If you want to remove it any way, use @removeitem or @removeeqrow");
-                return;
-            }
-        }
-        if (Items.isCurrency(source.getItemId()) && c.getPlayer().getReborns() < 5) {
-            c.showMessage("You cannot drop Tao until you get 5 RB");
+        if (!SpecialStuff.getInstance().canStoreTradeDrop(source, c.getPlayer())) {
+            c.showMessage("You cannot drop a Stat Item. If you want to remove it any way, use @removeitem or @removeeqrow");
             return;
-        }
-
+        } 
         if (quantity < source.getQuantity() && !ii.isThrowingStar(source.getItemId()) && !ii.isBullet(source.getItemId())) {
             IItem target = source.copy();
             target.setQuantity(quantity);

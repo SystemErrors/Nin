@@ -1,37 +1,1 @@
-/*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-//Author: Traitor
-
-function enter(pi) {
-    if ((pi.getPlayer().getMapId() / 100) % 100 != 38) {
-        if (pi.getPlayer().getMap().getCharacters().size() == 1) {
-            pi.getPlayer().getMap().clearDrops(pi.getPlayer(), false);
-            pi.getPlayer().getMap().killAllMonsters();
-            pi.getPlayer().getMap().resetReactors();
-        }
-        pi.warp(pi.getPlayer().getMap().getId() + 100, 0);
-    } else {
-        pi.warp(925020003, 0);
-        pi.getPlayer().gainExp(2000 * pi.getPlayer().getDojoPoints(), true, true, true);
-    }
-    return true;
-}
+//Author: Traitorfunction enter(pi) {    if ((pi.getPlayer().getMapId() / 100) % 100 != 38) {        if (pi.getPlayer().getMap().getCharacters().size() == 1) {            pi.getPlayer().getMap().clearDrops(pi.getPlayer(), false);            pi.getPlayer().getMap().killAllMonsters();            pi.getPlayer().getMap().resetReactors();        }        if(pi.getPlayer().getMap().getReactorByName("door").getState() == 1) {            pi.warp(pi.getPlayer().getMap().getId() + 100, 0);        } else {            pi.getPlayer().dropMessage(5, "Why are you trying to warp up there? The door isn't even open yet. Kill the monster.");        }    } else {        pi.warp(925020003, 0);        pi.getPlayer().gainExp(2000 * pi.getPlayer().getDojoPoints(), true, true, true);    }    return true;}

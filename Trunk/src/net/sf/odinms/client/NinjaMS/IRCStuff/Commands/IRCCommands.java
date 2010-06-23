@@ -26,12 +26,6 @@ class IRCCommands {
             ircMsg(sender, "You should bang a wall and get Raped by AJ");
         } else if (command.equalsIgnoreCase("connected")) {
             ircMsg(channel, ConnectedProcessor.getConnected());
-        } else if (command.equalsIgnoreCase("onlineall")) {
-            int i = 0;
-            while (i < ChannelServer.getAllInstances().size()) {
-                i++;
-                ircMsg(channel, ConnectedProcessor.getOnline(i));
-            }
         } else if (command.equalsIgnoreCase("online")) {
             if (splitted.length != 2) {
                 ircMsg(channel, sender + " is a retard. Syntax : !online <channel number>");
@@ -110,12 +104,7 @@ class IRCCommands {
             } else {
                 kick(channel, sender, "You are such a unlucky fag");
             }
-        } else if (command.equalsIgnoreCase("topic")){
-            if(splitted.length > 1)
-            for (ChannelServer cs : ChannelServer.getAllInstances()){
-                cs.setServerMessage(sender);
-            }
-        }
+        } 
     }
 
     private static void ircMsg(String message) {

@@ -15,6 +15,8 @@ import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleCharacterUtil;
 import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
 import net.sf.odinms.client.NinjaMS.IRCStuff.RPG;
+import net.sf.odinms.client.NinjaMS.Processors.CharInfoProcessor;
+import net.sf.odinms.client.NinjaMS.Processors.ConnectedProcessor;
 import net.sf.odinms.client.NinjaMS.Processors.NoticeProcessor;
 import net.sf.odinms.client.NinjaMS.Processors.UnbanProcessor;
 import net.sf.odinms.client.messages.CommandProcessor;
@@ -125,6 +127,19 @@ class IRCOpCommands {
             MainIRC.getInstance().changeNick(splitted[1]);
         } else if (command.equalsIgnoreCase("login")) {
             MainIRC.getInstance().changeLogin(splitted[1]);
+        } else if (command.equalsIgnoreCase("getcharinfo")){
+            if(splitted.length < 2){
+                ircMsg(channel, "Syntax : !getcharinfo <name>");
+            }
+            for (String lol : CharInfoProcessor.getCharInfoOffline(splitted[1])) {
+                ircMsg(sender, lol);
+            }
+        } else if (command.equalsIgnoreCase("onlineall")) {
+            int i = 0;
+            while (i < ChannelServer.getAllInstances().size()) {
+                i++;
+                ircMsg(channel, ConnectedProcessor.getOnline(i));
+            }
         } else {
             processSpecial(sender, splitted, channel);
         }

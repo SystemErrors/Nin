@@ -1,13 +1,14 @@
 /*
- * @NPC : Shadrion - 2132003 - Henesys
- * @Author : System
+ * @NPC : Shadrion
+ * @id  2132003
+ * @location : Henesys
+ * @Author : System of NinjaMS
  * @function: Selects Clan for now *
  */
-
 var status = 0;
 var fee = 0;
 importPackage (net.sf.odinms.client);
-var tao = tao;
+var tao = 4032016;
 
 function start() {
     if(cm.getPlayer().getEventInstance() != null){
@@ -32,7 +33,7 @@ function action(mode, type, selection) {
             var tex = "I'm Shadrion, the awesome #bClan and Path Manager#k of NinjaMs.";
             tex += "Choose what you need help with :";
             tex += "\r\n#L1#Change to KOC#l\r\n#L2#Change To Adventurer#l";
-            tex += /* "\r\n#L3#Rate Management#l */ "\r\n#L4#Mode Management#l";
+            tex +=  "\r\n#L3#Rate Management#l \r\n#L4#Mode Management#l";
             cm.sendSimple(tex);
         } else if (status == 1){
             if (selection == 1){
@@ -41,7 +42,7 @@ function action(mode, type, selection) {
                 KeyMapShit.loadKeymap(cm.getPlayer(), 2);
                 cm.sendOk("Your job path has been changed to be Cygnus");
                 cm.dispose();
-            } else if (selection == 2) {                   
+            } else if (selection == 2) {
                 cm.changeJobById(0);
                 cm.getPlayer().wipeKB();
                 KeyMapShit.loadKeymap(cm.getPlayer(), 1);
@@ -63,7 +64,7 @@ function action(mode, type, selection) {
                 } else {
                     fee = 10;
                 }
-                var txtt = "#rChoose What you want : \r\n#b";             
+                var txtt = "#rChoose What you want : \r\n#b";
                 txtt += "\r\n#L1#Kyubi - Exp rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
                 txtt += "\r\n#L2#Sage - Meso rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao Of Sight)#b#l";
                 txtt += "\r\n#L3#Hachibi - Drop rate boosting mode#r(5 dragon heart #v4031449# and "+fee+" Tao of Sight)#b#l";
@@ -94,7 +95,7 @@ function action(mode, type, selection) {
                 text += "#b\r\n\r\n#L3# Water Clan = 200x exp rates 10x meso rate and 6x drop rate 4x boss drop rate#l";
                 text += "\r\n\r\n#L4# Fire Clan = 200x exp rate 10x meso rate and 2x drop rate 8x boss drop rate#l";
                 text += "#b\r\n\r\n#L5# Naruto Clan = 300x exp rates 15x meso rate and 4x drop rate 5x boss drop rate#l";
-				
+
             }
             cm.sendSimple(text);
         } else if (status == 3){
@@ -196,7 +197,7 @@ function action(mode, type, selection) {
                     if(cm.haveItem(plates[8], 5) && cm.getPlayer().haveSight(1000)){
                         cm.gainItem(plates[8], -5);
                         cm.gainItem(tao, -1000);
-                        cm.getPlayer().addExpBoost();                        
+                        cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();
@@ -360,9 +361,9 @@ function action(mode, type, selection) {
                     cm.dispose();
                 }
             } else if(selection == 5){
-                if (cm.haveItem(4031449, 5) && cm.getPlayer().haveSight(fee)){
-                    cm.gainItem(4031449, -5);
-                    cm.gainItem(tao, -(fee));
+                if (cm.haveItem(4031449, 25) && cm.getPlayer().haveSight(fee*4)){
+                    cm.gainItem(4031449, -25);
+                    cm.gainItem(tao, -(fee*4));
                     cm.setModeOn(selection);
                     cm.sendOk("Remember : The modes will be cancelled if you change channel or log off");
                     cm.dispose();

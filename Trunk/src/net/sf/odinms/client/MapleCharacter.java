@@ -823,9 +823,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     " `legend` = ?, `msi` = ?, `name` = ?, `pvpdeaths` = ?," + //28
                     " `pvpkills` = ?, `prefixshit` = ?, `autoap` = ?, `shuriken` = ?, `taocheck` = ?, `gmsmode` = ?," + //34
                     " `lastdojostage` = ? , `dojopoints` = ?, `smega` = ?, `bqpoints` = ?," + //38
-                    " `clan` = ?, `kpqpoints` = ?, `textcolour` = ?, `mission` = ?" +//42
+                    " `clan` = ?, `kpqpoints` = ?, `textcolour` = ?, `mission` = ?," +//42
+                    " `exprate` = ?, `mesorate` = ?, `droprate` = ?, `bossrate` = ?" + //46
                     //      " `matchcardwins` = ?, `matchcardlosses` = ?, `matchcardties` = ?, `omokwins` = ?, `omoklosses` = ?, `omokties` = ?" + //46
-                    " WHERE id = ?"; //43
+                    " WHERE id = ?"; //47
          /*   sql = "INSERT INTO characters VALUES (`level`, `fame`, `str`, `dex`, `luk`," + //5
             " `int`, `exp`, `hp`, `mp`, `storageap`," + //10
             " `ap`, `skincolor`, `job`, `hair`," + //14
@@ -889,7 +890,11 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ps.setInt(40, kpqpoints);
             ps.setByte(41, textColour);
             ps.setByte(42, mission);
-            ps.setInt(43, id);
+            ps.setInt(43, expBoost);
+            ps.setInt(44, mesoBoost);
+            ps.setInt(45, dropBoost);
+            ps.setInt(46, bdropBoost);
+            ps.setInt(47, id);
             int updateRows = ps.executeUpdate();
             if (updateRows < 1) {
                 throw new DatabaseException("Character not in database (" + id + ")");
@@ -2394,7 +2399,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void setMacros(SkillMacro[] fuck) {
-        skillMacros = null;
+        skillMacros = new SkillMacro[5];
         skillMacros = fuck;
         sendMacros();
     }
@@ -4113,6 +4118,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void wipeKB() {
         keymap.clear();
+        skillMacros = new SkillMacro[5];
     }
 
     public void changeMap(int mapid, int portal) {
@@ -5716,7 +5722,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     private void checkForBelts(int oldpts) {
-        int[] beltpoints = {2000, 18000, 40000, 92000, 170000};
+        int[] beltpoints = {1000, 8000, 25000, 60000, 120000};
         int[] belts = {1132000, 1132001, 1132002, 1132003, 1132004};
         int[] stats = {250, 500, 1337, 3337, 13337};
         for (int i = 0; i < beltpoints.length; i++) {

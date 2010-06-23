@@ -1,4 +1,11 @@
-var status = 0;
+/**
+ * @npc : Neve - Glove maker
+ * @id : 2010003
+ * @location : NLC MALL
+ * @author : System of NinjaMS
+ * @function : Gloves, shoes and bottoms Seller.
+ */
+ var status = 0;
 var pr = 10;
 var b1 = Array(
 1060000,1060001,1060002,1060003,1060004,1060005,1060006,1060007,1060008,1060009,

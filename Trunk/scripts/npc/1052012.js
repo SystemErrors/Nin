@@ -1,3 +1,11 @@
+/**
+ * @npc : Mong from kong - Internet Cafe Worker
+ * @id : 1052012
+ * @location : NLC MALL
+ * @author : System of NinjaMS
+ * @function : Hats Seller.
+ */
+
 var status = 0;
 var x = 10;
     var hats1 = Array (1000000, 1000001, 1000002, 1000003, 1000004, 1000005, 1000006, 1000007, 1000008,

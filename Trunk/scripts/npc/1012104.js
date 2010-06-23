@@ -1,3 +1,11 @@
+/**
+ * @npc : Brittany - Hair Salon Assistant
+ * @id : 1012104
+ * @location : NLC MALL
+ * @author : System of NinjaMS
+ * @function : Overall and Tops Seller.
+ */
+
 var status = 0;
 var x = 10;
 

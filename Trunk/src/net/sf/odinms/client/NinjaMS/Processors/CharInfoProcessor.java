@@ -61,10 +61,10 @@ public class CharInfoProcessor {
                     + " Luk : " + other.getLuk()
                     + " Remaining AP : "
                     + other.getRemainingAp() + " StorageAp : " + other.getStorageAp());
-            sb.add(" TStr : " + other.getStr()
-                    + " TDex : " + other.getDex()
-                    + " TInt : " + other.getInt()
-                    + " TLuk : " + other.getLuk()
+            sb.add(" TStr : " + other.getTotalStr()
+                    + " TDex : " + other.getTotalDex()
+                    + " TInt : " + other.getTotalInt()
+                    + " TLuk : " + other.getTotalLuk()
                     + " WA : " + other.getTotalWatk());
             sb.add(" MobKilled : " + other.getMobKilled()
                     + " BossKilled : " + other.getBossKilled()
@@ -518,7 +518,7 @@ public class CharInfoProcessor {
                     bosskilled = 0, pvpkills = 0, pvpdeaths = 0, fame = 0,
                     meso = 0, job = 0, exprate = 0, mesorate = 0, droprate = 0,
                     bossrate = 0;
-            String previousnames = "", macs = "", accountcreatedate = "", 
+            String previousnames = "", macs = "", accountcreatedate = "",
                     accountname = "", gm = "", legend = "", maccheck = "";
             int checkmacs = 0;
             String sql = "SELECT c.`str`, c.`dex`, c.`luk`, c.`int`,"
@@ -673,5 +673,165 @@ public class CharInfoProcessor {
         return sb.toString();
     }
 
-     
+    public static List<String> getCharInfoOffline(String name) {
+        List<String> sb = new LinkedList<String>();
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0, gml = 0,
+                    damount = 0, dpoint = 0, level = 0, rasengan = 0, tensu = 0,
+                    id = 0, accid = 0, mission = 0, village = 0, bqpoints = 0,
+                    dojopoints = 0, jqfinished = 0, jqpoints = 0, rank = 0,
+                    rb = 0, taorank = 0, taocheck = 0, msi = 0, mobkilled = 0,
+                    bosskilled = 0, pvpkills = 0, pvpdeaths = 0, fame = 0,
+                    meso = 0, job = 0, exprate = 0, mesorate = 0, droprate = 0,
+                    bossrate = 0;
+            String previousnames = "", macs = "", accountcreatedate = "",
+                    accountname = "", gm = "", legend = "", maccheck = "";
+            int checkmacs = 0;
+            String sql = "SELECT c.`str`, c.`dex`, c.`luk`, c.`int`,"
+                    + " c.`ap`, c.`storageap`, c.`rasengan`, c.`previousnames`,"
+                    + " c.`mission`, c.`id`, c.`accountid`, c.`legend`, c.`pvpkills`,"
+                    + " c.`pvpdeaths`, c.`fame`, c.`dojopoints`, c.`bqpoints`, c.`meso`,"
+                    + " c.`job`, c.`exprate`, c.`mesorate`, c.`droprate`, c.`bossrate`,"
+                    + " c.bosskilled, c.mobkilled, "
+                    + " a.`macs`, a.`name`, a.createdat,"
+                    + " a.`gm`, a.`damount`, a.`dpoints`,"
+                    + " a.`ninjatensu` FROM characters AS c"
+                    + " LEFT JOIN accounts AS a ON"
+                    + " c.accountid = a.id WHERE c.name = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                mobkilled = rs.getInt("mobkilled");
+                bosskilled = rs.getInt("bosskilled");
+                dojopoints = rs.getInt("dojopoints");
+                legend = rs.getString("legend");
+                str = rs.getInt("str");
+                dex = rs.getInt("dex");
+                luk = rs.getInt("luk");
+                int_ = rs.getInt("int");
+                ap = rs.getInt("ap");
+                store = rs.getInt("storageap");
+                rasengan = rs.getByte("rasengan");
+                previousnames = rs.getString("previousnames");
+                if (previousnames == null) {
+                    previousnames = "N/A";
+                }
+                macs = rs.getString("macs");
+                accountname = rs.getString("name");
+                accountcreatedate = rs.getString("createdat");
+                gml = rs.getInt("gm");
+                gm = Status.getByLevel(gml).getTitle();
+                damount = rs.getInt("damount");
+                dpoint = rs.getInt("dpoints");
+                tensu = rs.getInt("ninjatensu");
+                mission = rs.getInt("mission");
+                id = rs.getInt("id");
+                accid = rs.getInt("accountid");
+                exprate = rs.getInt("exprate");
+                mesorate = rs.getInt("mesorate");
+                droprate = rs.getInt("droprate");
+                bossrate = rs.getInt("bossrate");
+            }
+            rs.close();
+            ps.close();
+            ps = con.prepareStatement("SELECT COUNT(*) FROM accounts WHERE macs = ? LIMIT 10");
+            ps.setString(1, macs);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                checkmacs = rs.getInt(1);
+            }
+            rs.close();
+            ps.close();
+
+            RBRankingInfo rbrank = RankingWorker.getInstance().getRBRanksByName().get(name);
+            TaoRankingInfo taorankk = RankingWorker.getInstance().getTaoRanksByName().get(name);
+            if (rbrank != null) {
+                rank = rbrank.getRank();
+                rb = rbrank.getRB();
+                msi = rbrank.getMSI();
+            }
+            if (taorankk != null) {
+                taorank = taorankk.getRank();
+                taocheck = taorankk.getTaoCheck();
+            }
+            if (checkmacs > 0 && !macs.equalsIgnoreCase("")) {
+                ps = con.prepareStatement("SELECT name FROM characters WHERE accountid in (SELECT id FROM accounts WHERE macs = ?) LIMIT 20");
+                ps.setString(1, macs);
+                rs = ps.executeQuery();
+                maccheck += "This player has a MAC same to another user(s). The IGNs are : ";
+                while (rs.next()) {
+                    maccheck += rs.getString(1);
+                    maccheck += ", ";
+                }
+                rs.close();
+                ps.close();
+            }
+
+
+            sb.add(" #d#e [General information] #n\r\n");
+            sb.add("\r\n#b Name of the Player : #r" + name);
+            if (gml > 1) {
+                sb.add("\r\n #bAccount Name : #r" + accountname);
+            }
+            sb.add("\r\n #bBecame Ninja on : #r" + accountcreatedate);
+            sb.add("\r\n #bCharacter Id : #r" + id);
+            if (gml > 1) {
+                sb.add("\r\n #bAccount Id : #r" + accid);
+            }
+            sb.add("\r\n #bNinja Rank : #r" + Status.getByLevel(gml).getTitle());
+            sb.add("\r\n #bVillage: #r" + Village.getById(village).getName());
+            sb.add("\r\n\r\n#e#d[STATS]#n");
+            sb.add("\r\n #bStr : #r" + str
+                    + "; #bDex : #r" + dex
+                    + "; #bInt : #r" + int_
+                    + "; #bLuk : #r" + luk);
+            sb.add("\r\n #bRemaining AP : " + ap
+                    + "; #bStorageAp : #r" + store);
+            sb.add("#b" + getMissionStatus(mission) + "\r\n");
+            if (gml < 3) {
+                sb.add("\r\n\r\n#d#e Rebirth Ranking : #n\r\n");
+                sb.add(" #bOverall Rank :#r #" + rank);
+                sb.add(" #dRebirths : #r" + rb);
+                sb.add("\r\n\r\n #d#eWealth Ranking : #n\r\n");
+                sb.add(" #bOverall Rank :#r #" + taorank);
+                sb.add(" #dTao Amount : #r" + taocheck);
+            }
+            sb.add("\r\n #bMobKilled : #r" + mobkilled
+                    + "; #bBossKilled : #r" + bosskilled);
+            sb.add("\r\n #bPvP Kills : #r" + pvpkills
+                    + "; #bPvP Deaths : #r" + pvpdeaths);
+            sb.add("\r\n#b Fame : #r" + fame);
+            sb.add("\r\n #blevel : #r" + level
+                    + "; #bMesos : #r" + meso);
+            sb.add("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(job));
+            sb.add("\r\n#b Player's Legend : #r" + legend);
+            sb.add("\r\n #bShurikenItems : #r" + msi);
+
+            if (previousnames != null) {
+                if (previousnames.length() > 4) {
+                    sb.add("\r\n #d" + name + " has also been known as..." + previousnames);
+                }
+            }
+
+            sb.add("\r\n #bNinjaTensu : #r" + tensu
+                    + "\r\n #bDojoPoints : #r" + dojopoints
+                    + "\r\n #bBQPoints : #r" + bqpoints
+                    + "\r\n #bJQFinished : #r" + jqfinished
+                    + "; #bJQPoints : #r" + jqpoints);
+            sb.add("\r\n\r\n#d#e[Rates]#n");
+            sb.add("\r\n #bExprate : #r" + exprate
+                    + "#b ; Mesorate : #r" + mesorate
+                    + "#b\r\n Droprate : #r" + droprate
+                    + "#b ; Boss Droprate : #r" + bossrate);
+            sb.add("\r\n\r\n #bRasengan Quest Level : #r" + rasengan);
+            sb.add("\r\n#b Donated Amount : #r" + damount + "#b Dpoints : #r" + dpoint);
+            sb.add("\r\n\r\n" + maccheck);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        // search similarities
+        return sb;
+    }
 }

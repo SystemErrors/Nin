@@ -1,3 +1,10 @@
+/**
+ * @npc : Chunji
+ * @id : 9000007
+ * @location : All home towns
+ * @author : System of NinjaMS
+ * @function : D-Ranked mission Quest NPC
+ */
 var status = 0;
 var dull = 4031135;
 var battery = 4031115;

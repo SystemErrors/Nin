@@ -1,13 +1,21 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @npc : Doofus
+ * @id : 1012004
+ * @location : Henesys
+ * @author : System of NinjaMS
+ * @function : Pet & pet EQ Seller
  */
 
-
 var status = 0;
-var pets = new Array(5000000, 5000001, 5000002, 5000003, 5000004, 5000005, 5000006, 5000007, 5000008, 5000009, 5000010, 5000011, 5000012, 5000013, 5000014, 5000015, 5000017, 5000018, 5000020, 5000021, 5000022, 5000023, 5000024, 5000025, 5000034, 5000036, 5000037, 5000039, 5000041, 5000042, 5000044, 5000045, 5000055, 5000058, 5000029, 5000030, 5000031, 5000032, 5000033, 5000049, 5000050, 5000051, 5000052, 5000053);
+var pets = new Array(5000000, 5000001, 5000002, 5000003, 5000004,
+5000005, 5000006, 5000007, 5000008, 5000009, 5000010, 5000011,
+5000012, 5000013, 5000014, 5000015, 5000017, 5000018, 5000020,
+5000021, 5000022, 5000023, 5000024, 5000025, 5000034, 5000036,
+5000037, 5000039, 5000041, 5000042, 5000044, 5000045, 5000055,
+5000058, 5000029, 5000030, 5000031, 5000032, 5000033, 5000049,
+5000050, 5000051, 5000052, 5000053);
 var petprice = 10;
-var tos = 4032016;
+var tao = 4032016;
 var specpetequip = new Array(1812004, 1812005);
 var specprice = 250;
 var text;
@@ -64,11 +72,11 @@ function action(mode, type, selection) {
         } else if(status == 10){
             var petid = pets[selection];
             if (cm.checkSpace(petid, 1)) {
-                if (cm.haveItem(4032016, petprice)) {
+                if (cm.haveItem(tao, petprice)) {
                     cm.dispose();
                     cm.sendOk("#e#bHave a nice day#k#n!");
                     cm.gainItem(petid, 1);
-                    cm.gainItem(4032016, -petprice);
+                    cm.gainItem(tao, -petprice);
                 } else {
                     cm.dispose();
                     cm.sendOk("You do not have enough Tao of Sight to obtain this.");
@@ -77,11 +85,11 @@ function action(mode, type, selection) {
         } else if (status == 30) {
             var peti = specpetequip[selection];
             if (cm.checkSpace(peti, 1)) {
-                if (cm.haveItem(4032016, specprice)) {
+                if (cm.haveItem(tao, specprice)) {
                     cm.dispose();
                     cm.sendOk("#e#bHave a nice day#k#n!");
                     cm.gainItem(peti, 1);
-                    cm.gainItem(4032016, -specprice);
+                    cm.gainItem(tao, -specprice);
                 } else {
                     cm.dispose();
                     cm.sendOk("You do not have enough Tao of Sight to obtain this.");

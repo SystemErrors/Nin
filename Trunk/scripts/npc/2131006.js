@@ -1,10 +1,16 @@
-var status;
+/**
+ * @npc : Duru
+ * @id : 2131006
+ * @location : home towns and pq places
+ * @author : System of NinjaMS
+ * @function : GMS mode NPC
+ */
 
+var status;
 function start() {
     status = -1;
     action(1, 0, 0);
 }
-
 function action(mode, type, selection) {
     if (mode == -1) {
         cm.voteMSG();

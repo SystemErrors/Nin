@@ -129,8 +129,8 @@ public class MapleStorage {
                         equip.setWdef((short) rs.getInt("wdef"));
                         equip.setUpgradeSlots((byte) rs.getInt("upgradeslots"));
                         equip.setLevel((byte) rs.getInt("level"));
-                        equip.setExpiration(rs.getLong("expiredate"));
                         equip.setHammers((byte) rs.getInt("hammers"));
+                        equip.setExpiration(rs.getLong("expiredate"));                        
                         ret.items.add(equip);
                     } else {
                         Item item = new Item(rs.getInt("itemid"), (byte) rs.getInt("position"), (short) rs.getInt("quantity"), rs.getInt("uniqueid"));
@@ -203,8 +203,8 @@ public class MapleStorage {
                     pse.setInt(16, equip.getHands());
                     pse.setInt(17, equip.getSpeed());
                     pse.setInt(18, equip.getJump());
-                    pse.setInt(19, equip.getRingId());
-                    pse.setInt(20, equip.getHammers());
+                    pse.setInt(19, equip.getHammers());
+                    pse.setInt(20, equip.getRingId());
                     pse.executeUpdate();
                 }
             }

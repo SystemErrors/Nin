@@ -1,3 +1,10 @@
+/**
+ * @npc : Vicious - Item Maker
+ * @id : 1012002
+ * @location : NLC MALL
+ * @author : System of NinjaMS
+ * @function : All Accessory Seller.
+ */
 var status = 0;
 var pr = 10;
     var face1 = Array (1010000, 1010001, 1010002, 1010003, 1010004, 1010005, 1010006, 1011000, 1011001, 

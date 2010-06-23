@@ -6,7 +6,6 @@ package net.sf.odinms.server.constants;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.sf.odinms.client.Enums.Clans;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.server.TimerManager;
 

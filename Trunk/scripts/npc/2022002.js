@@ -1,4 +1,11 @@
-// default message
+/**
+ * @npc : Barun
+ * @id : 2022002
+ * @location : @scroll command
+ * @author : System of NinjaMS
+ * @function : Scroll seller.
+ */
+
 var status = 0;
 
 function start() {
@@ -12,20 +19,19 @@ function action(mode, type, selection) {
     } else {
         if (mode == 1) {
             status++;
-        } else { // determine below - if it is send default message, it will dispose upon clicking no.
-            // if it is status--, it goes back upon no. sophistication includes if (status >= 2 && mode == 0). DIY.
-            cm.voteMSG(); return; // return only if using senddefaultmess
-        //status--;
+        } else {             
+            cm.voteMSG();
+            return;
         }
 
         if (status == 0) {
-            cm.sendNext("Hello #b#h ##k#n, I'm the Scroll Seller of ninjaMS. Wanty to buy some scrolls??");
+            cm.sendNext("Hello #b#h ##k, I'm the Scroll Seller of ninjaMS. Want to buy some scrolls??");
         } else if (status == 1) {
-            cm.sendSimple("Please choose what type of #ePirate Equipment#n you "
-                +"wish to buy.\r\n\r\n#b#L0# 10% scrolls#l\r\n#L1# 30% scrolls"
+            cm.sendSimple("#rPlease choose what type of #eScrolls#n you "
+                +"wish to buy:\r\n\r\n#b#L0# 10% scrolls#l\r\n#L1# 30% scrolls"
                 +"#l\r\n#L2# 60% scrolls#l\r\n#L3# 70% scrolls#l\r\n"
-                +"#L4# Anniversary scrolls#l\r\n#L5# 15% scrolls #l"
-                +"\r\n#L6#65% scrolls#l");
+                +"#L5# 15% scrolls #l\r\n#L6#65% scrolls#l"
+                +"\r\n#L4# Anniversary scrolls#l\r\n");
         } else if (status == 2) {
             cm.dispose();
             if (selection == 0) {

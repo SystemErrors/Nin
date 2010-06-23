@@ -97,7 +97,7 @@ public class InventoryManipulationCommands implements PlayerCommand {
                     player.updateSingleStat(MapleStat.HP, 1);
                     player.updateSingleStat(MapleStat.MP, 1);
                 } else {
-                    mc.dropMessage("Trying to scam the system?");
+                    mc.dropMessage("Trying to scam the system? You do not have 2 billion mesos. Now die");
                     player.kill();
                 }
             } else {
@@ -108,8 +108,11 @@ public class InventoryManipulationCommands implements PlayerCommand {
                 player.gainItem(Items.currencyType.Sight, -1);
                 player.setMeso(2000000000);
                 player.updateSingleStat(MapleStat.MESO, 2000000000);
+            } else {
+                mc.dropMessage("Trying to scam the system? You do not have any Tao of sight. Now die");
+                player.kill();
             }
-        } 
+        }
     }
 
     public PlayerCommandDefinition[] getDefinition() {

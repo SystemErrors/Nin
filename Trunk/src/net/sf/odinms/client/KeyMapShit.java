@@ -27,26 +27,20 @@ public class KeyMapShit {
             ps.setInt(2, type);
             ResultSet rs = ps.executeQuery();
             SkillMacro[] skillMacros = new SkillMacro[5];
-            if (!rs.next()) {
-                chr.dropMessage("You do not have Saved Macro for this mode");
-                rs.close();
-                ps.close();
-            } else {
-                while (rs.next()) {
-                    int skill1 = rs.getInt("skill1");
-                    int skill2 = rs.getInt("skill2");
-                    int skill3 = rs.getInt("skill3");
-                    String name = rs.getString("name");
-                    int shout = rs.getInt("shout");
-                    int position = rs.getInt("position");
-                    SkillMacro macro = new SkillMacro(skill1, skill2, skill3, name, shout, position);
-                    skillMacros[position] = macro;
-                }
-                chr.setMacros(skillMacros);
-                chr.dropMessage("Macros Loaded");
-                rs.close();
-                ps.close();
+            while (rs.next()) {
+                int skill1 = rs.getInt("skill1");
+                int skill2 = rs.getInt("skill2");
+                int skill3 = rs.getInt("skill3");
+                String name = rs.getString("name");
+                int shout = rs.getInt("shout");
+                int position = rs.getInt("position");
+                SkillMacro macro = new SkillMacro(skill1, skill2, skill3, name, shout, position);
+                skillMacros[position] = macro;
             }
+            chr.setMacros(skillMacros);
+            chr.dropMessage("Macros Loaded");
+            rs.close();
+            ps.close();
             ps = con.prepareStatement("SELECT * FROM saved_keymap WHERE characterid = ? AND kbtype = ?");
             ps.setInt(1, chr.getId());
             ps.setInt(2, type);
@@ -95,9 +89,10 @@ public class KeyMapShit {
             }
             ps.executeBatch();
             chr.dropMessage("Macros Saved");
-            ps = con.prepareStatement("DELETE FROM saved_keymap WHERE characterid = ? AND type = ?");
+            ps = con.prepareStatement("DELETE FROM saved_keymap WHERE characterid = ? AND kbtype = ?");
             ps.setInt(1, chr.getId());
             ps.setInt(2, type);
+            ps.executeUpdate();
             ps = con.prepareStatement("INSERT INTO saved_keymap (`characterid`, `key`, `type`, `action`, `kbtype`) VALUES (?, ?, ?, ?, ?)");
             ps.setInt(1, chr.getId());
             ps.setInt(5, type);

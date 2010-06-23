@@ -1,7 +1,11 @@
-/* [NPC]
-	JobAdvancer - ;
-	Location - Henesys;
- */ 
+/**
+ * @npc : Lohd
+ * @id : 2132001
+ * @location : all home towns
+ * @author : System of NinjaMS
+ * @function : Job advancer NPC
+ */
+
 var status = 0;
  var job = 0; 
 var newJob = 0; 

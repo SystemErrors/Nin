@@ -1,3 +1,10 @@
+/**
+ * @npc : Loha
+ * @id : 2131003
+ * @location : Excavation Camp
+ * @author : System of NinjaMS
+ * @function : Fame Quest NPC
+ */
 var status = 0;
 function start() {
     status = -1;

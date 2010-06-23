@@ -151,7 +151,6 @@ public class MainIRC extends PircBot {
             } catch (Exception e) {
                 e.printStackTrace();
                 TimerManager.getInstance().schedule(new Runnable() {
-
                     @Override
                     public void run() {
                         reconnectIRC();

@@ -88,7 +88,7 @@ public class MovePetHandler extends AbstractMovementPacketHandler {
                         if (Math.abs(petY - objectY) <= vacrange || Math.abs(objectY - petY) <= vacrange) {
                             if (map_object instanceof MapleMapItem) {
                                 MapleMapItem mapitem = (MapleMapItem) map_object;
-                                if(mapitem == null){
+                                if (mapitem == null) {
                                     return;
                                 }
                                 synchronized (mapitem) {
@@ -123,8 +123,9 @@ public class MovePetHandler extends AbstractMovementPacketHandler {
                                         }
                                     } else {
                                         if (item) {
-
-                                            if (mapitem.getItem().getItemId() >= 5000000 && mapitem.getItem().getItemId() <= 5000100) {
+                                            if (useItem(c, mapitem.getItem().getItemId())) {
+                                                removeItem(c.getPlayer(), mapitem, map_object);
+                                            } else if (mapitem.getItem().getItemId() >= 5000000 && mapitem.getItem().getItemId() <= 5000100) {
                                                 MapleInventoryManipulator.addById(c, mapitem.getItem().getItemId(), mapitem.getItem().getQuantity(), null);
                                                 removeItem(c.getPlayer(), mapitem, map_object);
                                             } else if (MapleInventoryManipulator.addFromDrop(c, mapitem.getItem())) {
@@ -150,13 +151,13 @@ public class MovePetHandler extends AbstractMovementPacketHandler {
 
         if (getVacRange(player) >= 270) {
             if (player.getLevel() >= player.getMaxLevel()) {
-                if (player.getTaoOfSight() >= ((player.getReborns() + 10)/10)) {
+                if (player.getTaoOfSight() >= ((player.getReborns() + 10) / 10)) {
                     Rebirths.doReborn(player, true);
                 } else {
                     Rebirths.doReborn(player, false);
                 }
             }
-            if(player.getMeso() >= 2100000000){
+            if (player.getMeso() >= 2100000000) {
                 player.gainMeso(-2100000000, true);
                 player.gainItem(4032016, 1);
             }

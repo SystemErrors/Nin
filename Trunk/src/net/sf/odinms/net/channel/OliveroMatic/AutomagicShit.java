@@ -32,7 +32,7 @@ public class AutomagicShit {
     }
 
     public void start() {
-        startFML();
+      //  startFML();
         startVoteMsg();
         RankingWorker.getInstance().start();
     }
@@ -120,7 +120,7 @@ public class AutomagicShit {
 
     public void broadcastVoteMsg() {
         for (ChannelServer lol : ChannelServer.getAllInstances()) {
-            lol.broadcastPacket(MaplePacketCreator.sendYellowTip("[Vote Reminder] Please do not forget to vote for us every 12 hrs. There are rewards for voting which you can claim from Charles at henesys. http://ninjams,org/vote"));
+            lol.broadcastPacket(MaplePacketCreator.serverNotice(6, "[Vote Reminder] Please do not forget to vote for us every 12 hrs. There are rewards for voting which you can claim from Charles at henesys. http://ninjams,org/vote"));
         }
     }
 }

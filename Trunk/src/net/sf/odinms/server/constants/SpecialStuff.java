@@ -186,7 +186,9 @@ public class SpecialStuff {
         if (player.isChunin()) {
             return false;
         }
-        if (mapId < 40000) {
+        if (mapId == 800010001
+            || mapId == 800020101
+                || mapId < 40000) {
             return true;
         }
         return false;
@@ -221,6 +223,9 @@ public class SpecialStuff {
             return false;
         }
         if (isPQMap(player.getMapId())) {
+            return false;
+        }
+        if (player.getMapId() == 0){
             return false;
         }
         return true;
@@ -300,6 +305,10 @@ public class SpecialStuff {
         }
         if (isEventMap(player.getMapId())) {
             player.showMessage(1, "You cannot drop items here!");
+            return false;
+        }
+        if ((player.getReborns() < 5) && item.getItemId() == Items.currencyType.Sight){
+            player.showMessage(1, "You cannot trade Tao of sight before you reach 5 Rebirths");
             return false;
         }
         return true;

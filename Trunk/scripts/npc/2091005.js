@@ -1,4 +1,10 @@
-// default message
+/**
+ * @npc : So Gong
+ * @id : 2091005
+ * @location : Mulung Dojo
+ * @author : Oliver of FMS
+ * @function : dojo NPC.
+ */
 var status = 0;
 
 var selected = 0;
@@ -14,7 +20,7 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == -1) {
-        cm.dispose();
+      cm.voteMSG();
     } else {
         if (cm.getPlayer().getMapId() == 925020001) {
             if (mode == 1) {
@@ -23,15 +29,15 @@ function action(mode, type, selection) {
                 if (selected == 1 && cm.getPlayer().getDojoStage() > 0 && status == 1) {
                     cm.dispose();
                     cm.getPlayer().setDojoStage(0);
-                    cm.sendOk("Alright then, you will be able start from the beginning next time you click on me.");
+                    cm.sendOk("Alright then #b#h #,#k you will be able start from the beginning next time you click on me.");
                     return;
                 }
-                cm.dispose();
+                cm.voteMSG();
                 return;
             }
 
             if (status == 0) {
-                cm.sendSimple("#eMy master is the strongest person in Mu Lung#n, and you want to challenge him? Fine, but you'll regret it later, rookie.\r\n\r\n#b"
+                cm.sendSimple("#eMy master is the strongest person in Mu Lung#n, and rookie like yourself want to challenge him? Fine, but you'll regret it later, nubcake.\r\n\r\n#b"
                     + "#L0#I shall battle to him alone!#l\r\n"
                     + "#L1#We wish to party against your boss!#l\r\n"
                     + "#L2#I want to receive a belt#l\r\n"
@@ -44,7 +50,10 @@ function action(mode, type, selection) {
                 }
                 if (selected == 0) {
                     if(cm.getPlayer().getGMSMode() < 1){
-                        cm.sendOk("Please turn on GMS Mode");
+                        var tt = "Sorry #b#h #,#k but you are not in GMS mode";
+                            tt += "Please turn on GMS Mode 5 by talking to NPC Duru";
+                            tt+= ". Only then you will be allowed to enter Dojo";
+                        cm.sendOk(tt);
                         cm.dispose();
                     } else if (cm.getPlayer().getDojoStage() > 0) {
                         if (status == 1) {
@@ -61,7 +70,7 @@ function action(mode, type, selection) {
                     }
                 } else if (selected == 1) {
                     if (status == 1) {
-                        cm.sendYesNo("So, #b#h ##k, are you #band your party#k ready to embark the Dojo and #rface a horrible, twisted death#k?");
+                        cm.sendYesNo("So, nubcake #b#h ##k, are you #band your party#k ready to embark the Dojo and #rface a horrible, twisted death#k?");
                     } else {
                         var party = cm.getParty();
                         var ptymem = party.getMembers();
@@ -153,7 +162,7 @@ function action(mode, type, selection) {
                 status++;
             } else { // determine below - if it is send default message, it will dispose upon clicking no.
                 cm.dispose();
-                cm.sendOk("Stop changing your mind! Soon, #eyou'll be crying cause of the Xero amount of friends you have#n, #bbegging me to go back#k.");
+                cm.sendOk("Stop changing your mind! Soon, #eyou'll be crying cause of the zero amount of friends you have#n, #bbegging me to go back#k.");
                 return;
             }
             if (status == 0) {
