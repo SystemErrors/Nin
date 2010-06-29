@@ -37,9 +37,9 @@ import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.SkillFactory;
 import net.sf.odinms.client.messages.commands.donator.HelpDonatorCommand;
-import net.sf.odinms.client.messages.commands.admins.HelpAdminCommand;
-import net.sf.odinms.client.messages.commands.gm.HelpGMCommand;
-import net.sf.odinms.client.messages.commands.intern.HelpInternCommand;
+import net.sf.odinms.client.messages.commands.Admin.HelpAdminCommand;
+import net.sf.odinms.client.messages.commands.Jounin.HelpGMCommand;
+import net.sf.odinms.client.messages.commands.chunins.HelpInternCommand;
 import net.sf.odinms.client.messages.commands.players.HelpPlayerCommand;
 import net.sf.odinms.client.messages.commands.Sannin.HelpSanninCommand;
 import net.sf.odinms.database.DatabaseConnection;
@@ -243,7 +243,7 @@ public class CommandProcessor implements CommandProcessorMBean {
         admincommands.clear();
         try {
             ClassFinder classFinder = new ClassFinder();
-            String[] classes = classFinder.listClasses("net.sf.odinms.client.messages.commands.admin", true);
+            String[] classes = classFinder.listClasses("net.sf.odinms.client.messages.commands.Admin", true);
             registerAdminCommand(new HelpAdminCommand()); // register the helpcommand first so it appears first in the list (LinkedHashMap)
             for (String clazz : classes) {
                 Class<?> clasz = Class.forName(clazz);
@@ -265,7 +265,7 @@ public class CommandProcessor implements CommandProcessorMBean {
         gmcommands.clear();
         try {
             ClassFinder classFinder = new ClassFinder();
-            String[] classes = classFinder.listClasses("net.sf.odinms.client.messages.commands.gm", true);
+            String[] classes = classFinder.listClasses("net.sf.odinms.client.messages.commands.Jounin", true);
             registerGMCommand(new HelpGMCommand()); // register the helpcommand first so it appears first in the list (LinkedHashMap)
             for (String clazz : classes) {
                 Class<?> clasz = Class.forName(clazz);
@@ -287,7 +287,7 @@ public class CommandProcessor implements CommandProcessorMBean {
         interncommands.clear();
         try {
             ClassFinder classFinder = new ClassFinder();
-            String[] classes = classFinder.listClasses("net.sf.odinms.client.messages.commands.intern", true);
+            String[] classes = classFinder.listClasses("net.sf.odinms.client.messages.commands.chunins", true);
             registerInternCommand(new HelpInternCommand()); // register the helpcommand first so it appears first in the list (LinkedHashMap)
             for (String clazz : classes) {
                 Class<?> clasz = Class.forName(clazz);

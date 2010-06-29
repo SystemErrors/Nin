@@ -13,15 +13,15 @@ import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;
 
 public class UseChairHandler extends AbstractMaplePacketHandler {
-	private static Logger log = LoggerFactory.getLogger(UseItemHandler.class);
 
-	public UseChairHandler() {
-	}
+    private static Logger log = LoggerFactory.getLogger(UseItemHandler.class);
 
-	    public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c) {
+    public UseChairHandler() {
+    }
+
+    public void handlePacket(SeekableLittleEndianAccessor slea, final MapleClient c) {
         final int itemId = slea.readInt();
         if (c.getPlayer().getInventory(MapleInventoryType.SETUP).findById(itemId) == null) {
-            c.getPlayer().getCheatTracker().registerOffense(CheatingOffense.USING_UNAVAILABLE_ITEM, Integer.toString(itemId));
             return;
         }
         c.getPlayer().setChair(itemId);
@@ -32,6 +32,7 @@ public class UseChairHandler extends AbstractMaplePacketHandler {
             int i = 1;
             for (final Clones clone : c.getPlayer().getClones()) {
                 TimerManager.getInstance().schedule(new Runnable() {
+
                     @Override
                     public void run() {
                         c.getPlayer().getMap().broadcastMessage(clone.getClone(), MaplePacketCreator.showChair(clone.getClone().getId(), itemId), false);

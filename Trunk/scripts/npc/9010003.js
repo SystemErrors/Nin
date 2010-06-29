@@ -7,7 +7,7 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == -1) {
-        cm.dispose();
+        cm.voteMSG();
     } else {
         if (cm.getChar().getMapId() != 101000000) {
             cm.sendOk("You can enter NinjaShiken Only From Ellinia");

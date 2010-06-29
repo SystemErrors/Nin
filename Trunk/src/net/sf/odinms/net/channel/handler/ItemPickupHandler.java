@@ -49,9 +49,9 @@ import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;
  *
  * @author Matze
  */
-public class ItemPickupHandler extends AbstractMaplePacketHandler {
+public final class ItemPickupHandler extends AbstractMaplePacketHandler {
 
-    public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
+    public final void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         @SuppressWarnings("unused")
         byte mode = slea.readByte(); // or something like that...but better ignore it if you want
         // mapchange to work! o.o!
@@ -160,14 +160,21 @@ public class ItemPickupHandler extends AbstractMaplePacketHandler {
         }
     }
 
-    public boolean useItem(MapleClient c, int id) {
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        if (Items.isUse(id)) { // TO prevent caching of everything, waste of mem
+    public static final boolean useItem(final MapleClient c, final int id) {
+        if (id / 1000000 == 2) {
+            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             if (ii.isConsumeOnPickup(id)) {
-                ii.getItemEffect(id).applyTo(c.getPlayer());
+                if (id > 2022430 && id < 2022434) {
+                    for (MapleCharacter mc : c.getPlayer().getMap().getCharacters()) {
+                        if (mc.getParty() == c.getPlayer().getParty()) {
+                            ii.getItemEffect(id).applyTo(mc);
+                        }
+                    }
+                } else {
+                    ii.getItemEffect(id).applyTo(c.getPlayer());
+                }
                 return true;
             }
-
         }
         return false;
     }

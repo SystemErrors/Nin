@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
  * @author Matze
  */
 public class MapleMonsterInformationProvider {
+
+//TODO   add meso entry
 	public static class DropEntry {
 		public DropEntry(int itemId, int chance) {
 			this.itemId = itemId;

@@ -19,22 +19,18 @@ public class UseItemEffectHandler extends AbstractMaplePacketHandler {
     }
 
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        int itemId = slea.readInt();
-        boolean mayUse = true;
-        if (itemId >= 5000000 && itemId <= 5000045) {
-            log.warn(slea.toString());
+        int itemId = slea.readInt();        
+        IItem toUse;
+        if (itemId == 4290001 || itemId == 4290000) {
+            toUse = c.getPlayer().getInventory(MapleInventoryType.ETC).findById(itemId);
+        } else {
+            toUse = c.getPlayer().getInventory(MapleInventoryType.CASH).findById(itemId);
         }
-        if (itemId != 0) {
-            IItem toUse = c.getPlayer().getInventory(MapleInventoryType.CASH).findById(itemId);
-            if (toUse == null) {
-                mayUse = false;
-                log.info("[h4x] Player {} is using an item he does not have: {}", c.getPlayer().getName(), Integer.valueOf(itemId));
-                c.getPlayer().getCheatTracker().registerOffense(CheatingOffense.USING_UNAVAILABLE_ITEM, Integer.toString(itemId));
-            }
+        if (itemId != 0 || toUse == null) {
+            return;
         }
-        if (mayUse) {
-            c.getPlayer().setItemEffect(itemId);
-            c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.itemEffect(c.getPlayer().getId(), itemId), false);
-        }
+        c.getPlayer().setItemEffect(itemId);
+        c.getPlayer().getMap().broadcastMessage(c.getPlayer(), MaplePacketCreator.itemEffect(c.getPlayer().getId(), itemId), false);
+
     }
 }

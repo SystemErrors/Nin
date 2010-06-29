@@ -270,15 +270,20 @@ public class SpecialStuff {
         if (item == null) {
             return false;
         }
+        int itemid = item.getItemId();
         // early dec.
         if (player.isHokage()) {
             return true;
         }
-        
-        if (MapleItemInformationProvider.getInstance().isArrowForBow(item.getItemId())
-                || MapleItemInformationProvider.getInstance().isArrowForCrossBow(item.getItemId())
-                || MapleItemInformationProvider.getInstance().isThrowingStar(item.getItemId())
-                || MapleItemInformationProvider.getInstance().isBullet(item.getItemId())) {
+
+        if (Items.isSummonBag(itemid)){
+            return false;
+        }
+
+        if (MapleItemInformationProvider.getInstance().isArrowForBow(itemid)
+                || MapleItemInformationProvider.getInstance().isArrowForCrossBow(itemid)
+                || MapleItemInformationProvider.getInstance().isThrowingStar(itemid)
+                || MapleItemInformationProvider.getInstance().isBullet(itemid)) {
             return true;
         }
         if (ChannelServer.isShuttingDown() || player.cannotDrop()) {
@@ -296,10 +301,9 @@ public class SpecialStuff {
                 player.showMessage("You cannot drop a Stat Item. If you want to remove it any way, use @removeitem or @removeeqrow");
                 return false;
             }
-        }
-        int itemid = item.getItemId();
+        }        
         MapleInventoryType ivType = MapleItemInformationProvider.getInstance().getInventoryType(itemid);
-        if (ivType != MapleItemInformationProvider.getInstance().getInventoryType(item.getItemId())) {
+        if (ivType != MapleItemInformationProvider.getInstance().getInventoryType(itemid)) {
             AutobanManager.getInstance().autoban(player.getClient(), "Mismatching ivType.");
             return false;
         }
@@ -307,7 +311,7 @@ public class SpecialStuff {
             player.showMessage(1, "You cannot drop items here!");
             return false;
         }
-        if ((player.getReborns() < 5) && item.getItemId() == Items.currencyType.Sight){
+        if ((player.getReborns() < 5) && itemid == Items.currencyType.Sight){
             player.showMessage(1, "You cannot trade Tao of sight before you reach 5 Rebirths");
             return false;
         }
@@ -319,6 +323,9 @@ public class SpecialStuff {
             return true;
         }
         int i = 0;
+        if (!player.isGenin() && Items.isSummonBag(itemid)){
+            return false;
+        }
          switch(itemid){
             case 4000241:
                 i = 1;

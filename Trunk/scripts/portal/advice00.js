@@ -1,1 +1,1 @@
-function enter(pi) {	pi.showInstruction(" Welcome to NinjaMS. We are glad you chose to try out our server.", 250, 5);	return true;}
+function enter(pi) {	pi.showInstruction(" Welcome to NinjaMS. \r\\ We are glad you chose to be a part of our community.", 150, 15);	return true;}

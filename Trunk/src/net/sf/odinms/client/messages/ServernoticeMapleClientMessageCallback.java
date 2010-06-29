@@ -29,7 +29,7 @@ public class ServernoticeMapleClientMessageCallback implements MessageCallback {
 	private int mode;
 	
 	public ServernoticeMapleClientMessageCallback(MapleClient client) {
-		this (6, client);
+		this (5, client);
 	}
 	
 	public ServernoticeMapleClientMessageCallback(int mode, MapleClient client) {

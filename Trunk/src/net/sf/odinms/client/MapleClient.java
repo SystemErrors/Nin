@@ -92,7 +92,6 @@ public class MapleClient {
     private Map<String, ScriptEngine> engines = new HashMap<String, ScriptEngine>();
     private ScheduledFuture<?> idleTask = null;
 
-
     public MapleClient(MapleAESOFB send, MapleAESOFB receive, IoSession session) {
         this.send = send;
         this.receive = receive;
@@ -123,7 +122,7 @@ public class MapleClient {
         this.session.write(MaplePacketCreator.getCharList(this, server));
     }
 
-    public List<MapleCharacter> loadCharacters(int serverId) { 
+    public List<MapleCharacter> loadCharacters(int serverId) {
         // TODO make this less costly zZz
         List<MapleCharacter> chars = new LinkedList<MapleCharacter>();
         for (CharNameAndId cni : loadCharactersInternal(serverId)) {
@@ -501,7 +500,7 @@ public class MapleClient {
         return this.accId;
     }
 
-    public void updateLoginState(int newstate) { 
+    public void updateLoginState(int newstate) {
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = ?, lastlogin = CURRENT_TIMESTAMP() WHERE id = ?");
@@ -524,7 +523,7 @@ public class MapleClient {
         }
     }
 
-    public int getLoginState() { 
+    public int getLoginState() {
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement ps;
@@ -609,7 +608,7 @@ public class MapleClient {
             } catch (RemoteException e) {
                 getChannelServer().reconnectWorld();
             }
-           // getPlayer().unequipAllPets();
+            // getPlayer().unequipAllPets();
             boolean hene = false;
             if (!chr.isAlive()) {
                 chr.setHp(50, true);
@@ -725,7 +724,7 @@ public class MapleClient {
             ps = con.prepareStatement("DELETE FROM characters WHERE id = ?");
             ps.setInt(1, cid);
             ps.executeUpdate();
-            ps.close();           
+            ps.close();
             return true;
         } catch (SQLException e) {
             log.error("ERROR", e);
@@ -869,6 +868,10 @@ public class MapleClient {
 
     public void showMessage(String string) {
         getSession().write(MaplePacketCreator.serverNotice(1, string));
+    }
+
+    public void dropMessage(String string) {
+        getSession().write(MaplePacketCreator.serverNotice(5, string));
     }
 
     public void showMessage(int fuck, String string) {

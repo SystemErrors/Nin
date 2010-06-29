@@ -23,16 +23,14 @@ function start() {
 
 function action(mode, type, selection) {
     if (mode == -1) {
-        cm.sendDefaultMessage();
+        cm.voteMSG();
     } else {
         if (mode == 1) {
             status++;
-        } else { // determine below - if it is send default message, it will dispose upon clicking no.
-            // if it is status--, it goes back upon no. sophistication includes if (status >= 2 && mode == 0). DIY.
-            cm.voteMSG(); cm.dispose();return; // return only if using senddefaultmess
-        //status--;
+        } else {
+            cm.voteMSG();
+            return;
         }
-
         if (status == 0) {
                 if (!cm.p().isGenin()) { cm.dispose(); cm.p().goHome(); return};
                     var selStr = "";

@@ -53,8 +53,8 @@ public class UseCashItemHandler extends AbstractMaplePacketHandler {
         slea.readByte();
         int itemId = slea.readInt();
         IItem item = c.getPlayer().getInventory(MapleInventoryType.CASH).findById(itemId);
-        if (item == null) {
-            c.disconnect();
+        if (item == null || item.getItemId() != itemId || item.getQuantity() < 1) {
+            c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
         try {

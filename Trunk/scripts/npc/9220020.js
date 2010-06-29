@@ -61,7 +61,7 @@ function action(mode, type, selection) {
                 } else if (selection == 4){
                     cm.getPlayer().reduceNinjaTensu();
                     cm.gainNX(50000);
-                    cm.sendOk("You have gaines 50000 nx. Have fun and Keep Voting :)");
+                    cm.sendOk("You have gained 50000 nx. Have fun and Keep Voting :)");
                     cm.dispose();
                 } else if (selection == 5){
                     if (cm.getPlayer().getNinjaTensu() >= 5){

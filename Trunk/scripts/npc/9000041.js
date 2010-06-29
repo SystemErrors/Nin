@@ -29,16 +29,16 @@ function action(mode, type, selection) {
             status++;
         } else { // determine below - if it is send default message, it will dispose upon clicking no.
             // if it is status--, it goes back upon no. sophistication includes if (status >= 2 && mode == 0). DIY.
-            cm.voteMSG(); cm.dispose();return; // return only if using senddefaultmess
+            cm.voteMSG();cm.dispose();return; // return only if using senddefaultmess
         //status--;
         }
 
         if (status == 0) {
-                if (!cm.p().isGenin()) { cm.dispose(); cm.p().goHome(); return};
+                if (!cm.p().isGenin()) {cm.dispose();cm.p().goHome();return};
                     var selStr = "";
-            selStr += "Hello there, #b#h ##k, I am the #rCharity Box#k,";
-			selStr += "and I am in charge of the distribution of #eDonator Autobuffs#n.";
-			selStr += "Buffs selected here will automatically be activated when yo$";
+            selStr += "Hello there Elite Ninja, #b#h ##k, I am the #rDonation Box#k,";
+            selStr += "and I am in charge of the distribution of #eDonator Autobuffs#n.";
+            selStr += "Buffs selected here will automatically be activated when yo$";
             selStr += "#r#ePlease choose an appropriate category to add an autobuff to.#k#n\r\n#b";
             for (var i = 0; i < names.length; i++) {
                 selStr += "\r\n#L" + i + "#" + names[i] + "#l";
@@ -67,12 +67,12 @@ function action(mode, type, selection) {
                 }
 
                 switch (selection) {
-                    case 0: buffs = boosters; break;
-                    case 1: buffs = statups; break;
-                    case 2: buffs = defencebuffs; break;
-                    case 3: buffs = charges; break;
-                    case 4: buffs = souls; break;
-                    default: cm.dispose(); cm.sendOk("Invalid buff choice: " + selection); return;
+                    case 0:buffs = boosters;break;
+                    case 1:buffs = statups;break;
+                    case 2:buffs = defencebuffs;break;
+                    case 3:buffs = charges;break;
+                    case 4:buffs = souls;break;
+                    default:cm.dispose();cm.sendOk("Invalid buff choice: " + selection);return;
                 }
 
                 var selStr = "#r#ePlease choose an approriate buff from below.#n#k";

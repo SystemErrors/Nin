@@ -1,1 +1,1 @@
-/* * @author:   Moogra * @function: Warp character up and award player with dojo points * @maps:     All Dojo fighting maps */function enter(pi) {    return pi.dojang_up();}
+function enter(pi) {    return pi.dojang_up();}

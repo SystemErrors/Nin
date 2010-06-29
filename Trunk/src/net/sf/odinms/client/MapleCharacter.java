@@ -49,6 +49,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import net.sf.odinms.client.Enums.*;
 import net.sf.odinms.client.Inventory.MapleRing;
+import net.sf.odinms.client.NinjaMS.Donations;
 import net.sf.odinms.client.NinjaMS.Rebirths;
 
 import net.sf.odinms.client.anticheat.CheatTracker;
@@ -214,7 +215,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private List<MapleRing> crushRings = new LinkedList<MapleRing>(),
             friendshipRings = new LinkedList<MapleRing>(),
             marriageRings = new LinkedList<MapleRing>();
-
+    //item filter
+    private ArrayList<Integer> excluded = new ArrayList<Integer>();
 
     private MapleCharacter() {
         setStance(0);
@@ -300,7 +302,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         ret.mp = rs.getInt("mp");
         ret.storageAp = rs.getInt("storageap");
         ret.remainingAp = rs.getInt("ap");
-        ret.meso.set(rs.getInt("meso"));       
+        ret.meso.set(rs.getInt("meso"));
         ret.skinColor = MapleSkinColor.getById(rs.getInt("skincolor"));
         int jobId = rs.getInt("job");
         ret.job = MapleJob.getById(jobId);
@@ -664,8 +666,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     ps.setInt(5, item.getQuantity());
                     ps.setString(6, item.getOwner());
                     ps.setInt(7, item.getUniqueId());
-                    ps.setLong(8, item.getExpiration());                    
-                    ps.setByte(9, (byte)-1);
+                    ps.setLong(8, item.getExpiration());
+                    ps.setByte(9, (byte) -1);
                     ps.executeUpdate();
                     rs = ps.getGeneratedKeys();
                     int itemid;
@@ -1769,9 +1771,10 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         }
     }
 
-    public void gainFame(){
+    public void gainFame() {
         this.fame++;
     }
+
     public void setFame(int fuck) {
         this.fame += fuck;
     }
@@ -1832,17 +1835,17 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     }
 
-    public void changeJob(MapleJob newJob) {        
+    public void changeJob(MapleJob newJob) {
         this.job = newJob;
         updateSingleStat(MapleStat.JOB, newJob.getId());
         getMap().broadcastMessage(this, MaplePacketCreator.showJobChange(getId()), false);
         this.maxSkills(false);
         silentPartyUpdate();
         guildUpdate();
-        if (newJob.isA(MapleJob.NOBLESSE)&& !haveItem(1142065, 1, true, true)) {
-                MapleInventoryManipulator.addStatItemById(client, 1142065, name, (short) 69, (short) 1, (short) 1);
-                showMessage(1, "Congratulations on acheiving noblesse Medal!");
-            }
+        if (newJob.isA(MapleJob.NOBLESSE) && !haveItem(1142065, 1, true, true)) {
+            MapleInventoryManipulator.addStatItemById(client, 1142065, name, (short) 69, (short) 1, (short) 1);
+            showMessage(1, "Congratulations on acheiving noblesse Medal!");
+        }
     }
 
     public void gainAp(int ap) {
@@ -3106,7 +3109,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return nf.format(MapleGuild.CREATE_GUILD_COST);
     }
 
-    public void genericGuildMessage(int code) {     
+    public void genericGuildMessage(int code) {
         this.client.getSession().write(MaplePacketCreator.genericGuildMessage((byte) code));
     }
 
@@ -4142,7 +4145,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void dropMessage(String msg) {
-        dropMessage(6, msg);
+        dropMessage(5, msg);
     }
 
     public void dropMessage(int type, String message) {
@@ -4150,7 +4153,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void showMessage(String msg) {
-        showMessage(6, msg);
+        showMessage(5, msg);
     }
 
     public void showMessage(int type, String message) {
@@ -4161,7 +4164,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
      * GM Status
      */
     public boolean canFuck(MapleCharacter noob) {
-        if(noob.getGMLevel() <= 1){
+        if (noob.getGMLevel() <= 1) {
             return true;
         } else if (getGMLevel() >= noob.getGMLevel()) {
             return true;
@@ -4261,7 +4264,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void changeJobById(int fuck) {
         skills.clear();
-        this.changeJob(MapleJob.getById(fuck));        
+        this.changeJob(MapleJob.getById(fuck));
     }
 
     public void kill() {
@@ -4319,12 +4322,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     public void setIsRebirthing(boolean b) {
         this.rebirthing = b;
     }
-    
+
     public void setReborns(int fuck) {
         this.reborn = fuck;
     }
 
-    public void addReborn(){
+    public void addReborn() {
         this.reborn++;
     }
 
@@ -4602,7 +4605,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         }
     }
 
-        public MaplePet getPet() {
+    public MaplePet getPet() {
         return pet;
     }
 
@@ -4627,12 +4630,18 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         } else {
             dropMessage("You have Gained " + fff + "donator Points");
         }
-
+        dropMessage("You have " + dpoints + " donator points");
     }
 
     public void modifyDAmount(short fff) {
         damount += fff;
         saveToDB();
+        if (fff < 0) {
+            dropMessage("[TheBass] $ " + (fff * -1) + " has been reduced from your donated amount.");
+        } else {
+            dropMessage("[TheBass] $ " + fff + " has been increased in your donated amount.");
+        }
+        dropMessage("[TheBass] So far you have donated " + damount + " USD to NinjaMS.");
     }
 
     public void finishAlert() {
@@ -4649,7 +4658,6 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             getClient().getChannelServer().broadcastStaffPacket(MaplePacketCreator.serverNotice(5, sb.toString()));
         } catch (Exception ignored) {
         }
-
     }
 
     public void giveJQReward() {
@@ -4798,152 +4806,13 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void donatorGacha() {
-        if (this.getDPoints() < 1) {
+        if (dpoints < 1) {
             dropMessage("You dont have any donator Point");
             return;
         }
-        int i = 0;
-        int type = (int) Math.floor(Math.random() * 20 + 1);
-        int chance = (int) Math.floor(Math.random() * 10 + 1);
-        int chance1 = (int) Math.floor(Math.random() * 10 + 1);
-        int chance2 = (int) Math.floor(Math.random() * 10 + 1);
-        switch (type) {
-            case 1:
-            case 2:
-            case 3:
-                int mesolar = type * 1000000;
-                mesolar += chance * 1000000;
-                mesolar += chance1 * 1000000;
-                mesolar += chance2 * 1000000;
-                mesolar *= 20;
-                if (mesolar < 100000000) {
-                    mesolar += 100000000;
-                }
-                if (getMeso() + mesolar >= Integer.MAX_VALUE) {
-                    gainMeso((Integer.MAX_VALUE - getMeso() - 1), true);
-                } else {
-                    gainMeso(mesolar, true);
-                }
-
-                dropMessage("You have gained Mesos");
-                break;
-            case 4:
-            case 5:
-            case 6:
-                modifyCSPoints(1, 15000);
-                showMessage("You have gained 15000 NX");
-            case 7:
-                int[] scrolls = {2040603, 2044503, 2041024, 2041025, 2044703, 2044603, 2043303, 2040807, 2040806, 2040006, 2040007, 2043103, 2043203, 2043003, 2040506, 2044403, 2040903, 2040709, 2040710, 2040711, 2044303, 2043803, 2040403, 2044103, 2044203, 2044003, 2043703, 2041200, 2049100, 2049000, 2049001, 2049002, 2049003};
-                i = (int) Math.floor(Math.random() * scrolls.length);
-                MapleInventoryManipulator.addById(getClient(), scrolls[i], (short) 5);
-                showMessage("You have gained a scroll (Gm scroll / Chaos scroll / Clean slate scroll)");
-                break;
-            case 8:
-                int[] rareness = {1302081, 1312037, 1322060, 1402046, 1412033, 1422037, 1442063, 1482023, 1372035, 1372036, 1372037, 1372038, 1372039, 1372040, 1372041, 1372042, 1382045, 1382046, 1382047, 1382048, 1382049, 1382050, 1382051, 1382052, 1382060, 1442068, 1452060};
-                showMessage("You have gained a super Rare Weapon");
-                i = (int) Math.floor(Math.random() * rareness.length);
-                MapleInventoryManipulator.addById(getClient(), rareness[i], (short) 1);
-                int fucks = chance + chance1 + chance2;
-                showMessage("You have gained " + fucks + " attack pots of each kind");
-                MapleInventoryManipulator.addById(getClient(), 2022245, (short) fucks);
-                MapleInventoryManipulator.addById(getClient(), 2022179, (short) fucks);
-                MapleInventoryManipulator.addById(getClient(), 2022282, (short) fucks);
-                break;
-            case 9:
-                gainAp(2500);
-                showMessage("You have gained 2500 AP");
-                break;
-            case 10:
-                gainAp(1000);
-                showMessage("you have gained 1000 AP");
-                break;
-            case 11:
-                gainAp(5000);
-                showMessage("you have gained 5000 Ap");
-                break;
-            case 12:
-                gainAp(500);
-                showMessage("you have gained 500 Ap");
-                break;
-            case 13:
-                addFame(100);
-                showMessage("You have gained 100 Fame");
-                break;
-            case 14:
-                jqpoints++;
-                showMessage("you have gained a JQ point");
-                break;
-            case 15:
-                int p = chance > 5 ? 1 : 2;
-                jqpoints += p;
-                showMessage("you have gained " + p + " JQ Points");
-                break;
-            case 16:
-                showMessage("You have gained 50 Rebirths");
-                for (i = 0; i < 50; i++) {
-                    Rebirths.giveRebirth(this);
-                }
-                getClient().getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[The Elite NinjaGang] Congratulations " + getName() + " On getting 50 rebirths from Donator Gacha"));
-                break;
-            case 17:
-            case 18:
-            case 19:
-                int[] chairs1 = {3010000, 3010001, 3010002, 3010003, 3010004, 3010005};
-                int[] chairs2 = {3010006, 3010007, 3010008, 3010009, 3010010, 3010011};
-                int[] chairs3 = {3010012, 3010013, 3010014, 3010015, 3010016, 3010017};
-                int[] chairs4 = {3010018, 3010019, 3010022, 3010023, 3010024, 3010025};
-                int[] chairs5 = {3010026, 3010028, 3010040, 3010041, 3010045, 3010046};
-                int[] chairs6 = {3010000, 3010047, 3010057, 3010058, 3010072, 3011000};
-                int z;
-                switch (chance2) {
-                    case 1:
-                    case 2:
-                        for (z = 0; z < 6; z++) {
-                            gainItem(chairs1[i], 1);
-                        }
-                        break;
-                    case 3:
-                    case 4:
-                        for (z = 0; z < 6; z++) {
-                            gainItem(chairs2[i], 1);
-                        }
-                        break;
-                    case 5:
-                    case 6:
-                        for (z = 0; z < 6; z++) {
-                            gainItem(chairs3[i], 1);
-                        }
-                        break;
-                    case 7:
-                        for (z = 0; z < 6; z++) {
-                            gainItem(chairs4[i], 1);
-                        }
-                        break;
-                    case 8:
-                        for (z = 0; z < 6; z++) {
-                            gainItem(chairs5[i], 1);
-                        }
-                        break;
-                    default:
-                        for (z = 0; z < 6; z++) {
-                            gainItem(chairs6[i], 1);
-                        }
-                }
-                showMessage("You have Gained Chairs");
-                break;
-            case 20:
-                showMessage("You have gained 25 Rebirths");
-                for (i = 0; i < 25; i++) {
-                    Rebirths.giveRebirth(this);
-                }
-                getClient().getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[The Elite NinjaGang] Congratulations " + getName() + " On getting 25 rebirths from Donator Gacha"));
-                break;
-            default:
-                modifyCSPoints(1, 15000);
-                showMessage("You have gained 15000 NX");
-                break;
+        if (Donations.Gacha(this)) {
+            modifyDPoints((short) -1);
         }
-        modifyDPoints((short) -1);
     }
 
     public void maxAllStats() {
@@ -4967,10 +4836,9 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         client.getSession().write(MaplePacketCreator.getShowItemGain(itemid, (short) 1, true));
     }
 
-
     public void gainStatItem(int id, short stat, short wa, short ma) {
         MapleInventoryManipulator.addStatItemById(client, id, name, stat, wa, ma);
-       // client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
+        // client.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) 1, true));
         dropMessage("You have gained a stat Item. Itemid : " + id + " Stats : " + stat + "WA : " + wa + " MA : " + ma);
     }
 
@@ -5152,7 +5020,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         cannotdrop = true;
     }
 
-    public void setDroppable(){
+    public void setDroppable() {
         cannotdrop = false;
     }
 
@@ -5213,7 +5081,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     public void doAutoAp(byte apla) {
         switch (autoap) {
             case 0:
-                if (remainingAp + apla <= Short.MAX_VALUE) {
+                if (remainingAp + apla < Short.MAX_VALUE) {
                     remainingAp += apla;
                     updateSingleStat(MapleStat.AVAILABLEAP, remainingAp);
                 } else {
@@ -5228,7 +5096,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
                 break;
             case 1:
-                if (str + apla <= Short.MAX_VALUE) {
+                if (str + apla < Short.MAX_VALUE) {
                     str += apla;
                     updateSingleStat(MapleStat.STR, str);
                 } else {
@@ -5243,7 +5111,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
                 break;
             case 2:
-                if (dex + apla <= Short.MAX_VALUE) {
+                if (dex + apla < Short.MAX_VALUE) {
                     dex += apla;
                     updateSingleStat(MapleStat.DEX, dex);
                 } else {
@@ -5258,7 +5126,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
                 break;
             case 3:
-                if (int_ + apla <= Short.MAX_VALUE) {
+                if (int_ + apla < Short.MAX_VALUE) {
                     int_ += apla;
                     updateSingleStat(MapleStat.INT, int_);
                 } else {
@@ -5273,7 +5141,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                 }
                 break;
             case 4:
-                if (luk + apla <= Short.MAX_VALUE) {
+                if (luk + apla < Short.MAX_VALUE) {
                     luk += apla;
                     updateSingleStat(MapleStat.LUK, luk);
                 } else {
@@ -5294,6 +5162,21 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
                     byte togain = apla;
                     byte gain = (byte) (Integer.MAX_VALUE - storageAp);
                     client.showMessage((byte) 5, "Your STORAGE AP has been maxed! You will not gain AP any more.");
+                }
+                break;
+            default:
+                if (remainingAp + apla < Short.MAX_VALUE) {
+                    remainingAp += apla;
+                    updateSingleStat(MapleStat.AVAILABLEAP, remainingAp);
+                } else {
+                    byte togain = apla;
+                    byte gain = (byte) (Short.MAX_VALUE - remainingAp);
+                    togain -= gain;
+                    dropMessage("Your remaining AP has been maxed! Your AP will now be added to Storage AP");
+                    autoap = 5;
+                    remainingAp += gain;
+                    storageAp += togain;
+                    updateSingleStat(MapleStat.AVAILABLEAP, remainingAp);
                 }
                 break;
         }
@@ -5534,7 +5417,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public void setGMSMode(byte type) {
-        if(isHokage()){
+        if (isHokage()) {
             GMSMode = type;
             return;
         }
@@ -5981,7 +5864,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         return village;
     }
 
-    public void setVillage(byte lol){
+    public void setVillage(byte lol) {
         this.village = Village.getById(lol);
     }
 
@@ -5999,7 +5882,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void addFootnote(String note) {
         StringBuilder sb = new StringBuilder();
-        if(footnote != null){
+        if (footnote != null) {
             sb.append(this.footnote);
         }
         sb.append(note);
@@ -6013,5 +5896,14 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
 
     public void missionComplete() {
         this.mission++;
+    }
+
+    // Item Filter
+    public ArrayList<Integer> getExcluded() {
+        return excluded;
+    }
+
+    public void addExcluded(int x) {
+        excluded.add(x);
     }
 }

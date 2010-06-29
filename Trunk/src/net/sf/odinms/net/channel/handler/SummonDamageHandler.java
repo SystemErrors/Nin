@@ -65,7 +65,7 @@ public class SummonDamageHandler extends AbstractMaplePacketHandler {
     @Override
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
         int oid = slea.readInt();
-        MapleCharacter player = c.getPlayer();
+        MapleCharacter player = c.getPlayer();        
         Collection<MapleSummon> summons = player.getSummons().values();
         MapleSummon summon = null;
         for (MapleSummon sum : summons) {

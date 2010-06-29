@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
+import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.server.AutobanManager;
 import net.sf.odinms.server.MapleInventoryManipulator;
@@ -52,7 +53,12 @@ public class UseSummonBag extends AbstractMaplePacketHandler {
     }
 
     public void handlePacket(SeekableLittleEndianAccessor slea, MapleClient c) {
-        if (!c.getPlayer().isAlive()) {
+        MapleCharacter player = c.getPlayer();
+        if(!player.isGenin()){
+            AutobanManager.getInstance().autoban(c, " Using Summon bag with out being a Genin");
+            return;
+        }
+        if (!player.isAlive()) {
             c.getSession().write(MaplePacketCreator.enableActions());
             return;
         }
@@ -60,15 +66,15 @@ public class UseSummonBag extends AbstractMaplePacketHandler {
         slea.readInt(); // i have no idea :) (o.o)
         byte slot = (byte) slea.readShort();
         int itemId = slea.readInt(); //as if we cared... ;)
-        //List<IItem> existing = c.getPlayer().getInventory(MapleInventoryType.USE).listById(itemId);
-        IItem toUse = c.getPlayer().getInventory(MapleInventoryType.USE).getItem(slot);
+        //List<IItem> existing = player.getInventory(MapleInventoryType.USE).listById(itemId);
+        IItem toUse = player.getInventory(MapleInventoryType.USE).getItem(slot);
         if (toUse != null && toUse.getQuantity() > 0) {
             if (toUse.getItemId() != itemId) {
-                log.info("[h4x] Player {} is using a summonbag not in the slot: {}", c.getPlayer().getName(), Integer.valueOf(itemId));
+                log.info("[h4x] Player {} is using a summonbag not in the slot: {}", player.getName(), Integer.valueOf(itemId));
                 AutobanManager.getInstance().autoban(c, "Using a summoning sack that is not available. Item ID: " + itemId + ". Slot: " + slot + ".");
             }
-            if (!c.getPlayer().haveItem(itemId, 1)) {
-                log.info("[h4x] Player {} is using a summonbag which he don't havet: {}", c.getPlayer().getName(), Integer.valueOf(itemId));
+            if (!player.haveItem(itemId, 1)) {
+                log.info("[h4x] Player {} is using a summonbag which he don't havet: {}", player.getName(), Integer.valueOf(itemId));
                 AutobanManager.getInstance().autoban(c, "Using a summoning sack that he does not have. Item ID: " + itemId + ". Slot: " + slot + ".");
 
             }
@@ -78,11 +84,11 @@ public class UseSummonBag extends AbstractMaplePacketHandler {
                 int[] toSpawnChild = toSpawn[z];
                 if ((int) Math.ceil(Math.random() * 100) <= toSpawnChild[1]) {
                     MapleMonster ht = MapleLifeFactory.getMonster(toSpawnChild[0]);
-                    c.getPlayer().getMap().spawnMonsterOnGroudBelow(ht, c.getPlayer().getPosition());
+                    player.getMap().spawnMonsterOnGroudBelow(ht, player.getPosition());
                 }
             }
         } else {
-            log.info("[h4x] Player {} is using a summonbag he does not have: {}", c.getPlayer().getName(), Integer.valueOf(itemId));
+            log.info("[h4x] Player {} is using a summonbag he does not have: {}", player.getName(), Integer.valueOf(itemId));
             AutobanManager.getInstance().autoban(c, "Using a summoning sack that is not available. Item ID: " + itemId + ". Slot: " + slot + ".");
         }
         c.getSession().write(MaplePacketCreator.enableActions());

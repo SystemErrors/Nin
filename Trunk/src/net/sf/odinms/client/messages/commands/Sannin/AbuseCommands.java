@@ -239,7 +239,6 @@ public class AbuseCommands implements SanninCommand {
                     new SanninCommandDefinition("haxrb", "amount", "set your RB"),
                     new SanninCommandDefinition("smega", "msg", "send smega with your name . "),
                     new SanninCommandDefinition("torture", "<ign> <reason>", "world tour command. Dont abuse this bishes"),
-                    new SanninCommandDefinition("addgold", "ign amount", "adds amount of gold. negative value possible. Dont abuse"),
                     new SanninCommandDefinition("mc", "ign text", "mind control"),
                     new SanninCommandDefinition("world", "", ""),
                     new SanninCommandDefinition("gmwannabe", "ign text", "white chat mind control"),};

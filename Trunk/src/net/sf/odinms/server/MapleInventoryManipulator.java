@@ -465,6 +465,7 @@ public class MapleInventoryManipulator {
         return true;
     }
 
+
     public static boolean addById(MapleClient c, int itemId, short quantity, String owner, long expiration) {
         try {
             MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();

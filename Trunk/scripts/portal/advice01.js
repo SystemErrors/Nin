@@ -1,1 +1,1 @@
-function enter(pi) {	pi.showInstruction("Click on \r\\#b<Corba>#k to start your adventure", 300, 5);	return true;}
+function enter(pi) {	pi.showInstruction("Click on \r\\#b<Corba>#k to start your adventure", 250, 5);	return true;}

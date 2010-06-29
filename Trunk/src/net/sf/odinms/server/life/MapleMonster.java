@@ -352,7 +352,7 @@ public class MapleMonster extends AbstractLoadedMapleLife {
         final List<Integer> toSpawn = this.getRevives();
         if (toSpawn != null) {
             final MapleMap reviveMap = killer.getMap();
-            if (toSpawn.contains(9300216)) {
+            if (toSpawn.contains(9300216) && SpecialStuff.getInstance().isDojoMap(reviveMap.getId())){
                 reviveMap.broadcastMessage(MaplePacketCreator.environmentChange("Dojang/clear", 4));
                 reviveMap.broadcastMessage(MaplePacketCreator.environmentChange("dojang/end/clear", 3));
                 if (killer.getParty() != null) {

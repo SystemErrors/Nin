@@ -280,8 +280,8 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         if (channel == 9) {
             sendIRCNotice();
             RPG.getInstance();
-            RPG_1.getInstance();            
-            Pandora.getInstance();         
+            RPG_1.getInstance();
+            Pandora.getInstance();
         }
         tMan.register(new spawnMobs(), 2500);
         tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));
@@ -383,13 +383,14 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         broadcastPacket(MaplePacketCreator.serverMessage(serverMessage));
     }
 
-    public static void setArrayString(String newMessage){
+    public static void setArrayString(String newMessage) {
         arrayString = newMessage;
     }
 
-    public static String getArrayString(){
+    public static String getArrayString() {
         return arrayString;
     }
+
     public void broadcastPacket(MaplePacket data) {
         for (MapleCharacter chr : players.getAllCharacters()) {
             chr.getClient().getSession().write(data);
@@ -558,6 +559,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         }
         return g;
     }
+
     public MapleGuildSummary getGuildSummary(int gid) {
         if (gsStore.containsKey(gid)) {
             return gsStore.get(gid);
@@ -652,13 +654,29 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         }
     }
 
+    public void broadcastGMMessage(String msg) {
+        for (MapleCharacter chr : players.getAllCharacters()) {
+            if (chr.isJounin()) {
+                chr.getClient().dropMessage(msg);
+            }
+        }
+    }
+
+    public void broadcastStaffMessage(String msg) {
+        for (MapleCharacter chr : players.getAllCharacters()) {
+            if (chr.isChunin()) {
+                chr.getClient().dropMessage(msg);
+            }
+        }
+    }
+
     public void broadcastStaffPacket(MaplePacket data) {
         for (MapleCharacter chr : players.getAllCharacters()) {
             if (chr.isChunin()) {
                 chr.getClient().getSession().write(data);
             }
         }
-    }    
+    }
 
     private class spawnMobs implements Runnable {
 
@@ -705,7 +723,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         this.isRebooting = isRebooting;
     }
 
-    public void scheduleReboot(){
+    public void scheduleReboot() {
         this.isRebooting = true;
         int i = this.channel;
         for (ChannelServer cserv : getAllInstances()) {
@@ -713,13 +731,16 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
         }
         TimerManager.getInstance().schedule(new scheduleReboot(), 30 * 1000);
     }
+
     private class scheduleReboot implements Runnable {
+
         final int i = channel;
+
         @Override
         public void run() {
             instances.get(i).shutdown();
             instances.remove(i);
-            log.info("Channel "+i+"Shut Down");
+            log.info("Channel " + i + "Shut Down");
             try {
                 newInstance(initialProp.getProperty("net.sf.odinms.channel." + i + ".key")).run();
             } catch (InstanceAlreadyExistsException ex) {
@@ -731,9 +752,8 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
             } catch (MalformedObjectNameException ex) {
                 java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            log.info("Channel "+i+"Rebooted");
+            log.info("Channel " + i + "Rebooted");
         }
-        
     }
 
     public void restarttimers() {
@@ -745,7 +765,7 @@ public class ChannelServer implements Runnable, ChannelServerMBean {
     }
 
     private void sendIRCNotice() {
-        MainIRC.getInstance().sendGlobalMessage(Colors.DARK_GREEN + Colors.REVERSE + "The Server is be up in 2 minutes. Calm the fudge down and wait. Thanks");
+        MainIRC.getInstance().sendGlobalMessage(Colors.DARK_GREEN + Colors.REVERSE + "The Server will be up in 2 minutes. Thank you for your patience");
         MainIRC.getInstance().sendGlobalMessage("******************************************************************************** ");
     }
 

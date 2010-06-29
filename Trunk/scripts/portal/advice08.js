@@ -1,1 +1,1 @@
-function enter(pi) {	pi.showInstruction("You can check your character's stats by pressing the #e#b[S]#k#nkey.", 350, 5);	return true;}
+function enter(pi) {	pi.showInstruction("You can check your character's stats by \r\\using command the #e#b@ninjaglare#k#n.", 200, 10);	return true;}

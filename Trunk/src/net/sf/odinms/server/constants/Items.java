@@ -50,6 +50,10 @@ public class Items {
         return itemid >= 4032015 && itemid < 4032017;
     }
 
+    public static boolean isSummonBag(int itemid){
+        return itemid >= 2100000 && itemid < 2102010;
+    }
+
     public static class Cash {
 
         public final static int TeleportRock = 5040000;

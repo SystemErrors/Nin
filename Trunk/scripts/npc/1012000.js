@@ -49,9 +49,22 @@ function action(mode, type, selection) {
                 text += "#b\r\n#L" + i + "#" +  village[i % 5];
                 text += " Village .#l";
             }
+            if(cm.getPlayer().getReborns() < 50){
+                text += "#d#e\r\n\r\n\r\n ------------------------------------ \r\n";
+                text += "Special map for beginners upto 50 Rebirths ";
+                text += "\r\n ------------------------------------#n";
+                text += "\r\n#L"+(maps.length + 10)+"#CubeSlimes map#l";
+                text += "\r\n#L"+(maps.length + 20)+"#Dark lord Clone map#l";
+            }
             cm.sendSimple(text);
         } else {
-            cm.warp(maps[selection]);
+            if (selection < (maps.length+5)){
+                cm.warp(maps[selection]);
+            } else if(selection == (maps.length + 10)){
+                cm.warp(800010001);
+            } else {
+                cm.warp(800020101);
+            }
             cm.voteMSG();
         }
     }
