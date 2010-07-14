@@ -52,7 +52,7 @@ public class DebugCommands implements AdminCommand {
             final MaplePortal portal = player.getMap().findClosestSpawnpoint(player.getPosition());
             mc.dropMessage(portal.getName() + " id: " + portal.getId() + " script: " + portal.getScriptName());
         } else if (splitted[0].equals("spawndebug")) {
-            c.getPlayer().getMap().spawnDebug(mc);
+            mc.dropMessage(c.getPlayer().getMap().spawnDebug());
         } else if (splitted[0].equals("door")) {
             Point doorPos = new Point(player.getPosition());
             doorPos.y -= 270;
@@ -123,7 +123,8 @@ public class DebugCommands implements AdminCommand {
                     MapleMap map = c.getChannelServer().getMapFactory().getMap(mapid);
                     map.deleteAndReloadMap();
                 }
-            } else if (splitted[1].equalsIgnoreCase("timer")) {
+                c.getPlayer().dropMessage(6, "Completed reloading Maps.");
+            }/* else if (splitted[1].equalsIgnoreCase("timer")) {
                 try {
                     TimerManager.getInstance().stop();
                 } catch (Exception e) {
@@ -136,35 +137,36 @@ public class DebugCommands implements AdminCommand {
                         for (ChannelServer cserv : ChannelServer.getAllInstances()) {
                             cserv.restarttimers();
                         }
-                        mc.dropMessage("Success");
+                        mc.dropMessage("Success reloafing Timers.");
                     } catch (Exception e) {
                         mc.dropMessage("Error : " + e);
                         e.printStackTrace();
                     }
                 }
-            } else if (splitted[1].equalsIgnoreCase("reactors")) {
+            }*/ else if (splitted[1].equalsIgnoreCase("reactors")) {
                 c.getPlayer().getMap().resetReactors();
+                c.getPlayer().dropMessage(6, "Completed reloading reactors.");
             } else if (splitted[1].equalsIgnoreCase("events")) {
                 for (ChannelServer cs : ChannelServer.getAllInstances()) {
                     cs.reloadEvents();
                 }
+                c.getPlayer().dropMessage(6, "Completed reloading Events.");
             } else if (splitted[1].equalsIgnoreCase("guilds")) {
-                try {
+                
                     c.getPlayer().dropMessage(6, "Attempting to reload all guilds... this may take a while...");
-                    c.getChannelServer().getWorldInterface().clearGuilds();
-                    c.getPlayer().dropMessage(6, "Completed.");
-                } catch (RemoteException re) {
-                    c.getPlayer().dropMessage(6, "RemoteException occurred while attempting to reload guilds.");
-                    System.err.println("RemoteException occurred while attempting to reload guilds." + re);
-                }
+                    
+                    c.getPlayer().dropMessage(6, "Completed reloading Guilds.");
+               
             } else if (splitted[1].equalsIgnoreCase("cache")) {
                 //     MapleMonsterInformationProvider.getInstance().clearMesos();
                 MapleMonsterInformationProvider.getInstance().clearDrops();
                 ReactorScriptManager.getInstance().clearDrops();
                 PortalScriptManager.getInstance().clearScripts();
                 MapleShopFactory.getInstance().clear();
+                c.getPlayer().dropMessage(6, "Completed clearing Cache.");
             } else if (splitted[1].equalsIgnoreCase("drops")){
                 MapleMonsterInformationProvider.getInstance().clearDrops();
+                c.getPlayer().dropMessage(6, "Completed clearing Drop cache");
             }
         }
     }

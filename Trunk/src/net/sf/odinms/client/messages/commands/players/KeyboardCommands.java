@@ -32,7 +32,7 @@ public class KeyboardCommands implements PlayerCommand {
             }
         } else if (splitted[0].equalsIgnoreCase("savekockb")) {
             if(!pl.getCheatTracker().spam(60000, 4)){
-                if(pl.getJobId() < 900){
+                if(pl.getJob() < 900){
                     mc.dropMessage("You cannot save KOC keyboard when you are not in KOC path");
                     return;
                 }
@@ -42,7 +42,7 @@ public class KeyboardCommands implements PlayerCommand {
             }
         } else if (splitted[0].equalsIgnoreCase("saveadvkb")) {
             if(!pl.getCheatTracker().spam(60000, 4)){
-                if(pl.getJobId() > 900){
+                if(pl.getJob() > 900){
                     mc.dropMessage("You cannot save Adventurer keyboard when you are not in Adventurer path");
                     return;
                 }
@@ -62,7 +62,7 @@ public class KeyboardCommands implements PlayerCommand {
             }
         } else if (splitted[0].equalsIgnoreCase("loadkockb")) {
             if(!pl.getCheatTracker().spam(60000, 4)){
-                if(pl.getJobId() < 900){
+                if(pl.getJob() < 900){
                     mc.dropMessage("You cannot load KOC keyboard when you are not in KOC path");
                     return;
                 }
@@ -72,7 +72,7 @@ public class KeyboardCommands implements PlayerCommand {
             }
         } else if (splitted[0].equalsIgnoreCase("loadadvkb")) {
             if(!pl.getCheatTracker().spam(60000, 4)){
-                if(pl.getJobId() > 900){
+                if(pl.getJob() > 900){
                     mc.dropMessage("You cannot load adventurer keyboard when you are not in adventurer path");
                     return;
                 }

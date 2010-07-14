@@ -1,0 +1,1 @@
+killall -v -w java

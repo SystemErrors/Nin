@@ -81,17 +81,6 @@ public final class PacketProcessor {
         handlers = new MaplePacketHandler[handlers.length];
         registerHandler(RecvPacketOpcode.PONG, new KeepAliveHandler());
         if (mode == Mode.LOGINSERVER) {
-            registerHandler(RecvPacketOpcode.AFTER_LOGIN, new AfterLoginHandler());
-            registerHandler(RecvPacketOpcode.SERVERLIST_REREQUEST, new ServerlistRequestHandler());
-            registerHandler(RecvPacketOpcode.CHARLIST_REQUEST, new CharlistRequestHandler());
-            registerHandler(RecvPacketOpcode.CHAR_SELECT, new CharSelectedHandler());
-            registerHandler(RecvPacketOpcode.LOGIN_PASSWORD, new LoginPasswordHandler());
-            registerHandler(RecvPacketOpcode.RELOG, new RelogRequestHandler());
-            registerHandler(RecvPacketOpcode.SERVERLIST_REQUEST, new ServerlistRequestHandler());
-            registerHandler(RecvPacketOpcode.SERVERSTATUS_REQUEST, new ServerStatusRequestHandler());
-            registerHandler(RecvPacketOpcode.CHECK_CHAR_NAME, new CheckCharNameHandler());
-            registerHandler(RecvPacketOpcode.CREATE_CHAR, new CreateCharHandler());
-            registerHandler(RecvPacketOpcode.DELETE_CHAR, new DeleteCharHandler());
         } else if (mode == Mode.CHANNELSERVER) {
             registerHandler(RecvPacketOpcode.CHANGE_CHANNEL, new ChangeChannelHandler());
             registerHandler(RecvPacketOpcode.STRANGE_DATA, LoginRequiringNoOpHandler.getInstance());

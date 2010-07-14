@@ -78,7 +78,7 @@ public class WarpCommands implements DonatorCommand {
                 } else if (maps.containsKey(splitted[1])) {
                     int map = maps.get(splitted[1]);
                     if (map == 910000000) {
-                        player.saveLocation("FREE_MARKET");
+                        player.saveLocation(SavedLocationType.FREE_MARKET);
                     }
                     player.changeMap(map, 0);
                     mc.dropMessage("Please feel free to suggest any more locations");

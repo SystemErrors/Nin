@@ -35,8 +35,8 @@ import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;
 import net.sf.odinms.client.MapleCharacter;
-import net.sf.odinms.client.ISkill;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.ISkill;
+import net.sf.odinms.client.Skills.SkillFactory;
 	
 public class SkillBookHandler extends AbstractMaplePacketHandler {	
 	private static Logger log = LoggerFactory.getLogger(ScrollHandler.class);

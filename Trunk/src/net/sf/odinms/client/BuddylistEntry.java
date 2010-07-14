@@ -62,6 +62,8 @@ public class BuddylistEntry {
 		this.visible = visible;
 	}
 
+
+
 	/**
 	 * @return the channel the character is on. If the character is offline returns -1.
 	 */

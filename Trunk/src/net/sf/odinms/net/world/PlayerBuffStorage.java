@@ -37,79 +37,75 @@ import net.sf.odinms.tools.Pair;
  * @author Danny
  */
 
-@SuppressWarnings("serial")
 public class PlayerBuffStorage implements Serializable {
-	private List<Pair<Integer, List<PlayerBuffValueHolder>>> buffs = new ArrayList<Pair<Integer, List<PlayerBuffValueHolder>>>();
-	private List<Pair<Integer, List<PlayerCoolDownValueHolder>>> coolDowns = new ArrayList<Pair<Integer, List<PlayerCoolDownValueHolder>>>();
-	private int id = (int) (Math.random()*100);
-	
-	public PlayerBuffStorage() {
-		// Empty constructor
-	}
-	
-	public void addBuffsToStorage(int chrid, List<PlayerBuffValueHolder> toStore) {
-		for (Pair<Integer, List<PlayerBuffValueHolder>> stored : buffs) {
-			if (stored.getLeft() == Integer.valueOf(chrid)) {
-				buffs.remove(stored);
-			}
-		}
-		buffs.add(new Pair<Integer, List<PlayerBuffValueHolder>>(Integer.valueOf(chrid), toStore));
-	}
-	
-	public void addCooldownsToStorage(int chrid, List<PlayerCoolDownValueHolder> toStore) {
-		for (Pair<Integer, List<PlayerCoolDownValueHolder>> stored : coolDowns) {
-			if (stored.getLeft() == Integer.valueOf(chrid)) {
-				coolDowns.remove(stored);
-			}
-		}
-		coolDowns.add(new Pair<Integer, List<PlayerCoolDownValueHolder>>(Integer.valueOf(chrid), toStore));
-	}
-	
-	public List<PlayerBuffValueHolder> getBuffsFromStorage(int chrid) {
-		List<PlayerBuffValueHolder> ret = null;
-		Pair<Integer, List<PlayerBuffValueHolder>> stored;
-		for (int i = 0; i < buffs.size(); i++) {
-			stored = buffs.get(i);
-			if (stored.getLeft().equals(Integer.valueOf(chrid))) {
-				ret = stored.getRight();
-				buffs.remove(stored);
-			}
-		}
-		return ret;
-	}
-	
-	public List<PlayerCoolDownValueHolder> getCooldownsFromStorage(int chrid) {
-		List<PlayerCoolDownValueHolder> ret = null;
-		Pair<Integer, List<PlayerCoolDownValueHolder>> stored;
-		for (int i = 0; i < coolDowns.size(); i++) {
-			stored = coolDowns.get(i);
-			if (stored.getLeft().equals(Integer.valueOf(chrid))) {
-				ret = stored.getRight();
-				coolDowns.remove(stored);
-			}
-		}
-		return ret;
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final PlayerBuffStorage other = (PlayerBuffStorage) obj;
-		if (id != other.id)
-			return false;
-		return true;
+    private final List<Pair<Integer, List<PlayerBuffValueHolder>>> buffs = new ArrayList<Pair<Integer, List<PlayerBuffValueHolder>>>();
+    private final List<Pair<Integer, List<PlayerCoolDownValueHolder>>> coolDowns = new ArrayList<Pair<Integer, List<PlayerCoolDownValueHolder>>>();
+    private final List<Pair<Integer, List<PlayerDiseaseValueHolder>>> diseases = new ArrayList<Pair<Integer, List<PlayerDiseaseValueHolder>>>();
+
+    public final void addBuffsToStorage(final int chrid, final List<PlayerBuffValueHolder> toStore) {
+	for (final Pair<Integer, List<PlayerBuffValueHolder>> stored : buffs) {
+	    if (stored.getLeft() == Integer.valueOf(chrid)) {
+		buffs.remove(stored);
+	    }
 	}
+	buffs.add(new Pair<Integer, List<PlayerBuffValueHolder>>(Integer.valueOf(chrid), toStore));
+    }
+
+    public final void addCooldownsToStorage(final int chrid, final List<PlayerCoolDownValueHolder> toStore) {
+	for (final Pair<Integer, List<PlayerCoolDownValueHolder>> stored : coolDowns) {
+	    if (stored.getLeft() == Integer.valueOf(chrid)) {
+		coolDowns.remove(stored);
+	    }
+	}
+	coolDowns.add(new Pair<Integer, List<PlayerCoolDownValueHolder>>(Integer.valueOf(chrid), toStore));
+    }
+
+    public final void addDiseaseToStorage(final int chrid, final List<PlayerDiseaseValueHolder> toStore) {
+	for (final Pair<Integer, List<PlayerDiseaseValueHolder>> stored : diseases) {
+	    if (stored.getLeft() == Integer.valueOf(chrid)) {
+		diseases.remove(stored);
+	    }
+	}
+	diseases.add(new Pair<Integer, List<PlayerDiseaseValueHolder>>(Integer.valueOf(chrid), toStore));
+    }
+
+    public final List<PlayerBuffValueHolder> getBuffsFromStorage(final int chrid) {
+	List<PlayerBuffValueHolder> ret = null;
+
+	for (int i = 0; i < buffs.size(); i++) {
+	    final Pair<Integer, List<PlayerBuffValueHolder>> stored = buffs.get(i);
+	    if (stored.getLeft().equals(chrid)) {
+		ret = stored.getRight();
+		buffs.remove(stored);
+	    }
+	}
+	return ret;
+    }
+
+    public final List<PlayerCoolDownValueHolder> getCooldownsFromStorage(final int chrid) {
+	List<PlayerCoolDownValueHolder> ret = null;
+
+	for (int i = 0; i < coolDowns.size(); i++) {
+	    final Pair<Integer, List<PlayerCoolDownValueHolder>> stored = coolDowns.get(i);
+	    if (stored.getLeft().equals(chrid)) {
+		ret = stored.getRight();
+		coolDowns.remove(stored);
+	    }
+	}
+	return ret;
+    }
+
+    public final List<PlayerDiseaseValueHolder> getDiseaseFromStorage(final int chrid) {
+	List<PlayerDiseaseValueHolder> ret = null;
+
+	for (int i = 0; i < diseases.size(); i++) {
+	    final Pair<Integer, List<PlayerDiseaseValueHolder>> stored = diseases.get(i);
+	    if (stored.getLeft().equals(chrid)) {
+		ret = stored.getRight();
+		diseases.remove(stored);
+	    }
+	}
+	return ret;
+    }
 }

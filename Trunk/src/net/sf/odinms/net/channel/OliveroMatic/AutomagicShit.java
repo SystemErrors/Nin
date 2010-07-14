@@ -37,26 +37,25 @@ public class AutomagicShit {
         RankingWorker.getInstance().start();
     }
 
-    public void startFML() {
-        broadcastFMLMessage();
-        scheduleFML();
-    }
+    /*public void startFML() {
+    broadcastFMLMessage();
+    scheduleFML();
+    }*/
 
     public void startVoteMsg() {
         broadcastVoteMsg();
         scheduleVoteMsg();
     }
 
-    public void scheduleFML() {
-        TimerManager.getInstance().schedule(new Runnable() {
+    /*public void scheduleFML() {
+    TimerManager.getInstance().schedule(new Runnable() {
 
-            @Override
-            public void run() {
-                startFML();
-            }
-        }, 10 * 60 * 1000); // 10 min once
+    @Override
+    public void run() {
+    startFML();
     }
-
+    }, 10 * 60 * 1000); // 10 min once
+    }*/
     public void scheduleVoteMsg() {
         TimerManager.getInstance().schedule(new Runnable() {
 

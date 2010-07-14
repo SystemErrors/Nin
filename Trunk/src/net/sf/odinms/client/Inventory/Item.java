@@ -20,127 +20,136 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.client.Inventory;
 
-public class Item implements IItem {
+import java.io.Serializable;
 
-    private int id;
-    private byte position;
+public class Item implements IItem, Serializable {
+
+    private final int id;
+    private short position;
     private short quantity;
-    private int petid = -1;
+    private byte flag;
     private long expiration = -1;
+    private MaplePet pet = null;
+    private int uniqueid = 0;
     private String owner = "";
-        private byte flag = 0;
+    private String GameMaster_log = null;
 
-   public Item(int id, byte position, short quantity) {
-        this.id = id;
-        this.position = position;
-        this.quantity = quantity;
-        this.petid = -1;
-    }
-
-    public Item(int id, byte position, short quantity, int petid) {
-        this.id = id;
-        this.position = position;
-        this.quantity = quantity;
-        this.petid = petid;
-    }
-
-    public Item(int id, byte position, short quantity, int petid, long expiration) {
-        this.id = id;
-        this.position = position;
-        this.quantity = quantity;
-        this.petid = petid;
-        this.expiration = expiration;
+    public Item(final int id, final short position, final short quantity, final byte flag) {
+	super();
+	this.id = id;
+	this.position = position;
+	this.quantity = quantity;
+	this.pet = null;
+	this.flag = flag;
     }
 
     public IItem copy() {
-        Item ret = new Item(id, position, quantity, petid, expiration);
-        ret.owner = owner;
-        ret.flag = flag;
-        return ret;
+	final Item ret = new Item(id, position, quantity, flag);
+	ret.pet = pet;
+	ret.owner = owner;
+	ret.GameMaster_log = GameMaster_log;
+	ret.expiration = expiration;
+	return ret;
     }
 
-    // gets
-    @Override
-    public int getItemId() {
-        return id;
+    public final void setPosition(final short position) {
+	this.position = position;
+	if (pet != null) {
+	    pet.setInventoryPosition(position);
+	}
+    }
+
+    public void setQuantity(final short quantity) {
+	this.quantity = quantity;
     }
 
     @Override
-    public byte getPosition() {
-        return position;
+    public final int getItemId() {
+	return id;
     }
 
     @Override
-    public short getQuantity() {
-        return quantity;
+    public final short getPosition() {
+	return position;
+    }
+
+    @Override
+    public final byte getFlag() {
+	return flag;
+    }
+
+    @Override
+    public final short getQuantity() {
+	return quantity;
     }
 
     @Override
     public byte getType() {
-        return IItem.ITEM;
+	return 2; // An Item
     }
 
     @Override
-    public String getOwner() {
-        return owner;
+    public final String getOwner() {
+	return owner;
+    }
+
+    public final void setOwner(final String owner) {
+	this.owner = owner;
+    }
+
+    public final void setFlag(final byte flag) {
+	this.flag = flag;
     }
 
     @Override
-    public int getUniqueId() {
-        return petid;
+    public final long getExpiration() {
+	return expiration;
     }
 
-     @Override
-    public long getExpiration() {
-        return expiration;
-    }
-
-    @Override
-    public byte getFlag() {
-        return flag;
-    }
-
-    // void
-    @Override
-    public void setPosition(byte position) {
-        this.position = position;
+    public final void setExpiration(final long expire) {
+	this.expiration = expire;
     }
 
     @Override
-    public void setQuantity(short quantity) {
-        this.quantity = quantity;
+    public final String getGMLog() {
+	return GameMaster_log;
     }
 
     @Override
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setGMLog(final String GameMaster_log) {
+	this.GameMaster_log = GameMaster_log;
     }
 
-    @Override
-    public void setExpiration(long expire) {
-        this.expiration = expire;
+    public final int getUniqueId() {
+	return uniqueid;
     }
 
-    @Override
-    public void setUniqueId(int id){
-        this.petid = id;
-    }
-    
-    @Override
-    public void setFlag(byte fff) {
-        this.flag = fff;
+    public final void setUniqueId(final int id) {
+	this.uniqueid = id;
     }
 
-    // lol scam!
+    public final MaplePet getPet() {
+	return pet;
+    }
+
+    public final void setPet(final MaplePet pet) {
+	this.pet = pet;
+    }
+
     @Override
     public int compareTo(IItem other) {
-        if (Math.abs(position) < Math.abs(other.getPosition())) {
-            return -1;
-        } else if (Math.abs(position) == Math.abs(other.getPosition())) {
-            return 0;
-        } else {
-            return 1;
-        }
+	if (Math.abs(position) < Math.abs(other.getPosition())) {
+	    return -1;
+	} else if (Math.abs(position) == Math.abs(other.getPosition())) {
+	    return 0;
+	} else {
+	    return 1;
+	}
+    }
+
+    @Override
+    public String toString() {
+	return "Item: " + id + " quantity: " + quantity;
     }
 }
 

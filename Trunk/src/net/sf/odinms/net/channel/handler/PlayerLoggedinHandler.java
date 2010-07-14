@@ -29,7 +29,7 @@ import net.sf.odinms.client.BuddylistEntry;
 import net.sf.odinms.client.CharacterNameAndId;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.CharacterIdChannelPair;
@@ -73,8 +73,13 @@ public class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
             log.error("Loading the char failed", e);
         }
         c.setAccID(player.getAccountID());
+        if (!c.CheckIPAddress()) { // Remote hack
+	    c.getSession().close();
+	    return;
+	}
         int state = c.getLoginState();
         boolean allowLogin = true;
+        
         synchronized (this) {
             try {
                 WorldChannelInterface worldInterface = channelServer.getWorldInterface();

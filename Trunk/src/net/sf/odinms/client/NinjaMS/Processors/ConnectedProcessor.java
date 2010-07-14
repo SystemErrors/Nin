@@ -48,14 +48,21 @@ public class ConnectedProcessor {
 
     public static String getOnline(int channel) {
         StringBuilder sb = new StringBuilder("Characters connected to channel ");
-        sb.append(+channel + ":");
-        Collection<MapleCharacter> chrs = ChannelServer.getInstance(channel).getPlayerStorage().getAllCharacters();
-        for (MapleCharacter chr : chrs) {
-            sb.append(chr.getName() + " at map ID: " + chr.getMapId());
-        }
-        sb.append("Total characters on channel " + channel + ": " + chrs.size());
+        sb.append(channel);
+        sb.append(":");
+        sb.append(ChannelServer.getInstance(channel).getPlayerStorage().getOnlinePlayers(true));
         return sb.toString();
     }
 
-
+    public static String getOnline() {
+        StringBuilder sb = new StringBuilder();
+        for (int channel = 0; channel < ChannelServer.getAllInstances().size(); channel++) {
+            sb.append("Characters in channel ");
+            sb.append(channel);
+            sb.append(":");
+            sb.append(ChannelServer.getInstance(channel).getPlayerStorage().getOnlinePlayers(true));
+            sb.append("\r\n");
+        }
+        return sb.toString();
+    }
 }

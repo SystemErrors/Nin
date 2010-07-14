@@ -18,7 +18,7 @@ public class Huggable extends PircBot {
      * and open the template in the editor.
      */
 /*
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Huggable instance = new Huggable();
 
     public static Huggable getInstance() {

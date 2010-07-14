@@ -1,10 +1,10 @@
 package net.sf.odinms.server.constants;
 
-import net.sf.odinms.client.Enums.Village;
 import net.sf.odinms.client.Inventory.Equip;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
+import net.sf.odinms.client.Village;
 import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.AutobanManager;
 import net.sf.odinms.net.channel.ChannelServer;
@@ -187,7 +187,7 @@ public class SpecialStuff {
             return false;
         }
         if (mapId == 800010001
-            || mapId == 800020101
+                || mapId == 800020101
                 || mapId < 40000) {
             return true;
         }
@@ -225,7 +225,7 @@ public class SpecialStuff {
         if (isPQMap(player.getMapId())) {
             return false;
         }
-        if (player.getMapId() == 0){
+        if (player.getMapId() == 0) {
             return false;
         }
         return true;
@@ -276,17 +276,17 @@ public class SpecialStuff {
             return true;
         }
 
-        if (Items.isSummonBag(itemid)){
+        if (Items.isSummonBag(itemid)) {
             return false;
         }
 
-        if (MapleItemInformationProvider.getInstance().isArrowForBow(itemid)
-                || MapleItemInformationProvider.getInstance().isArrowForCrossBow(itemid)
-                || MapleItemInformationProvider.getInstance().isThrowingStar(itemid)
-                || MapleItemInformationProvider.getInstance().isBullet(itemid)) {
+        if (InventoryConstants.isArrowForBow(itemid)
+                || InventoryConstants.isArrowForCrossBow(itemid)
+                || InventoryConstants.isThrowingStar(itemid)
+                || InventoryConstants.isBullet(itemid)) {
             return true;
         }
-        if (ChannelServer.isShuttingDown() || player.cannotDrop()) {
+        if (player.cannotDrop()) {
             player.showMessage(1, "You cannot do this operation during this time.");
             return false;
         }
@@ -301,9 +301,9 @@ public class SpecialStuff {
                 player.showMessage("You cannot drop a Stat Item. If you want to remove it any way, use @removeitem or @removeeqrow");
                 return false;
             }
-        }        
-        MapleInventoryType ivType = MapleItemInformationProvider.getInstance().getInventoryType(itemid);
-        if (ivType != MapleItemInformationProvider.getInstance().getInventoryType(itemid)) {
+        }
+        MapleInventoryType ivType = InventoryConstants.getInventoryType(itemid);
+        if (ivType != InventoryConstants.getInventoryType(itemid)) {
             AutobanManager.getInstance().autoban(player.getClient(), "Mismatching ivType.");
             return false;
         }
@@ -311,22 +311,22 @@ public class SpecialStuff {
             player.showMessage(1, "You cannot drop items here!");
             return false;
         }
-        if ((player.getReborns() < 5) && itemid == Items.currencyType.Sight){
+        if ((player.getReborns() < 5) && itemid == Items.currencyType.Sight) {
             player.showMessage(1, "You cannot trade Tao of sight before you reach 5 Rebirths");
             return false;
         }
         return true;
     }
 
-    public boolean canLoot(MapleCharacter player, int itemid){
-        if(player.isAdmin()){
+    public boolean canLoot(MapleCharacter player, int itemid) {
+        if (player.isAdmin()) {
             return true;
         }
         int i = 0;
-        if (!player.isGenin() && Items.isSummonBag(itemid)){
+        if (!player.isGenin() && Items.isSummonBag(itemid)) {
             return false;
         }
-         switch(itemid){
+        switch (itemid) {
             case 4000241:
                 i = 1;
                 break;
@@ -343,10 +343,11 @@ public class SpecialStuff {
                 i = 5;
                 break;
         }
-         if(i == 0){
-             return true;
-         } else {
-             return player.getVillage().equals(Village.getVillageByItem(itemid));
-         }
+        if (i == 0) {
+            return true;
+        } else {
+            return player.getVillage() == (Village.getVillageByItem(itemid));
+        }
     }
+
 }

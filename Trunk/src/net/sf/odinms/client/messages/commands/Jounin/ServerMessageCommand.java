@@ -41,7 +41,7 @@ public class ServerMessageCommand implements GMCommand {
         for (ChannelServer cserv : cservs) {
             cserv.setServerMessage(msg);
         }
-        MainIRC.getInstance().setTopic("#ninjas", msg);
+        MainIRC.getInstance().setTopic("#ninjams", msg);
     }
 
     @Override

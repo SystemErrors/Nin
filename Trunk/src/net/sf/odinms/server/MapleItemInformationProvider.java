@@ -1,32 +1,5 @@
-/*
-This file is part of the OdinMS Maple Story Server
-Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
-Matthias Butz <matze@odinms.de>
-Jan Christian Meyer <vimes@odinms.de>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License version 3
-as published by the Free Software Foundation. You may not use, modify
-or distribute this program under any other version of the
-GNU Affero General Public License.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * MapleItemInformationProvider.java
- * 
- * Created on 26. November 2007, 21:58
- * 
- * To change this template, choose Tools | Template Manager and open the template in the editor.
- */
 package net.sf.odinms.server;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,198 +7,187 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Map.Entry;
-
+import net.sf.odinms.client.Buffs.MapleStatEffect;
 import net.sf.odinms.client.Inventory.Equip;
 import net.sf.odinms.client.Inventory.IItem;
+import net.sf.odinms.client.Inventory.ItemFlag;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
-import net.sf.odinms.client.Inventory.MapleWeaponType;
 import net.sf.odinms.provider.MapleData;
 import net.sf.odinms.provider.MapleDataDirectoryEntry;
 import net.sf.odinms.provider.MapleDataFileEntry;
 import net.sf.odinms.provider.MapleDataProvider;
 import net.sf.odinms.provider.MapleDataProviderFactory;
 import net.sf.odinms.provider.MapleDataTool;
+import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.tools.Pair;
+import net.sf.odinms.tools.Randomizer;
 
-/**
- * 
- * @author Matze
- * 
- * TODO: make faster
- * 
- */
+
+
 public class MapleItemInformationProvider {
 
-    private static MapleItemInformationProvider instance = null;
-    protected MapleDataProvider itemData;
-    protected MapleDataProvider equipData;
-    protected MapleDataProvider stringData;
-    protected MapleData cashStringData;
-    protected MapleData consumeStringData;
-    protected MapleData eqpStringData;
-    protected MapleData etcStringData;
-    protected MapleData insStringData;
-    protected MapleData petStringData;
-    protected Map<Integer, MapleInventoryType> inventoryTypeCache = new HashMap<Integer, MapleInventoryType>();
-    protected Map<Integer, Short> slotMaxCache = new HashMap<Integer, Short>();
-    protected Map<Integer, MapleStatEffect> itemEffects = new HashMap<Integer, MapleStatEffect>();
-    protected Map<Integer, Map<String, Integer>> equipStatsCache = new HashMap<Integer, Map<String, Integer>>();
-    protected Map<Integer, Equip> equipCache = new HashMap<Integer, Equip>();
-    protected Map<Integer, Double> priceCache = new HashMap<Integer, Double>();
-    protected Map<Integer, Integer> wholePriceCache = new HashMap<Integer, Integer>();
-    protected Map<Integer, Integer> projectileWatkCache = new HashMap<Integer, Integer>();
-    protected Map<Integer, String> nameCache = new HashMap<Integer, String>();
-    protected Map<Integer, String> descCache = new HashMap<Integer, String>();
-    protected Map<Integer, String> msgCache = new HashMap<Integer, String>();
-    protected Map<Integer, Boolean> dropRestrictionCache = new HashMap<Integer, Boolean>();
-    protected Map<Integer, Boolean> pickupRestrictionCache = new HashMap<Integer, Boolean>();
-    protected Map<Integer, List<Integer>> scrollRestrictionCache = new HashMap<Integer, List<Integer>>();
-    protected Map<Integer, Integer> triggerItemCache = new HashMap<Integer, Integer>();
-    private static Random rand = new Random();
-    protected List<Pair<Integer, String>> itemNameCache = new ArrayList<Pair<Integer, String>>();
-    protected Map<Integer, Boolean> consumeOnPickupCache = new HashMap<Integer, Boolean>();
-    protected Map<Integer, Boolean> karmaCache = new HashMap<Integer, Boolean>();
-    protected Map<Integer, Boolean> onEquipUntradableCache = new HashMap<Integer, Boolean>();
-    protected Map<Integer, Boolean> cashEquipCache = new HashMap < Integer, Boolean
+    private final static MapleItemInformationProvider instance = new MapleItemInformationProvider();
+    protected final MapleDataProvider itemData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Item.wz"));
+    protected final MapleDataProvider equipData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Character.wz"));
+    protected final MapleDataProvider stringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz"));
+    protected final MapleData cashStringData = stringData.getData("Cash.img");
+    protected final MapleData consumeStringData = stringData.getData("Consume.img");
+    protected final MapleData eqpStringData = stringData.getData("Eqp.img");
+    protected final MapleData etcStringData = stringData.getData("Etc.img");
+    protected final MapleData insStringData = stringData.getData("Ins.img");
+    protected final MapleData petStringData = stringData.getData("Pet.img");
+    protected final Map<Integer, Short> slotMaxCache = new HashMap<Integer, Short>();
+    protected final Map<Integer, MapleStatEffect> itemEffects = new HashMap<Integer, MapleStatEffect>();
+    protected final Map<Integer, Map<String, Integer>> equipStatsCache = new HashMap<Integer, Map<String, Integer>>();
+    protected final Map<Integer, Map<String, Byte>> itemMakeStatsCache = new HashMap<Integer, Map<String, Byte>>();
+    protected final Map<Integer, List<StructEquipLevel>> equipLevelCache = new HashMap<Integer, List<StructEquipLevel>>();
+    protected final Map<Integer, Short> itemMakeLevel = new HashMap<Integer, Short>();
+    protected final Map<Integer, Equip> equipCache = new HashMap<Integer, Equip>();
+    protected final Map<Integer, Double> priceCache = new HashMap<Integer, Double>();
+    protected final Map<Integer, Integer> wholePriceCache = new HashMap<Integer, Integer>();
+    protected final Map<Integer, Integer> projectileWatkCache = new HashMap<Integer, Integer>();
+    protected final Map<Integer, Integer> monsterBookID = new HashMap<Integer, Integer>();
+    protected final Map<Integer, String> nameCache = new HashMap<Integer, String>();
+    protected final Map<Integer, String> descCache = new HashMap<Integer, String>();
+    protected final Map<Integer, String> msgCache = new HashMap<Integer, String>();
+    protected final Map<Integer, Map<String, Integer>> SkillStatsCache = new HashMap<Integer, Map<String, Integer>>();
+    protected final Map<Integer, Byte> consumeOnPickupCache = new HashMap<Integer, Byte>();
+    protected final Map<Integer, Boolean> dropRestrictionCache = new HashMap<Integer, Boolean>();
+    protected final Map<Integer, Boolean> cashEquipCache = new HashMap<Integer, Boolean>();
+    protected final Map<Integer, Boolean> pickupRestrictionCache = new HashMap<Integer, Boolean>();
+    protected final Map<Integer, Integer> stateChangeCache = new HashMap<Integer, Integer>(40);
+    protected final Map<Integer, Boolean> karmaEnabledCache = new HashMap<Integer, Boolean>();
+    protected final Map<Integer, Boolean> isQuestItemCache = new HashMap<Integer, Boolean>();
+    protected final Map<Integer, List<Pair<Integer, Integer>>> summonMobCache = new HashMap<Integer, List<Pair<Integer, Integer>>>();
+    protected final List<Pair<Integer, String>> itemNameCache = new ArrayList<Pair<Integer, String>>();
+    protected final Map<Integer, Pair<Integer, List<StructRewardItem>>> RewardItem = new HashMap<Integer, Pair<Integer, List<StructRewardItem>>>();
 
-
-           >();
-    /** Creates a new instance of MapleItemInformationProvider */
     protected MapleItemInformationProvider() {
-        itemData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Item.wz"));
-        equipData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Character.wz"));
-        stringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz"));
-        cashStringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Cash.img");
-        consumeStringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Consume.img");
-        eqpStringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Eqp.img");
-        etcStringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Etc.img");
-        insStringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Ins.img");
-        petStringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Pet.img");
+        System.out.println("Loading MapleItemInformationProvider :::");
     }
 
-    public static MapleItemInformationProvider getInstance() {
-        if (instance == null) {
-            instance = new MapleItemInformationProvider();
-        }
+    public static final MapleItemInformationProvider getInstance() {
         return instance;
     }
 
-    /* returns the inventory type for the specified item id */
-    public MapleInventoryType getInventoryType(int itemId) {
-        if (inventoryTypeCache.containsKey(itemId)) {
-            return inventoryTypeCache.get(itemId);
+    public final List<Pair<Integer, String>> getAllItems() {
+        if (itemNameCache.size() != 0) {
+            return itemNameCache;
         }
-        MapleInventoryType ret;
-        String idStr = "0" + String.valueOf(itemId);
-        // first look in items...
-        MapleDataDirectoryEntry root = itemData.getRoot();
-        for (MapleDataDirectoryEntry topDir : root.getSubdirectories()) {
-            // we should have .img files here beginning with the first 4 IID
-            for (MapleDataFileEntry iFile : topDir.getFiles()) {
-                if (iFile.getName().equals(idStr.substring(0, 4) + ".img")) {
-                    ret = MapleInventoryType.getByWZName(topDir.getName());
-                    inventoryTypeCache.put(itemId, ret);
-                    return ret;
-                } else if (iFile.getName().equals(idStr.substring(1) + ".img")) {
-                    ret = MapleInventoryType.getByWZName(topDir.getName());
-                    inventoryTypeCache.put(itemId, ret);
-                    return ret;
-                }
+        final List<Pair<Integer, String>> itemPairs = new ArrayList<Pair<Integer, String>>();
+        MapleData itemsData;
+
+        itemsData = stringData.getData("Cash.img");
+        for (final MapleData itemFolder : itemsData.getChildren()) {
+            itemPairs.add(new Pair<Integer, String>(Integer.parseInt(itemFolder.getName()), MapleDataTool.getString("name", itemFolder, "NO-NAME")));
+        }
+
+        itemsData = stringData.getData("Consume.img");
+        for (final MapleData itemFolder : itemsData.getChildren()) {
+            itemPairs.add(new Pair<Integer, String>(Integer.parseInt(itemFolder.getName()), MapleDataTool.getString("name", itemFolder, "NO-NAME")));
+        }
+
+        itemsData = stringData.getData("Eqp.img").getChildByPath("Eqp");
+        for (final MapleData eqpType : itemsData.getChildren()) {
+            for (final MapleData itemFolder : eqpType.getChildren()) {
+                itemPairs.add(new Pair<Integer, String>(Integer.parseInt(itemFolder.getName()), MapleDataTool.getString("name", itemFolder, "NO-NAME")));
             }
         }
-        // not found? maybe its equip...
-        root = equipData.getRoot();
-        for (MapleDataDirectoryEntry topDir : root.getSubdirectories()) {
-            for (MapleDataFileEntry iFile : topDir.getFiles()) {
-                if (iFile.getName().equals(idStr + ".img")) {
-                    ret = MapleInventoryType.EQUIP;
-                    inventoryTypeCache.put(itemId, ret);
-                    return ret;
-                }
-            }
+
+        itemsData = stringData.getData("Etc.img").getChildByPath("Etc");
+        for (final MapleData itemFolder : itemsData.getChildren()) {
+            itemPairs.add(new Pair<Integer, String>(Integer.parseInt(itemFolder.getName()), MapleDataTool.getString("name", itemFolder, "NO-NAME")));
         }
-        ret = MapleInventoryType.UNDEFINED;
-        inventoryTypeCache.put(itemId, ret);
-        return ret;
+
+        itemsData = stringData.getData("Ins.img");
+        for (final MapleData itemFolder : itemsData.getChildren()) {
+            itemPairs.add(new Pair<Integer, String>(Integer.parseInt(itemFolder.getName()), MapleDataTool.getString("name", itemFolder, "NO-NAME")));
+        }
+
+        itemsData = stringData.getData("Pet.img");
+        for (final MapleData itemFolder : itemsData.getChildren()) {
+            itemPairs.add(new Pair<Integer, String>(Integer.parseInt(itemFolder.getName()), MapleDataTool.getString("name", itemFolder, "NO-NAME")));
+        }
+        return itemPairs;
     }
 
-    protected MapleData getStringData(int itemId) {
-        String cat = "null";
-        MapleData theData;
+    protected final MapleData getStringData(final int itemId) {
+        String cat = null;
+        MapleData data;
+
         if (itemId >= 5010000) {
-            theData = cashStringData;
+            data = cashStringData;
         } else if (itemId >= 2000000 && itemId < 3000000) {
-            theData = consumeStringData;
-        } else if (itemId >= 1010000 && itemId < 1040000 || itemId >= 1122000 && itemId < 1123000) {
-            theData = eqpStringData;
+            data = consumeStringData;
+        } else if (itemId >= 1142000 && itemId < 1143000 || itemId >= 1010000 && itemId < 1040000 || itemId >= 1122000 && itemId < 1123000) {
+            data = eqpStringData;
             cat = "Accessory";
         } else if (itemId >= 1000000 && itemId < 1010000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Cap";
         } else if (itemId >= 1102000 && itemId < 1103000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Cape";
         } else if (itemId >= 1040000 && itemId < 1050000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Coat";
         } else if (itemId >= 20000 && itemId < 22000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Face";
         } else if (itemId >= 1080000 && itemId < 1090000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Glove";
         } else if (itemId >= 30000 && itemId < 32000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Hair";
         } else if (itemId >= 1050000 && itemId < 1060000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Longcoat";
         } else if (itemId >= 1060000 && itemId < 1070000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Pants";
         } else if (itemId >= 1802000 && itemId < 1810000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "PetEquip";
         } else if (itemId >= 1112000 && itemId < 1120000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Ring";
         } else if (itemId >= 1092000 && itemId < 1100000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Shield";
         } else if (itemId >= 1070000 && itemId < 1080000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Shoes";
         } else if (itemId >= 1900000 && itemId < 2000000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Taming";
         } else if (itemId >= 1300000 && itemId < 1800000) {
-            theData = eqpStringData;
+            data = eqpStringData;
             cat = "Weapon";
         } else if (itemId >= 4000000 && itemId < 5000000) {
-            theData = etcStringData;
+            data = etcStringData;
         } else if (itemId >= 3000000 && itemId < 4000000) {
-            theData = insStringData;
+            data = insStringData;
         } else if (itemId >= 5000000 && itemId < 5010000) {
-            theData = petStringData;
+            data = petStringData;
         } else {
             return null;
         }
-        if (cat.equalsIgnoreCase("null")) {
-            return theData.getChildByPath(String.valueOf(itemId));
+        if (cat == null) {
+            return data.getChildByPath(String.valueOf(itemId));
         } else {
-            return theData.getChildByPath(cat + "/" + itemId);
+            return data.getChildByPath("Eqp/" + cat + "/" + itemId);
         }
     }
 
-    protected MapleData getItemData(int itemId) {
+    protected final MapleData getItemData(final int itemId) {
         MapleData ret = null;
-        String idStr = "0" + String.valueOf(itemId);
+        final String idStr = "0" + String.valueOf(itemId);
         MapleDataDirectoryEntry root = itemData.getRoot();
-        for (MapleDataDirectoryEntry topDir : root.getSubdirectories()) {
+        for (final MapleDataDirectoryEntry topDir : root.getSubdirectories()) {
             // we should have .img files here beginning with the first 4 IID
-            for (MapleDataFileEntry iFile : topDir.getFiles()) {
+            for (final MapleDataFileEntry iFile : topDir.getFiles()) {
                 if (iFile.getName().equals(idStr.substring(0, 4) + ".img")) {
                     ret = itemData.getData(topDir.getName() + "/" + iFile.getName());
                     if (ret == null) {
@@ -239,8 +201,8 @@ public class MapleItemInformationProvider {
             }
         }
         root = equipData.getRoot();
-        for (MapleDataDirectoryEntry topDir : root.getSubdirectories()) {
-            for (MapleDataFileEntry iFile : topDir.getFiles()) {
+        for (final MapleDataDirectoryEntry topDir : root.getSubdirectories()) {
+            for (final MapleDataFileEntry iFile : topDir.getFiles()) {
                 if (iFile.getName().equals(idStr + ".img")) {
                     return equipData.getData(topDir.getName() + "/" + iFile.getName());
                 }
@@ -250,26 +212,21 @@ public class MapleItemInformationProvider {
     }
 
     /** returns the maximum of items in one slot */
-    public short getSlotMax(int itemId) {
+    public final short getSlotMax(final int itemId) {
         if (slotMaxCache.containsKey(itemId)) {
             return slotMaxCache.get(itemId);
         }
         short ret = 0;
-        MapleData item = getItemData(itemId);
+        final MapleData item = getItemData(itemId);
         if (item != null) {
-            MapleData smEntry = item.getChildByPath("info/slotMax");
+            final MapleData smEntry = item.getChildByPath("info/slotMax");
             if (smEntry == null) {
-                if (getInventoryType(itemId).getType() == MapleInventoryType.EQUIP.getType()) {
+                if (InventoryConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
                     ret = 1;
                 } else {
                     ret = 100;
                 }
             } else {
-                if (isThrowingStar(itemId) || isBullet(itemId)) {
-                    ret = 1;
-                } else if (MapleDataTool.getInt(smEntry) == 0) {
-                    ret = 1;
-                }
                 ret = (short) MapleDataTool.getInt(smEntry);
             }
         }
@@ -277,17 +234,16 @@ public class MapleItemInformationProvider {
         return ret;
     }
 
-    public int getWholePrice(int itemId) {
+    public final int getWholePrice(final int itemId) {
         if (wholePriceCache.containsKey(itemId)) {
             return wholePriceCache.get(itemId);
         }
-        MapleData item = getItemData(itemId);
+        final MapleData item = getItemData(itemId);
         if (item == null) {
             return -1;
         }
-
         int pEntry = 0;
-        MapleData pData = item.getChildByPath("info/price");
+        final MapleData pData = item.getChildByPath("info/price");
         if (pData == null) {
             return -1;
         }
@@ -297,17 +253,13 @@ public class MapleItemInformationProvider {
         return pEntry;
     }
 
-    public double getPrice(int itemId) {
+    public final double getPrice(final int itemId) {
         if (priceCache.containsKey(itemId)) {
             return priceCache.get(itemId);
         }
-        MapleData item = getItemData(itemId);
+        final MapleData item = getItemData(itemId);
         if (item == null) {
             return -1;
-        }
-        //TODO ULTRAHACK - prevent players gaining miriads of mesars with orbis/eos scrolls
-        if (itemId == 4001019 || itemId == 4001020) {
-            return 0;
         }
         double pEntry = 0.0;
         MapleData pData = item.getChildByPath("info/unitPrice");
@@ -324,272 +276,291 @@ public class MapleItemInformationProvider {
             }
             pEntry = (double) MapleDataTool.getInt(pData);
         }
+        if (itemId == 2070019 || itemId == 2330007) {
+            pEntry = 1.0;
+        }
         priceCache.put(itemId, pEntry);
         return pEntry;
     }
 
-    protected Map<String, Integer> getEquipStats(int itemId) {
-        if (equipStatsCache.containsKey(itemId)) {
-            return equipStatsCache.get(itemId);
-        }
-        Map<String, Integer> ret = new LinkedHashMap<String, Integer>();
-        MapleData item = getItemData(itemId);
+    public final List<StructEquipLevel> getEquipLevelStat(final int itemid, final byte level) {
+	if (equipLevelCache.containsKey(itemid)) {
+	    return equipLevelCache.get(itemid);
+	}
+        final MapleData item = getItemData(itemid);
         if (item == null) {
             return null;
         }
-        MapleData info = item.getChildByPath("info");
+        final MapleData info = item.getChildByPath("info/level");
         if (info == null) {
             return null;
         }
-        for (MapleData data : info.getChildren()) {
+	final List<StructEquipLevel> el = new ArrayList<StructEquipLevel>();
+	StructEquipLevel sel;
+
+	for (final MapleData data : info.getChildByPath("info")) {
+	    sel = new StructEquipLevel();
+	    sel.incSTRMax = (byte) MapleDataTool.getInt("incSTRMax", data, 0);
+	    sel.incSTRMin = (byte) MapleDataTool.getInt("incSTRMin", data, 0);
+
+	    sel.incDEXMax = (byte) MapleDataTool.getInt("incDEXMax", data, 0);
+	    sel.incDEXMin = (byte) MapleDataTool.getInt("incDEXMin", data, 0);
+
+	    sel.incLUKMax = (byte) MapleDataTool.getInt("incLUKMax", data, 0);
+	    sel.incLUKMin = (byte) MapleDataTool.getInt("incLUKMin", data, 0);
+
+	    sel.incINTMax = (byte) MapleDataTool.getInt("incINTMax", data, 0);
+	    sel.incINTMin = (byte) MapleDataTool.getInt("incINTMin", data, 0);
+
+	    sel.incPADMax = (byte) MapleDataTool.getInt("incPADMax", data, 0);
+	    sel.incPADMin = (byte) MapleDataTool.getInt("incPADMin", data, 0);
+
+	    sel.incMADMax = (byte) MapleDataTool.getInt("incMADMax", data, 0);
+	    sel.incMADMin = (byte) MapleDataTool.getInt("incMADMin", data, 0);
+
+	    el.add(sel);
+	}
+	equipLevelCache.put(itemid, el);
+	return el;
+    }
+
+    public final Map<String, Byte> getItemMakeStats(final int itemId) {
+        if (itemMakeStatsCache.containsKey(itemId)) {
+            return itemMakeStatsCache.get(itemId);
+        }
+        if (itemId / 10000 != 425) {
+            return null;
+        }
+        final Map<String, Byte> ret = new LinkedHashMap<String, Byte>();
+        final MapleData item = getItemData(itemId);
+        if (item == null) {
+            return null;
+        }
+        final MapleData info = item.getChildByPath("info");
+        if (info == null) {
+            return null;
+        }
+        ret.put("incPAD", (byte) MapleDataTool.getInt("incPAD", info, 0)); // WATK
+        ret.put("incMAD", (byte) MapleDataTool.getInt("incMAD", info, 0)); // MATK
+        ret.put("incACC", (byte) MapleDataTool.getInt("incACC", info, 0)); // ACC
+        ret.put("incEVA", (byte) MapleDataTool.getInt("incEVA", info, 0)); // AVOID
+        ret.put("incSpeed", (byte) MapleDataTool.getInt("incSpeed", info, 0)); // SPEED
+        ret.put("incJump", (byte) MapleDataTool.getInt("incJump", info, 0)); // JUMP
+        ret.put("incMaxHP", (byte) MapleDataTool.getInt("incMaxHP", info, 0)); // HP
+        ret.put("incMaxMP", (byte) MapleDataTool.getInt("incMaxMP", info, 0)); // MP
+        ret.put("incSTR", (byte) MapleDataTool.getInt("incSTR", info, 0)); // STR
+        ret.put("incINT", (byte) MapleDataTool.getInt("incINT", info, 0)); // INT
+        ret.put("incLUK", (byte) MapleDataTool.getInt("incLUK", info, 0)); // LUK
+        ret.put("incDEX", (byte) MapleDataTool.getInt("incDEX", info, 0)); // DEX
+//	ret.put("incReqLevel", MapleDataTool.getInt("incReqLevel", info, 0)); // IDK!
+        ret.put("randOption", (byte) MapleDataTool.getInt("randOption", info, 0)); // Black Crystal Wa/MA
+        ret.put("randStat", (byte) MapleDataTool.getInt("randStat", info, 0)); // Dark Crystal - Str/Dex/int/Luk
+
+        itemMakeStatsCache.put(itemId, ret);
+        return ret;
+    }
+
+    public final Map<String, Integer> getEquipStats(final int itemId) {
+        if (equipStatsCache.containsKey(itemId)) {
+            return equipStatsCache.get(itemId);
+        }
+        final Map<String, Integer> ret = new LinkedHashMap<String, Integer>();
+        final MapleData item = getItemData(itemId);
+        if (item == null) {
+            return null;
+        }
+        final MapleData info = item.getChildByPath("info");
+        if (info == null) {
+            return null;
+        }
+        for (final MapleData data : info.getChildren()) {
             if (data.getName().startsWith("inc")) {
                 ret.put(data.getName().substring(3), MapleDataTool.getIntConvert(data));
             }
         }
         ret.put("tuc", MapleDataTool.getInt("tuc", info, 0));
         ret.put("reqLevel", MapleDataTool.getInt("reqLevel", info, 0));
+        ret.put("reqJob", MapleDataTool.getInt("reqJob", info, 0));
+        ret.put("reqSTR", MapleDataTool.getInt("reqSTR", info, 0));
+        ret.put("reqDEX", MapleDataTool.getInt("reqDEX", info, 0));
+        ret.put("reqINT", MapleDataTool.getInt("reqINT", info, 0));
+        ret.put("reqLUK", MapleDataTool.getInt("reqLUK", info, 0));
+        ret.put("reqPOP", MapleDataTool.getInt("reqPOP", info, 0));
+        ret.put("cash", MapleDataTool.getInt("cash", info, 0));
+	ret.put("canLevel", info.getChildByPath("level") == null ? 0 : 1);
         ret.put("cursed", MapleDataTool.getInt("cursed", info, 0));
         ret.put("success", MapleDataTool.getInt("success", info, 0));
+	ret.put("equipTradeBlock", MapleDataTool.getInt("equipTradeBlock", info, 0));
+
+        if (InventoryConstants.isMagicWeapon(itemId)) {
+            ret.put("elemDefault", MapleDataTool.getInt("elemDefault", info, 100));
+            ret.put("incRMAS", MapleDataTool.getInt("incRMAS", info, 100)); // Poison
+            ret.put("incRMAF", MapleDataTool.getInt("incRMAF", info, 100)); // Fire
+            ret.put("incRMAL", MapleDataTool.getInt("incRMAL", info, 100)); // Lightning
+            ret.put("incRMAI", MapleDataTool.getInt("incRMAI", info, 100)); // Ice
+        }
+
         equipStatsCache.put(itemId, ret);
         return ret;
     }
 
-    public int getReqLevel(int itemId) {
-        final Integer req = getEquipStats(itemId).get("reqLevel");
-        return req == null ? 0 : req.intValue();
+    public final boolean canEquip(final Map<String, Integer> stats, final int itemid, final int level, final int job, final int fame, final int str, final int dex, final int luk, final int int_) {
+        if (level >= stats.get("reqLevel") && str >= stats.get("reqSTR") && dex >= stats.get("reqDEX") && luk >= stats.get("reqLUK") && int_ >= stats.get("reqINT")) {
+            final int fameReq = stats.get("reqPOP");
+            if (fameReq != 0 && fame < fameReq) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
-    public List<Integer> getScrollReqs(int itemId) {
-        if (scrollRestrictionCache.containsKey(itemId)) {
-            return scrollRestrictionCache.get(itemId);
-        }
-        List<Integer> ret = new ArrayList<Integer>();
-        MapleData data = getItemData(itemId);
-        data = data.getChildByPath("req");
+    public final int getReqLevel(final int itemId) {
+        return getEquipStats(itemId).get("reqLevel");
+    }
+
+    public final List<Integer> getScrollReqs(final int itemId) {
+        final List<Integer> ret = new ArrayList<Integer>();
+        final MapleData data = getItemData(itemId).getChildByPath("req");
+
         if (data == null) {
             return ret;
         }
-        for (MapleData req : data.getChildren()) {
+        for (final MapleData req : data.getChildren()) {
             ret.add(MapleDataTool.getInt(req));
         }
         return ret;
     }
 
-    public MapleWeaponType getWeaponType(int itemId) {
-        int cat = itemId / 10000;
-        cat = cat % 100;
-        switch (cat) {
-            case 30:
-                return MapleWeaponType.SWORD1H;
-            case 31:
-                return MapleWeaponType.AXE1H;
-            case 32:
-                return MapleWeaponType.BLUNT1H;
-            case 33:
-                return MapleWeaponType.DAGGER;
-            case 37:
-                return MapleWeaponType.WAND;
-            case 38:
-                return MapleWeaponType.STAFF;
-            case 40:
-                return MapleWeaponType.SWORD2H;
-            case 41:
-                return MapleWeaponType.AXE2H;
-            case 42:
-                return MapleWeaponType.BLUNT2H;
-            case 43:
-                return MapleWeaponType.SPEAR;
-            case 44:
-                return MapleWeaponType.POLE_ARM;
-            case 45:
-                return MapleWeaponType.BOW;
-            case 46:
-                return MapleWeaponType.CROSSBOW;
-            case 47:
-                return MapleWeaponType.CLAW;
-            case 48:
-                return MapleWeaponType.KNUCKLE;
-            case 49:
-                return MapleWeaponType.GUN;
+    public final IItem scrollEquipWithId(final IItem equip, final int scrollId, final boolean ws) {
+        if (equip.getType() == 1) { // See IItem.java
+            final Equip nEquip = (Equip) equip;
+            final Map<String, Integer> stats = getEquipStats(scrollId);
+            final Map<String, Integer> eqstats = getEquipStats(equip.getItemId());
 
-        }
-        return MapleWeaponType.NOT_A_WEAPON;
-    }
-
-    public boolean isShield(int itemId) {
-        int cat = itemId / 10000;
-        cat = cat % 100;
-        return cat == 9;
-    }
-
-    public boolean isEquip(int itemId) {
-        return itemId / 1000000 == 1;
-    }
-
-    public boolean isCleanSlate(int scrollId) {
-        switch (scrollId) {
-            case 2049000:
-            case 2049001:
-            case 2049002:
-            case 2049003:
-                return true;
-        }
-        return false;
-
-    }
-
-    public IItem hammerEquip(IItem equip) {
-        if (equip instanceof Equip) {
-            Equip nEquip = (Equip) equip;
-            if (nEquip.getHammers() < 2) {
-                nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + 1));
-                nEquip.setHammers((byte) (nEquip.getHammers() + 1));
-            }
-        }
-        return equip;
-    }
-
-    public IItem scrollEquipWithId(IItem equip, int scrollId, boolean usingWhiteScroll, boolean isJounin, boolean isGenin, int damount) {
-        if (equip instanceof Equip) {
-            Equip nEquip = (Equip) equip;
-            Map<String, Integer> stats = this.getEquipStats(scrollId);
-            Map<String, Integer> eqstats = this.getEquipStats(equip.getItemId());
-            int extraslot = 0;
-            if (isGenin && (damount >= 10)) {
-                extraslot = damount / 10;
-            }
-            if ((nEquip.getUpgradeSlots() > 0 || isCleanSlate(scrollId)) && Math.ceil(Math.random() * 100.0) <= stats.get("success") || isJounin) {
+            if (Randomizer.nextInt(100) <= stats.get("success")) {
                 switch (scrollId) {
                     case 2049000:
                     case 2049001:
                     case 2049002:
-                    case 2049003:
-                        if (nEquip.getUpgradeSlots() <= eqstats.get("tuc") && nEquip.getLevel() != eqstats.get("tuc")) {
-                            byte newSlots = (byte) (nEquip.getUpgradeSlots() + 1);
-                            nEquip.setUpgradeSlots(newSlots);
-                            return equip;
+                    case 2049003: {
+                        if (nEquip.getLevel() + nEquip.getUpgradeSlots() < eqstats.get("tuc")) {
+                            nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + 1));
                         }
                         break;
-                    case 2049100:
-                        int increase = 1;
-                        if (Math.ceil(Math.random() * 100.0) <= 50) {
-                            increase = increase * -1;
-                        }
+                    }
+                    case 2040727: // Spikes on shoe, prevents slip
+                    {
+                        byte flag = nEquip.getFlag();
+                        flag |= ItemFlag.SPIKES.getValue();
+                        nEquip.setFlag(flag);
+                        break;
+                    }
+                    case 2041058: // Cape for Cold protection
+                    {
+                        byte flag = nEquip.getFlag();
+                        flag |= ItemFlag.COLD.getValue();
+                        nEquip.setFlag(flag);
+                        break;
+                    }
+                    case 2049100: // Chaos Scroll
+                    case 2049101: // Liar's Wood Liquid
+                    case 2049102: // Maple Syrup
+                    case 2049104: // Angent Equipmenet scroll
+                    case 2049103: { // Beach Sandals Scroll
+                        final int increase = Randomizer.nextBoolean() ? 1 : -1;
+
                         if (nEquip.getStr() > 0) {
-                            short newStat = (short) (nEquip.getStr() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setStr(newStat);
+                            nEquip.setStr((short) (nEquip.getStr() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getDex() > 0) {
-                            short newStat = (short) (nEquip.getDex() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setDex(newStat);
+                            nEquip.setDex((short) (nEquip.getDex() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getInt() > 0) {
-                            short newStat = (short) (nEquip.getInt() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setInt(newStat);
+                            nEquip.setInt((short) (nEquip.getInt() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getLuk() > 0) {
-                            short newStat = (short) (nEquip.getLuk() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setLuk(newStat);
+                            nEquip.setLuk((short) (nEquip.getLuk() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getWatk() > 0) {
-                            short newStat = (short) (nEquip.getWatk() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setWatk(newStat);
+                            nEquip.setWatk((short) (nEquip.getWatk() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getWdef() > 0) {
-                            short newStat = (short) (nEquip.getWdef() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setWdef(newStat);
+                            nEquip.setWdef((short) (nEquip.getWdef() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getMatk() > 0) {
-                            short newStat = (short) (nEquip.getMatk() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setMatk(newStat);
+                            nEquip.setMatk((short) (nEquip.getMatk() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getMdef() > 0) {
-                            short newStat = (short) (nEquip.getMdef() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setMdef(newStat);
+                            nEquip.setMdef((short) (nEquip.getMdef() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getAcc() > 0) {
-                            short newStat = (short) (nEquip.getAcc() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setAcc(newStat);
+                            nEquip.setAcc((short) (nEquip.getAcc() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getAvoid() > 0) {
-                            short newStat = (short) (nEquip.getAvoid() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setAvoid(newStat);
+                            nEquip.setAvoid((short) (nEquip.getAvoid() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getSpeed() > 0) {
-                            short newStat = (short) (nEquip.getSpeed() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setSpeed(newStat);
+                            nEquip.setSpeed((short) (nEquip.getSpeed() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getJump() > 0) {
-                            short newStat = (short) (nEquip.getJump() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setJump(newStat);
+                            nEquip.setJump((short) (nEquip.getJump() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getHp() > 0) {
-                            short newStat = (short) (nEquip.getHp() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setHp(newStat);
+                            nEquip.setHp((short) (nEquip.getHp() + Randomizer.nextInt(5) * increase));
                         }
                         if (nEquip.getMp() > 0) {
-                            short newStat = (short) (nEquip.getMp() + Math.ceil(Math.random() * 5.0) * increase);
-                            nEquip.setStr(newStat);
+                            nEquip.setMp((short) (nEquip.getMp() + Randomizer.nextInt(5) * increase));
                         }
                         break;
-                    default:
+                    }
+                    default: {
                         for (Entry<String, Integer> stat : stats.entrySet()) {
-                            if (stat.getKey().equals("STR")) {
+			    final String key = stat.getKey();
+
+                            if (key.equals("STR")) {
                                 nEquip.setStr((short) (nEquip.getStr() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("DEX")) {
+                            } else if (key.equals("DEX")) {
                                 nEquip.setDex((short) (nEquip.getDex() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("INT")) {
+                            } else if (key.equals("INT")) {
                                 nEquip.setInt((short) (nEquip.getInt() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("LUK")) {
+                            } else if (key.equals("LUK")) {
                                 nEquip.setLuk((short) (nEquip.getLuk() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("PAD")) {
+                            } else if (key.equals("PAD")) {
                                 nEquip.setWatk((short) (nEquip.getWatk() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("PDD")) {
+                            } else if (key.equals("PDD")) {
                                 nEquip.setWdef((short) (nEquip.getWdef() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("MAD")) {
+                            } else if (key.equals("MAD")) {
                                 nEquip.setMatk((short) (nEquip.getMatk() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("MDD")) {
+                            } else if (key.equals("MDD")) {
                                 nEquip.setMdef((short) (nEquip.getMdef() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("ACC")) {
+                            } else if (key.equals("ACC")) {
                                 nEquip.setAcc((short) (nEquip.getAcc() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("EVA")) {
+                            } else if (key.equals("EVA")) {
                                 nEquip.setAvoid((short) (nEquip.getAvoid() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("Speed")) {
+                            } else if (key.equals("Speed")) {
                                 nEquip.setSpeed((short) (nEquip.getSpeed() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("Jump")) {
+                            } else if (key.equals("Jump")) {
                                 nEquip.setJump((short) (nEquip.getJump() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("MHP")) {
+                            } else if (key.equals("MHP")) {
                                 nEquip.setHp((short) (nEquip.getHp() + stat.getValue().intValue()));
-                            } else if (stat.getKey().equals("MMP")) {
+                            } else if (key.equals("MMP")) {
                                 nEquip.setMp((short) (nEquip.getMp() + stat.getValue().intValue()));
+//			    } else if (stat.getKey().equals("afterImage")) {
                             }
                         }
                         break;
-                }
-                int level = nEquip.getLevel();
-                int upslot = nEquip.getUpgradeSlots();
-                int lol = 12;
-                if (isJounin) {
-                } else if (isGenin) {
-                    if (level == 68) {
-                        nEquip.setUpgradeSlots((byte) (0));
-                    } else {
-                        lol -= level;
-                        lol += extraslot;
-                        lol = Math.min(lol, 69);
-                        nEquip.setUpgradeSlots((byte) (lol - 1));
                     }
-
-                } else {
-                    nEquip.setUpgradeSlots((byte) (upslot - 1));
                 }
-                nEquip.setLevel((byte) (level + 1));
+                if (!InventoryConstants.isCleanSlate(scrollId) && !InventoryConstants.isSpecialScroll(scrollId)) {
+                    nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
+                    nEquip.setLevel((byte) (nEquip.getLevel() + 1));
+                }
             } else {
-                if (!usingWhiteScroll) {
+                if (!ws && !InventoryConstants.isCleanSlate(scrollId) && !InventoryConstants.isSpecialScroll(scrollId)) {
                     nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() - 1));
                 }
-                if (Math.ceil(1.0 + Math.random() * 100.0) < stats.get("cursed")) {
-                    // DESTROY :) (O.O!)
+                if (Randomizer.nextInt(99) < stats.get("cursed")) {
                     return null;
                 }
             }
@@ -597,62 +568,69 @@ public class MapleItemInformationProvider {
         return equip;
     }
 
-    public IItem getEquipById(int equipId) {
-        Equip nEquip;
-        nEquip = new Equip(equipId, (byte) 0);
-        nEquip.setQuantity((short) 1);
-        nEquip.setHammers((byte) 0);
-        Map<String, Integer> stats = this.getEquipStats(equipId);
-        if (stats != null) {
-            for (Entry<String, Integer> stat : stats.entrySet()) {
-                if (stat.getKey().equals("STR")) {
-                    nEquip.setStr((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("DEX")) {
-                    nEquip.setDex((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("INT")) {
-                    nEquip.setInt((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("LUK")) {
-                    nEquip.setLuk((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("PAD")) {
-                    nEquip.setWatk((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("PDD")) {
-                    nEquip.setWdef((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MAD")) {
-                    nEquip.setMatk((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MDD")) {
-                    nEquip.setMdef((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("ACC")) {
-                    nEquip.setAcc((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("EVA")) {
-                    nEquip.setAvoid((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("Speed")) {
-                    nEquip.setSpeed((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("Jump")) {
-                    nEquip.setJump((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MHP")) {
-                    nEquip.setHp((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MMP")) {
-                    nEquip.setMp((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("tuc")) {
-                    nEquip.setUpgradeSlots((byte) stat.getValue().intValue());
-                } else if (stat.getKey().equals("afterImage")) {
-                }
-            }
-        }
-        equipCache.put(equipId, nEquip);
-        return nEquip.copy();
+    public final IItem getEquipById(final int equipId) {
+        return getEquipById(equipId, -1);
     }
 
-    private short getRandStat(short defaultValue, int maxRange) {
+    public final IItem getEquipById(final int equipId, final int ringId) {
+	final Equip nEquip = new Equip(equipId, (byte) 0, ringId, (byte) 0);
+	nEquip.setQuantity((short) 1);
+	final Map<String, Integer> stats = getEquipStats(equipId);
+	if (stats != null) {
+	    for (Entry<String, Integer> stat : stats.entrySet()) {
+		final String key = stat.getKey();
+
+		if (key.equals("STR")) {
+		    nEquip.setStr((short) stat.getValue().intValue());
+		} else if (key.equals("DEX")) {
+		    nEquip.setDex((short) stat.getValue().intValue());
+		} else if (key.equals("INT")) {
+		    nEquip.setInt((short) stat.getValue().intValue());
+		} else if (key.equals("LUK")) {
+		    nEquip.setLuk((short) stat.getValue().intValue());
+		} else if (key.equals("PAD")) {
+		    nEquip.setWatk((short) stat.getValue().intValue());
+		} else if (key.equals("PDD")) {
+		    nEquip.setWdef((short) stat.getValue().intValue());
+		} else if (key.equals("MAD")) {
+		    nEquip.setMatk((short) stat.getValue().intValue());
+		} else if (key.equals("MDD")) {
+		    nEquip.setMdef((short) stat.getValue().intValue());
+		} else if (key.equals("ACC")) {
+		    nEquip.setAcc((short) stat.getValue().intValue());
+		} else if (key.equals("EVA")) {
+		    nEquip.setAvoid((short) stat.getValue().intValue());
+		} else if (key.equals("Speed")) {
+		    nEquip.setSpeed((short) stat.getValue().intValue());
+		} else if (key.equals("Jump")) {
+		    nEquip.setJump((short) stat.getValue().intValue());
+		} else if (key.equals("MHP")) {
+		    nEquip.setHp((short) stat.getValue().intValue());
+		} else if (key.equals("MMP")) {
+		    nEquip.setMp((short) stat.getValue().intValue());
+		} else if (key.equals("tuc")) {
+		    nEquip.setUpgradeSlots((byte) stat.getValue().intValue());
+		} else if (key.equals("Craft")) {
+		    nEquip.setHands((short) stat.getValue().intValue());
+//                } else if (key.equals("afterImage")) {
+		}
+	    }
+	}
+	equipCache.put(equipId, nEquip);
+	return nEquip.copy();
+    }
+
+    private final short getRandStat(final short defaultValue, final int maxRange) {
         if (defaultValue == 0) {
             return 0;
         }
+        // vary no more than ceil of 10% of stat
+        final int lMaxRange = (int) Math.min(Math.ceil(defaultValue * 0.1), maxRange);
 
-        int lMaxRange = (int) Math.min(Math.ceil(defaultValue * 0.1), maxRange);
-        return (short) ((defaultValue - lMaxRange) + Math.floor(rand.nextDouble() * (lMaxRange * 2 + 1)));
+        return (short) ((defaultValue - lMaxRange) + Math.floor(Math.random() * (lMaxRange * 2 + 1)));
     }
 
-    public Equip randomizeStats(Equip equip) {
+    public final Equip randomizeStats(final Equip equip) {
         equip.setStr(getRandStat(equip.getStr(), 5));
         equip.setDex(getRandStat(equip.getDex(), 5));
         equip.setInt(getRandStat(equip.getInt(), 5));
@@ -662,6 +640,7 @@ public class MapleItemInformationProvider {
         equip.setAcc(getRandStat(equip.getAcc(), 5));
         equip.setAvoid(getRandStat(equip.getAvoid(), 5));
         equip.setJump(getRandStat(equip.getJump(), 5));
+	equip.setHands(getRandStat(equip.getHands(), 5));
         equip.setSpeed(getRandStat(equip.getSpeed(), 5));
         equip.setWdef(getRandStat(equip.getWdef(), 10));
         equip.setMdef(getRandStat(equip.getMdef(), 10));
@@ -670,182 +649,238 @@ public class MapleItemInformationProvider {
         return equip;
     }
 
-    public MapleStatEffect getItemEffect(int itemId) {
+    public final MapleStatEffect getItemEffect(final int itemId) {
         MapleStatEffect ret = itemEffects.get(Integer.valueOf(itemId));
         if (ret == null) {
-            MapleData item = getItemData(itemId);
+            final MapleData item = getItemData(itemId);
             if (item == null) {
                 return null;
             }
-            MapleData spec = item.getChildByPath("spec");
-            ret = MapleStatEffect.loadItemEffectFromData(spec, itemId);
+            ret = MapleStatEffect.loadItemEffectFromData(item.getChildByPath("spec"), itemId);
             itemEffects.put(Integer.valueOf(itemId), ret);
         }
         return ret;
     }
 
-    public int[][] getSummonMobs(int itemId) {
-        MapleData data = getItemData(itemId);
-        int theInt = data.getChildByPath("mob").getChildren().size();
-        int[][] mobs2spawn = new int[theInt][2];
-        for (int x = 0; x < theInt; x++) {
-            mobs2spawn[x][0] = MapleDataTool.getIntConvert("mob/" + x + "/id", data);
-            mobs2spawn[x][1] = MapleDataTool.getIntConvert("mob/" + x + "/prob", data);
+    public final List<Pair<Integer, Integer>> getSummonMobs(final int itemId) {
+        if (summonMobCache.containsKey(Integer.valueOf(itemId))) {
+            return summonMobCache.get(itemId);
         }
-        return mobs2spawn;
-    }
-
-    public boolean isThrowingStar(int itemId) {
-        return (itemId >= 2070000 && itemId < 2080000);
-    }
-
-    public boolean isBullet(int itemId) {
-        int id = itemId / 10000;
-        if (id == 233) {
-            return true;
-        } else {
-            return false;
+        if (!InventoryConstants.isSummonSack(itemId)) {
+            return null;
         }
-    }
-
-    public boolean isRechargable(int itemId) {
-        int id = itemId / 10000;
-        if (id == 233 || id == 207) {
-            return true;
-        } else {
-            return false;
+        final MapleData data = getItemData(itemId).getChildByPath("mob");
+        if (data == null) {
+            return null;
         }
-    }
+        final List<Pair<Integer, Integer>> mobPairs = new ArrayList<Pair<Integer, Integer>>();
 
-    public boolean isPet(int itemId) {
-        return itemId >= 5000000 && itemId <= 5000100;
-    }
-
-    public boolean isOverall(int itemId) {
-        return itemId >= 1050000 && itemId < 1060000;
-    }
-
-    public boolean isArrowForCrossBow(int itemId) {
-        return itemId >= 2061000 && itemId < 2062000;
-    }
-
-    public boolean isArrowForBow(int itemId) {
-        return itemId >= 2060000 && itemId < 2061000;
-    }
-
-    public boolean isTwoHanded(int itemId) {
-        switch (getWeaponType(itemId)) {
-            case AXE2H:
-                return true;
-            case BLUNT2H:
-                return true;
-            case BOW:
-                return true;
-            case CLAW:
-                return true;
-            case CROSSBOW:
-                return true;
-            case POLE_ARM:
-                return true;
-            case SPEAR:
-                return true;
-            case SWORD2H:
-                return true;
-            default:
-                return false;
+        for (final MapleData child : data.getChildren()) {
+            mobPairs.add(new Pair(
+                    MapleDataTool.getIntConvert("id", child),
+                    MapleDataTool.getIntConvert("prob", child)));
         }
+        summonMobCache.put(itemId, mobPairs);
+        return mobPairs;
     }
 
-    public int getWatkForProjectile(int itemId) {
+    public final int getCardMobId(final int id) {
+        if (id == 0) {
+            return 0;
+        }
+        if (monsterBookID.containsKey(id)) {
+            return monsterBookID.get(id);
+        }
+        final MapleData data = getItemData(id);
+        final int monsterid = MapleDataTool.getIntConvert("info/mob", data, 0);
+
+        if (monsterid == 0) { // Hack.
+            return 0;
+        }
+        monsterBookID.put(id, monsterid);
+        return monsterBookID.get(id);
+    }
+
+    public final int getWatkForProjectile(final int itemId) {
         Integer atk = projectileWatkCache.get(itemId);
         if (atk != null) {
             return atk.intValue();
         }
-        MapleData data = getItemData(itemId);
+        final MapleData data = getItemData(itemId);
         atk = Integer.valueOf(MapleDataTool.getInt("info/incPAD", data, 0));
         projectileWatkCache.put(itemId, atk);
         return atk.intValue();
     }
 
-    public boolean canScroll(int scrollid, int itemid) {
-        int scrollCategoryQualifier = (scrollid / 100) % 100;
-        int itemCategoryQualifier = (itemid / 10000) % 100;
-        return scrollCategoryQualifier == itemCategoryQualifier;
+    public final boolean canScroll(final int scrollid, final int itemid) {
+        return (scrollid / 100) % 100 == (itemid / 10000) % 100;
     }
 
-    public String getName(int itemId) {
+    public final String getName(final int itemId) {
         if (nameCache.containsKey(itemId)) {
             return nameCache.get(itemId);
         }
-        MapleData strings = getStringData(itemId);
+        final MapleData strings = getStringData(itemId);
         if (strings == null) {
             return null;
         }
-        String ret = MapleDataTool.getString("name", strings, null);
+        final String ret = MapleDataTool.getString("name", strings, null);
         nameCache.put(itemId, ret);
         return ret;
     }
 
-    public String getDesc(int itemId) {
+    public final String getDesc(final int itemId) {
         if (descCache.containsKey(itemId)) {
             return descCache.get(itemId);
         }
-        MapleData strings = getStringData(itemId);
+        final MapleData strings = getStringData(itemId);
         if (strings == null) {
             return null;
         }
-        String ret = MapleDataTool.getString("desc", strings, null);
+        final String ret = MapleDataTool.getString("desc", strings, null);
         descCache.put(itemId, ret);
         return ret;
     }
 
-    public String getMsg(int itemId) {
+    public final String getMsg(final int itemId) {
         if (msgCache.containsKey(itemId)) {
             return msgCache.get(itemId);
         }
-        MapleData strings = getStringData(itemId);
+        final MapleData strings = getStringData(itemId);
         if (strings == null) {
             return null;
         }
-        String ret = MapleDataTool.getString("msg", strings, null);
+        final String ret = MapleDataTool.getString("msg", strings, null);
         msgCache.put(itemId, ret);
         return ret;
     }
 
-    public boolean isDropRestricted(int itemId) {
+    public final short getItemMakeLevel(final int itemId) {
+        if (itemMakeLevel.containsKey(itemId)) {
+            return itemMakeLevel.get(itemId);
+        }
+        if (itemId / 10000 != 400) {
+            return 0;
+        }
+        final short lvl = (short) MapleDataTool.getIntConvert("info/lv", getItemData(itemId), 0);
+        itemMakeLevel.put(itemId, lvl);
+        return lvl;
+    }
+
+    public final byte isConsumeOnPickup(final int itemId) {
+        // 0 = not, 1 = consume on pickup, 2 = consume + party
+        if (consumeOnPickupCache.containsKey(itemId)) {
+            return consumeOnPickupCache.get(itemId);
+        }
+        final MapleData data = getItemData(itemId);
+        byte consume = (byte) MapleDataTool.getIntConvert("spec/consumeOnPickup", data, 0);
+        if (consume == 0) {
+            consume = (byte) MapleDataTool.getIntConvert("specEx/consumeOnPickup", data, 0);
+        }
+        if (consume == 1) {
+            if (MapleDataTool.getIntConvert("spec/party", getItemData(itemId), 0) > 0) {
+                consume = 2;
+            }
+        }
+        consumeOnPickupCache.put(itemId, consume);
+        return consume;
+    }
+
+    public final boolean isDropRestricted(final int itemId) {
         if (dropRestrictionCache.containsKey(itemId)) {
             return dropRestrictionCache.get(itemId);
         }
-        MapleData data = getItemData(itemId);
-        boolean bRestricted = MapleDataTool.getIntConvert("info/tradeBlock", data, 0) == 1;
-        if (!bRestricted) {
-            bRestricted = MapleDataTool.getIntConvert("info/quest", data, 0) == 1;
+        final MapleData data = getItemData(itemId);
+
+        boolean trade = false;
+        if (MapleDataTool.getIntConvert("info/tradeBlock", data, 0) == 1
+                || MapleDataTool.getIntConvert("info/quest", data, 0) == 1) {
+            trade = true;
         }
-        dropRestrictionCache.put(itemId, bRestricted);
-        return bRestricted;
+        dropRestrictionCache.put(itemId, trade);
+        return trade;
     }
 
-    public boolean isPickupRestricted(int itemId) {
+    public final boolean isPickupRestricted(final int itemId) {
         if (pickupRestrictionCache.containsKey(itemId)) {
             return pickupRestrictionCache.get(itemId);
         }
-        MapleData data = getItemData(itemId);
-        boolean bRestricted = MapleDataTool.getIntConvert("info/only", data, 0) == 1;
+        final boolean bRestricted = MapleDataTool.getIntConvert("info/only", getItemData(itemId), 0) == 1;
+
         pickupRestrictionCache.put(itemId, bRestricted);
         return bRestricted;
     }
 
-    public Map<String, Integer> getSkillStats(int itemId, double playerJob) {
-        Map<String, Integer> ret = new LinkedHashMap<String, Integer>();
-        MapleData item = getItemData(itemId);
+    public final int getStateChangeItem(final int itemId) {
+        if (stateChangeCache.containsKey(itemId)) {
+            return stateChangeCache.get(itemId);
+        }
+        final int triggerItem = MapleDataTool.getIntConvert("info/stateChangeItem", getItemData(itemId), 0);
+        stateChangeCache.put(itemId, triggerItem);
+        return triggerItem;
+    }
+
+    public final boolean isKarmaEnabled(final int itemId) {
+        if (karmaEnabledCache.containsKey(itemId)) {
+            return karmaEnabledCache.get(itemId);
+        }
+        final boolean bRestricted = MapleDataTool.getIntConvert("info/tradeAvailable", getItemData(itemId), 0) == 1;
+
+        karmaEnabledCache.put(itemId, bRestricted);
+        return bRestricted;
+    }
+
+    public final Pair<Integer, List<StructRewardItem>> getRewardItem(final int itemid) {
+	if (RewardItem.containsKey(itemid)) {
+	    return RewardItem.get(itemid);
+	}
+	final MapleData data = getItemData(itemid);
+	if (data == null) {
+	    return null;
+	}
+	final MapleData rewards = data.getChildByPath("reward");
+	if (rewards == null) {
+	    return null;
+	}
+	int totalprob = 0; // As there are some rewards with prob above 2000, we can't assume it's always 100
+	List<StructRewardItem> all = new ArrayList();
+
+	for (final MapleData reward : rewards) {
+	    StructRewardItem struct = new StructRewardItem();
+
+	    struct.itemid = MapleDataTool.getInt("item", reward, 0);
+	    struct.prob = (byte) MapleDataTool.getInt("prob", reward, 0);
+	    struct.quantity = (short) MapleDataTool.getInt("count", reward, 0);
+	    struct.effect = MapleDataTool.getString("Effect", reward, "");
+	    struct.worldmsg = MapleDataTool.getString("worldMsg", reward, null);
+	    struct.period = MapleDataTool.getInt("period", reward, -1);
+
+	    totalprob += struct.prob;
+
+	    all.add(struct);
+	}
+	Pair<Integer, List<StructRewardItem>> toreturn = new Pair(totalprob, all);
+	RewardItem.put(itemid, toreturn);
+	return toreturn;
+    }
+
+    public final Map<String, Integer> getSkillStats(final int itemId) {
+	if (SkillStatsCache.containsKey(itemId)) {
+	    return SkillStatsCache.get(itemId);
+	}
+        if (!(itemId / 10000 == 228 || itemId / 10000 == 229)) { // Skillbook and mastery book
+            return null;
+        }
+        final MapleData item = getItemData(itemId);
         if (item == null) {
             return null;
         }
-        MapleData info = item.getChildByPath("info");
+        final MapleData info = item.getChildByPath("info");
         if (info == null) {
             return null;
         }
-        for (MapleData data : info.getChildren()) {
+	final Map<String, Integer> ret = new LinkedHashMap<String, Integer>();
+        for (final MapleData data : info.getChildren()) {
             if (data.getName().startsWith("inc")) {
                 ret.put(data.getName().substring(3), MapleDataTool.getIntConvert(data));
             }
@@ -854,33 +889,21 @@ public class MapleItemInformationProvider {
         ret.put("reqSkillLevel", MapleDataTool.getInt("reqSkillLevel", info, 0));
         ret.put("success", MapleDataTool.getInt("success", info, 0));
 
-        MapleData skill = info.getChildByPath("skill");
-        int curskill = 1;
-        for (int i = 0; i < 100; i++) {// up to 100 -> impossible
-            curskill = MapleDataTool.getInt(Integer.toString(i), skill, 0);
-            if (curskill == 0) // end - no more;
-            {
-                break;
-            }
-            double skillJob = Math.floor(curskill / 10000);
-            if (skillJob == playerJob) {
-                ret.put("skillid", curskill);
-                break;
-            }
-        }
+        final MapleData skill = info.getChildByPath("skill");
 
-        if (ret.get("skillid") == null) {
-            ret.put("skillid", 0);
+        for (int i = 0; i < skill.getChildren().size(); i++) { // List of allowed skillIds
+	    ret.put("skillid" + i, MapleDataTool.getInt(Integer.toString(i), skill, 0));
         }
-
+	SkillStatsCache.put(itemId, ret);
         return ret;
     }
 
-    public List<Integer> petsCanConsume(int itemId) {
-        List<Integer> ret = new ArrayList<Integer>();
-        MapleData data = getItemData(itemId);
+    public final List<Integer> petsCanConsume(final int itemId) {
+        final List<Integer> ret = new ArrayList<Integer>();
+        final MapleData data = getItemData(itemId);
         int curPetId = 0;
-        for (int i = 0; i < 100; i++) {
+        int size = data.getChildren().size();
+        for (int i = 0; i < size; i++) {
             curPetId = MapleDataTool.getInt("spec/" + Integer.toString(i), data, 0);
             if (curPetId == 0) {
                 break;
@@ -890,67 +913,16 @@ public class MapleItemInformationProvider {
         return ret;
     }
 
-    public boolean isMiniDungeonMap(int mapId) {
-        switch (mapId) {
-            case 100020000:
-            case 105040304:
-            case 105050100:
-            case 221023400:
-                return true;
-            default:
-                return false;
+    public final boolean isQuestItem(final int itemId) {
+        if (isQuestItemCache.containsKey(itemId)) {
+            return isQuestItemCache.get(itemId);
         }
+        final boolean questItem = MapleDataTool.getIntConvert("info/quest", getItemData(itemId), 0) == 1;
+        isQuestItemCache.put(itemId, questItem);
+        return questItem;
     }
 
-    public List<Pair<Integer, String>> getAllItems() {
-        if (itemNameCache.size() != 0) {
-            return itemNameCache;
-        }
-        List<Pair<Integer, String>> itemPairs = new ArrayList<Pair<Integer, String>>();
-        MapleData itemsData;
-        itemsData = stringData.getData("Cash.img");
-        for (MapleData itemFolder : itemsData.getChildren()) {
-            int itemId = Integer.parseInt(itemFolder.getName());
-            String itemName = MapleDataTool.getString("name", itemFolder, "NO-NAME");
-            itemPairs.add(new Pair<Integer, String>(itemId, itemName));
-        }
-        itemsData = stringData.getData("Consume.img");
-        for (MapleData itemFolder : itemsData.getChildren()) {
-            int itemId = Integer.parseInt(itemFolder.getName());
-            String itemName = MapleDataTool.getString("name", itemFolder, "NO-NAME");
-            itemPairs.add(new Pair<Integer, String>(itemId, itemName));
-        }
-        itemsData = stringData.getData("Eqp.img").getChildByPath("Eqp");
-        for (MapleData eqpType : itemsData.getChildren()) {
-            for (MapleData itemFolder : eqpType.getChildren()) {
-                int itemId = Integer.parseInt(itemFolder.getName());
-                String itemName = MapleDataTool.getString("name", itemFolder, "NO-NAME");
-                itemPairs.add(new Pair<Integer, String>(itemId, itemName));
-            }
-        }
-
-        itemsData = stringData.getData("Etc.img").getChildByPath("Etc");
-        for (MapleData itemFolder : itemsData.getChildren()) {
-            int itemId = Integer.parseInt(itemFolder.getName());
-            String itemName = MapleDataTool.getString("name", itemFolder, "NO-NAME");
-            itemPairs.add(new Pair<Integer, String>(itemId, itemName));
-        }
-        itemsData = stringData.getData("Ins.img");
-        for (MapleData itemFolder : itemsData.getChildren()) {
-            int itemId = Integer.parseInt(itemFolder.getName());
-            String itemName = MapleDataTool.getString("name", itemFolder, "NO-NAME");
-            itemPairs.add(new Pair<Integer, String>(itemId, itemName));
-        }
-        itemsData = stringData.getData("Pet.img");
-        for (MapleData itemFolder : itemsData.getChildren()) {
-            int itemId = Integer.parseInt(itemFolder.getName());
-            String itemName = MapleDataTool.getString("name", itemFolder, "NO-NAME");
-            itemPairs.add(new Pair<Integer, String>(itemId, itemName));
-        }
-        return itemPairs;
-    }
-
-    public Equip makeEquipWithStats(Equip equip, short stats, short wa, short ma) {
+     public final Equip makeEquipWithStats(Equip equip, short stats, short wa, short ma) {
         equip.setStr((short) stats);
         equip.setDex((short) stats);
         equip.setInt((short) stats);
@@ -970,91 +942,7 @@ public class MapleItemInformationProvider {
         return equip;
     }
 
-    public boolean isConsumeOnPickup(int itemId) {
-        if (consumeOnPickupCache.containsKey(itemId)) {
-            return consumeOnPickupCache.get(itemId);
-        }
-        MapleData data = getItemData(itemId);
-        boolean consume = MapleDataTool.getIntConvert("spec/consumeOnPickup", data, 0) == 1 || MapleDataTool.getIntConvert("specEx/consumeOnPickup", data, 0) == 1;
-        consumeOnPickupCache.put(itemId, consume);
-        return consume;
-    }
-
-    public int getStateChangeItem(int itemId) {
-        if (triggerItemCache.containsKey(itemId)) {
-            return triggerItemCache.get(itemId);
-        } else {
-            int triggerItem = MapleDataTool.getIntConvert("info/stateChangeItem", getItemData(itemId), 0);
-            triggerItemCache.put(itemId, triggerItem);
-            return triggerItem;
-        }
-    }
-
-    public IItem getEquipById(int equipId, int ringId) {
-        Equip nEquip;
-        nEquip = new Equip(equipId, (byte) 0, ringId);
-        nEquip.setQuantity((short) 1);
-        Map<String, Integer> stats = this.getEquipStats(equipId);
-        if (stats != null) {
-            for (Entry<String, Integer> stat : stats.entrySet()) {
-                if (stat.getKey().equals("STR")) {
-                    nEquip.setStr((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("DEX")) {
-                    nEquip.setDex((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("INT")) {
-                    nEquip.setInt((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("LUK")) {
-                    nEquip.setLuk((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("PAD")) {
-                    nEquip.setWatk((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("PDD")) {
-                    nEquip.setWdef((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MAD")) {
-                    nEquip.setMatk((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MDD")) {
-                    nEquip.setMdef((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("ACC")) {
-                    nEquip.setAcc((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("EVA")) {
-                    nEquip.setAvoid((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("Speed")) {
-                    nEquip.setSpeed((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("Jump")) {
-                    nEquip.setJump((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MHP")) {
-                    nEquip.setHp((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("MMP")) {
-                    nEquip.setMp((short) stat.getValue().intValue());
-                } else if (stat.getKey().equals("tuc")) {
-                    nEquip.setUpgradeSlots((byte) stat.getValue().intValue());
-                } else if (stat.getKey().equals("afterImage")) {
-                }
-            }
-        }
-        return nEquip.copy();
-    }
-
-    public boolean isKarmaAble(int itemId) {
-        if (karmaCache.containsKey(itemId)) {
-            return karmaCache.get(itemId);
-        }
-        MapleData data = getItemData(itemId);
-        boolean bRestricted = MapleDataTool.getIntConvert("info/tradeAvailable", data, 0) > 0;
-        karmaCache.put(itemId, bRestricted);
-        return bRestricted;
-    }
-
-    public boolean isUntradeableOnEquip(int itemId) {
-        if (onEquipUntradableCache.containsKey(itemId)) {
-            return onEquipUntradableCache.get(itemId);
-        }
-        MapleData data = getItemData(itemId);
-        boolean untradableOnEquip = MapleDataTool.getIntConvert("info/equipTradeBlock", data, 0) >= 1;
-        onEquipUntradableCache.put(itemId, untradableOnEquip);
-        return untradableOnEquip;
-    }
-
-    public boolean isCashEquip(int itemId) {
+     public boolean isCashEquip(int itemId) {
         if (cashEquipCache.containsKey(itemId)) {
             return cashEquipCache.get(itemId);
         }

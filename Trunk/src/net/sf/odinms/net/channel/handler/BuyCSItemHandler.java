@@ -96,16 +96,7 @@ public class BuyCSItemHandler extends AbstractMaplePacketHandler {
         } else if (action == 31) { // credits pilsueng of Kdev
             int snCS = slea.readInt();
             CashItemInfo item = CashItemFactory.getItem(snCS);
-            if (c.getPlayer().getMeso() >= item.getPrice()) {
-                c.getPlayer().gainMeso(-item.getPrice(), false);
-                MapleInventoryManipulator.addById(c, item.getId(), (short) item.getCount(), "Quest Item was purchased.");
-                MapleInventory etcInventory = c.getPlayer().getInventory(MapleInventoryType.ETC);
-                byte slot = etcInventory.findById(item.getId()).getPosition();
-                c.getSession().write(MaplePacketCreator.showBoughtCSQuestItem(slot, item.getId()));
-            } else {
-                c.disconnect(); // The fuck? quest items are only like 1 meso HAX. poor hobo?
-                return;
-            }
+            c.showMessage("There is no Quest in our server. Why do you need Quest Item?");
             c.getSession().write(MaplePacketCreator.showNXMapleTokens(c.getPlayer()));
             c.getSession().write(MaplePacketCreator.enableCSorMTS());
             c.getSession().write(MaplePacketCreator.enableCSUse3());

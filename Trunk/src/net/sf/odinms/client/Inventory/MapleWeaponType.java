@@ -22,31 +22,31 @@
 package net.sf.odinms.client.Inventory;
 
 public enum MapleWeaponType {
-	NOT_A_WEAPON(0),
-	BOW(3.4),
-	CLAW(3.6),
-	DAGGER(4),
-	CROSSBOW(3.6),
-	AXE1H(4.4),
-	SWORD1H(4.0),
-	BLUNT1H(4.4),
-	AXE2H(4.8),
-	SWORD2H(4.6),
-	BLUNT2H(4.8),
-	POLE_ARM(5.0),
-	SPEAR(5.0),
-	STAFF(3.6),
-	WAND(3.6),
-	KNUCKLE(4.8),
-	GUN(3.6);
-	
-	private double damageMultiplier;
-	
-	private MapleWeaponType(double maxDamageMultiplier) {
-		this.damageMultiplier = maxDamageMultiplier;
-	}
-	
-	public double getMaxDamageMultiplier() {
-		return damageMultiplier;
-	}
+
+    NOT_A_WEAPON(4f),
+    BOW(3.4f),
+    CLAW(3.6f),
+    DAGGER(4.0f),
+    CROSSBOW(3.6f),
+    AXE1H(4.4f),
+    SWORD1H(4.0f),
+    BLUNT1H(4.4f),
+    AXE2H(4.8f), // Note : Swing = 4.8, Stab = 3.4
+    SWORD2H(4.6f),
+    BLUNT2H(4.8f), // Note : Swing = 4.8, Stab = 3.4
+    POLE_ARM(5.0f), // NOTE : Swing = 5.0, stab = 3.0
+    SPEAR(5.0f), // NOTE : Stab = 5.0, wing = 3.0
+    STAFF(3.6f),
+    WAND(3.6f),
+    KNUCKLE(4.8f),
+    GUN(3.6f);
+    private final float damageMultiplier;
+
+    private MapleWeaponType(final float maxDamageMultiplier) {
+	this.damageMultiplier = maxDamageMultiplier;
+    }
+
+    public final float getMaxDamageMultiplier() {
+	return damageMultiplier;
+    }
 };

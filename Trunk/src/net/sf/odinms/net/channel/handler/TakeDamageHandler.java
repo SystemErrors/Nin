@@ -20,11 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.net.channel.handler;
 
-import net.sf.odinms.client.ISkill;
-import net.sf.odinms.client.Enums.MapleBuffStat;
+import net.sf.odinms.client.Skills.ISkill;
+import net.sf.odinms.client.Buffs.MapleBuffStat;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.server.AutobanManager;
 import net.sf.odinms.server.constants.Skills;

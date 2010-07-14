@@ -106,7 +106,7 @@ public class EventManager {
     }
 
     public EventInstanceManager newInstance(String name) {
-        EventInstanceManager ret = new EventInstanceManager(this, name);
+	EventInstanceManager ret = new EventInstanceManager(this, name, cserv.getMapFactory());
         instances.put(name, ret);
         return ret;
     }

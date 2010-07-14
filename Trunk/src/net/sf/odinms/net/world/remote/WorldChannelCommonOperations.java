@@ -27,7 +27,13 @@ public interface WorldChannelCommonOperations {
 
     public boolean isConnected(String charName) throws RemoteException;
 
-    public void broadcastMessage(String sender, byte[] message) throws RemoteException;
+    public boolean isCharacterListConnected(List<String> charName) throws RemoteException;
+
+    public void broadcastMessage(byte[] message) throws RemoteException;
+
+    public void broadcastSmega(byte[] message) throws RemoteException;
+
+    public void broadcastGMMessage(byte[] message) throws RemoteException;
 
     public void whisper(String sender, String target, int channel, String message) throws RemoteException;
 
@@ -40,10 +46,6 @@ public interface WorldChannelCommonOperations {
     public List<CheaterData> getCheaters() throws RemoteException;
 
     public void buddyChat(int[] recipientCharacterIds, int cidFrom, String nameFrom, String chattext) throws RemoteException;
-
-    public void broadcastGMMessage(String sender, byte[] message) throws RemoteException;
-
-    public void broadcastStaffMessage(String sender, byte[] message) throws RemoteException;
 
     public void messengerInvite(String sender, int messengerid, String target, int fromchannel) throws RemoteException;
 }

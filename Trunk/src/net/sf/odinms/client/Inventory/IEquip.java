@@ -22,14 +22,22 @@ package net.sf.odinms.client.Inventory;
 
 public interface IEquip extends IItem {
 
-    public enum ScrollResult {
+    public static enum ScrollResult {
 
-        SUCCESS, FAIL, CURSE
+	SUCCESS, FAIL, CURSE
     }
 
-    public byte getUpgradeSlots();
+    byte getUpgradeSlots();
 
-    public byte getLevel();
+    byte getLevel();
+
+    public byte getViciousHammer();
+
+    public byte getItemLevel();
+
+    public short getItemEXP();
+
+    public int getRingId();
 
     public short getStr();
 
@@ -60,12 +68,5 @@ public interface IEquip extends IItem {
     public short getSpeed();
 
     public short getJump();
-
-    public short getHammers();
-
-    public int getRingId();
-
-    public void setUpgradeSlots(byte slot);
-
-    public void setHammers(byte hammer);
 }
+

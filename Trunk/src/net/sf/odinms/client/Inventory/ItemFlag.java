@@ -11,22 +11,25 @@ import net.sf.odinms.net.IntValueHolder;
  *
  * @author Owner
  */
-public enum ItemFlag implements IntValueHolder {
+public enum ItemFlag {
 
     LOCK(0x01),
     SPIKES(0x02),
     COLD(0x04),
     UNTRADEABLE(0x08),
-    KARMA(0x10);
+    KARMA_EQ(0x10),
+    KARMA_USE(0x02);
     private final int i;
 
     private ItemFlag(int i) {
-        this.i = i;
+	this.i = i;
     }
 
-    @Override
-    public int getValue() {
-        return i;
+    public final int getValue() {
+	return i;
+    }
+
+    public final boolean check(int flag) {
+	return (flag & i) == i;
     }
 }
-

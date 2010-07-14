@@ -4,7 +4,7 @@
  */
 package net.sf.odinms.client.messages.commands.players;
 
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
@@ -92,8 +92,8 @@ public class InventoryManipulationCommands implements PlayerCommand {
                 if (player.getMeso() >= 2000000000) {
                     player.gainMeso(-2000000000, true);
                     player.gainItem(4032016, 1);
-                    player.setHp(1);
-                    player.setMp(1);
+                    player.getStat().setHp(1);
+                    player.getStat().setMp(1);
                     player.updateSingleStat(MapleStat.HP, 1);
                     player.updateSingleStat(MapleStat.MP, 1);
                 } else {

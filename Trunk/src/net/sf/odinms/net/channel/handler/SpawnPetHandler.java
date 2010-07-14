@@ -27,7 +27,7 @@ import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.Inventory.MaplePet;
 import net.sf.odinms.client.PetDataFactory;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.client.messages.ServernoticeMapleClientMessageCallback;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.tools.MaplePacketCreator;

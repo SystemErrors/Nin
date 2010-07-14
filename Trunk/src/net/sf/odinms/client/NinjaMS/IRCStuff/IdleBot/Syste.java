@@ -21,7 +21,7 @@ public class Syste extends PircBot {
      * and open the template in the editor.
      */
 /*
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Syste instance = new Syste();
 
     public static Syste getInstance() {

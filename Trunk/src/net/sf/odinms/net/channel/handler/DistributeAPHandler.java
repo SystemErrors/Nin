@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.Pair;

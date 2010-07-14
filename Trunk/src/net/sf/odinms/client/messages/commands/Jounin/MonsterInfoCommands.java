@@ -43,25 +43,51 @@ public class MonsterInfoCommands implements GMCommand {
     @Override
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         Connection con = DatabaseConnection.getConnection();
-        if (splitted[0].equals("killall") || splitted[0].equals("monsterdebug")) {
-            MapleMap map = c.getPlayer().getMap();
-            double range = Double.POSITIVE_INFINITY;
+        MapleMap map = c.getPlayer().getMap();
+        double range = Double.POSITIVE_INFINITY;
+        if (splitted[0].equals("killall")) {
             if (splitted.length > 1) {
                 int irange = Integer.parseInt(splitted[1]);
-                range = irange * irange;
-            }
-            List<MapleMapObject> monsters = map.getMapObjectsInRange(c.getPlayer().getPosition(), range, Arrays.asList(MapleMapObjectType.MONSTER));
-            boolean kill = splitted[0].equals("killall");
-            for (MapleMapObject monstermo : monsters) {
-                MapleMonster monster = (MapleMonster) monstermo;
-                if (kill) {
-                    map.killMonster(monster, c.getPlayer(), false);
+                if (splitted.length <= 2) {
+                    range = irange * irange;
                 } else {
-                    mc.dropMessage("Monster " + monster.toString());
+                    map = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted[2]));
                 }
             }
-            if (kill) {
-                mc.dropMessage("Killed " + monsters.size() + " monsters <3");
+            MapleMonster mob;
+            for (MapleMapObject monstermo : map.getMapObjectsInRange(c.getPlayer().getPosition(), range, Arrays.asList(MapleMapObjectType.MONSTER))) {
+                mob = (MapleMonster) monstermo;
+                map.killMonster(mob, c.getPlayer(), false, false, (byte) 1);
+            }
+        } else if (splitted[0].equals("killalldrops")) {
+            if (splitted.length > 1) {
+                int irange = Integer.parseInt(splitted[1]);
+                if (splitted.length <= 2) {
+                    range = irange * irange;
+                } else {
+                    map = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted[2]));
+                }
+            }
+            MapleMonster mob;
+            for (MapleMapObject monstermo : map.getMapObjectsInRange(c.getPlayer().getPosition(), range, Arrays.asList(MapleMapObjectType.MONSTER))) {
+                mob = (MapleMonster) monstermo;
+                map.killMonster(mob, c.getPlayer(), true, false, (byte) 1);
+            }
+        } else if (splitted[0].equals("killallnospawn")) {
+            map.killAllMonsters(false);
+        } else if (splitted[0].equals("monsterdebug")) {
+            if (splitted.length > 1) {
+                int irange = Integer.parseInt(splitted[1]);
+                if (splitted.length <= 2) {
+                    range = irange * irange;
+                } else {
+                    map = c.getChannelServer().getMapFactory().getMap(Integer.parseInt(splitted[2]));
+                }
+            }
+            MapleMonster mob;
+            for (MapleMapObject monstermo : map.getMapObjectsInRange(c.getPlayer().getPosition(), range, Arrays.asList(MapleMapObjectType.MONSTER))) {
+                mob = (MapleMonster) monstermo;
+                c.getPlayer().dropMessage(6, "Monster " + mob.toString());
             }
         } else if (splitted[0].equalsIgnoreCase("insertdrop")) {
             if (splitted.length < 3) {
@@ -95,7 +121,7 @@ public class MonsterInfoCommands implements GMCommand {
                 ps.setInt(1, mid);
                 ps.setInt(2, iid);
                 ps.executeUpdate();
-                mc.dropMessage(" Success ");               
+                mc.dropMessage(" Success ");
                 ps.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -110,6 +136,8 @@ public class MonsterInfoCommands implements GMCommand {
     @Override
     public GMCommandDefinition[] getDefinition() {
         return new GMCommandDefinition[]{
+                    new GMCommandDefinition("killall", "[range]", ""),
+                    new GMCommandDefinition("killall", "[range]", ""),
                     new GMCommandDefinition("killall", "[range]", ""),
                     new GMCommandDefinition("monsterdebug", "[range]", ""),
                     new GMCommandDefinition("insertdrop", "mobid itemid", " Inserts items to the drop data base. Will work after server check"),

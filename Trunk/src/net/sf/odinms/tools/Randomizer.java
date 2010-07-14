@@ -20,49 +20,41 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package net.sf.odinms.tools;
-
-import java.security.SecureRandom;
 import java.util.Random;
 
-/**
- *
- * @author Jay Estrella
- */
 public class Randomizer {
-    private static Randomizer instance = new Randomizer();
-    private SecureRandom secureRandom;
-    private Random rand;
-    private int callCount;
 
-    public static Randomizer getInstance() {
-        return instance;
+    private final static Random rand = new Random();
+
+    public static final int nextInt() {
+	return rand.nextInt();
     }
 
-    private Randomizer() {
-        secureRandom = new SecureRandom();
-        rand = new Random(secureRandom.nextLong());
-        callCount = 0;
+    public static final int nextInt(final int arg0) {
+	return rand.nextInt(arg0);
     }
 
-    private void callRandom() {
-        if (callCount > 9) {
-            secureRandom.setSeed(rand.nextLong());
-            rand.setSeed(secureRandom.nextLong());
-        } else {
-            callCount++;
-        }
+    public static final void nextBytes(final byte[] bytes) {
+	rand.nextBytes(bytes);
     }
 
-    public int nextInt() {
-        return rand.nextInt();
+    public static final boolean nextBoolean() {
+	return rand.nextBoolean();
     }
 
-    public int nextInt(int i) {
-        callRandom();
-        return rand.nextInt(i);
+    public static final double nextDouble() {
+	return rand.nextDouble();
     }
 
-    public double nextDouble() {
-        return rand.nextDouble();
+    public static final float nextFloat() {
+	return rand.nextFloat();
+    }
+
+    public static final long nextLong() {
+	return rand.nextLong();
+    }
+
+    public static final int rand(final int lbound, final int ubound) {
+	return (int) ((rand.nextDouble() * (ubound - lbound + 1)) + lbound);
     }
 }

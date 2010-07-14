@@ -23,14 +23,14 @@ package net.sf.odinms.net.channel.handler;
 import java.awt.Point;
 
 import java.util.concurrent.ScheduledFuture;
-import net.sf.odinms.client.ISkill;
+import net.sf.odinms.client.Skills.ISkill;
 import net.sf.odinms.client.MapleCharacter.CancelCooldownAction;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.client.messages.ServernoticeMapleClientMessageCallback;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.server.AutobanManager;
-import net.sf.odinms.server.MapleStatEffect;
+import net.sf.odinms.client.Buffs.MapleStatEffect;
 import net.sf.odinms.server.TimerManager;
 import net.sf.odinms.server.constants.Skills;
 import net.sf.odinms.server.constants.SpecialStuff;

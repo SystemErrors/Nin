@@ -18,7 +18,7 @@ public class Angy extends PircBot {
      * and open the template in the editor.
      */
 /*
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Angy instance = new Angy();
 
     public static Angy getInstance() {

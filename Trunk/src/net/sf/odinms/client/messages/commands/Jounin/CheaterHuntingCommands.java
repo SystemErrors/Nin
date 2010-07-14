@@ -26,7 +26,7 @@ import java.util.List;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleCharacterUtil;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.client.messages.GMCommand;
 import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;

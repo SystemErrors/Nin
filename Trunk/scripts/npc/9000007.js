@@ -30,11 +30,13 @@ function action(mode, type, selection){
         if (status == 0){
             var txt = "Hello there #b#h #!.#k";
             txt += " I'm the Mission D manager of NinjaMS.";
-            if(cm.getPlayer().getMission() < 6) {
+            if(cm.getPlayer().getMission() < 5) {
                 txt += " You can get new D missions from me ";
                 txt += "press Ok if you are Ready to get the next mission";
             } else {
                 txt += "I do not deal with higher Missions. You may be want to check out my friends ";
+                txt += "\r\nNow you can proceed to The forest deep in Ellin where the fairies live for your rank C Missions";
+
             }
             cm.sendOk(txt);
         } else if (status == 1){

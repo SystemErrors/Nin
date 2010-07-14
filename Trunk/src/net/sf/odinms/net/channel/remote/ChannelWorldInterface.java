@@ -32,6 +32,7 @@ import java.util.List;
 import net.sf.odinms.client.BuddyList.BuddyAddResult;
 import net.sf.odinms.client.BuddyList.BuddyOperation;
 import net.sf.odinms.net.MaplePacket;
+import net.sf.odinms.net.world.CharacterTransfer;
 import net.sf.odinms.net.world.MapleMessenger;
 import net.sf.odinms.net.world.MapleParty;
 import net.sf.odinms.net.world.MaplePartyCharacter;
@@ -57,6 +58,10 @@ public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperati
 
     public int getLocation(String name) throws RemoteException;
 
+    public void toggleMegaphoneMuteState() throws RemoteException;
+
+    public boolean hasMerchant(int accountId) throws RemoteException;
+
     public void updateParty(MapleParty party, PartyOperation operation, MaplePartyCharacter target) throws RemoteException;
 
     public void partyChat(MapleParty party, String chattext, String namefrom) throws RemoteException;
@@ -69,6 +74,8 @@ public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperati
 
     public int[] multiBuddyFind(int charIdFrom, int[] characterIds) throws RemoteException;
 
+    public void ChannelChange_Data(CharacterTransfer transfer, int characterid) throws RemoteException;
+
     public void sendPacket(List<Integer> targetIds, MaplePacket packet, int exception) throws RemoteException;
 
     public void setGuildAndRank(int cid, int guildid, int rank) throws RemoteException;
@@ -76,8 +83,6 @@ public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperati
     public void setOfflineGuildStatus(int guildid, byte guildrank, int cid) throws RemoteException;
 
     public void setGuildAndRank(List<Integer> cids, int guildid, int rank, int exception) throws RemoteException;
-
-    public void reloadGuildCharacters() throws RemoteException;
 
     public void changeEmblem(int gid, List<Integer> affectedPlayers, MapleGuildSummary mgs) throws RemoteException;
 
@@ -87,12 +92,7 @@ public interface ChannelWorldInterface extends Remote, WorldChannelCommonOperati
 
     public void messengerChat(MapleMessenger messenger, String chattext, String namefrom) throws RemoteException;
 
-    public void broadcastGMMessage(String sender, byte[] message) throws RemoteException;
-
-    public void broadcastStaffMessage(String sender, byte[] message) throws RemoteException;
-
     public void declineChat(String target, String namefrom) throws RemoteException;
 
     public void updateMessenger(MapleMessenger messenger, String namefrom, int position, int fromchannel) throws RemoteException;
-
 }

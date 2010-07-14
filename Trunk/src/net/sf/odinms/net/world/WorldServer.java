@@ -30,20 +30,13 @@ import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.Calendar;
 import java.util.Properties;
 
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 import javax.rmi.ssl.SslRMIServerSocketFactory;
-import net.sf.odinms.client.MapleCharacter;
-import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
-import net.sf.odinms.client.NinjaMS.IRCStuff.PlayerIRC;
 
 import net.sf.odinms.database.DatabaseConnection;
-import org.jibble.pircbot.Colors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -51,91 +44,58 @@ import org.slf4j.LoggerFactory;
  */
 public class WorldServer {
 
-    private static WorldServer instance = null;
-    private static Logger log = LoggerFactory.getLogger(WorldServer.class);
+    private final static WorldServer instance = new WorldServer();
     private int worldId;
     private Properties dbProp = new Properties();
     private Properties worldProp = new Properties();
-    private boolean doubleRate;
-    private MainIRC bot = null;
-    private PlayerIRC bot1 = null;
+    private String arrayString = " ";
+    
 
     private WorldServer() {
-        try {            
-            InputStreamReader is = new FileReader("db.properties");
-            dbProp.load(is);
-            is.close();
-            DatabaseConnection.setProps(dbProp);
-            DatabaseConnection.getConnection();            
-            is = new FileReader("world.properties");
-            worldProp.load(is);
-            is.close();
-        } catch (Exception e) {
-            log.error("Could not configuration", e);
-        }
+	try {
+	    InputStreamReader is = new FileReader("db.properties");
+	    dbProp.load(is);
+	    is.close();
+	    DatabaseConnection.setProps(dbProp);
+	    DatabaseConnection.getConnection();
+	    is = new FileReader("world.properties");
+	    worldProp.load(is);
+	    is.close();
+	} catch (final Exception e) {
+	    System.err.println("Could not configuration" + e);
+	}
     }
 
-    public synchronized static WorldServer getInstance() {
-        if (instance == null) {
-            instance = new WorldServer();
-        }
-        return instance;
+    public static final WorldServer getInstance() {
+	return instance;
     }
 
-    public int getWorldId() {
-        return worldId;
+    public final int getWorldId() {
+	return worldId;
     }
 
-    public Properties getDbProp() {
-        return dbProp;
+    public final Properties getDbProp() {
+	return dbProp;
     }
 
-    public Properties getWorldProp() {
-        return worldProp;
+    public final Properties getWorldProp() {
+	return worldProp;
     }
 
-    public static void main(String[] args) {
-        try {
-            Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT,
-                    new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
-            registry.rebind("WorldRegistry", WorldRegistryImpl.getInstance());
-            log.info("World server has initated successfully.");
-        } catch (RemoteException ex) {
-            log.error("Could not initialize RMI system", ex);
-        }
+    public static final void startWorld_Main() {
+	try {
+	    final Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT, new SslRMIClientSocketFactory(), new SslRMIServerSocketFactory());
+	    registry.rebind("WorldRegistry", WorldRegistryImpl.getInstance());
+	} catch (final RemoteException ex) {
+	    System.err.println("Could not initialize RMI system" + ex);
+	}
     }
 
-    public void setDoubleRate() {
-        doubleRate = true;
+    public void setArrayString(final String string){
+        this.arrayString = string;
     }
 
-    public boolean isDoubleRate() {
-        if (Calendar.DAY_OF_WEEK == Calendar.SUNDAY) {
-            if (Calendar.HOUR > 7 && Calendar.HOUR < 9) {
-                return true;
-            }
-        } else if (Calendar.DAY_OF_WEEK == Calendar.SATURDAY) {
-            if (Calendar.HOUR > 7 && Calendar.HOUR < 9) {
-                return true;
-            }
-        } else if (doubleRate) {
-            return true;
-        }
-        return false;
+    public String getArrayString(){
+        return this.arrayString;
     }
-
-    public void turnIRCBot() {
-        bot = MainIRC.getInstance();
-    }
-
-    public MainIRC getBot() {
-        return bot;
-    }
-
-    public void sendIRCMsg(String msg) {
-        if(bot == null){
-            turnIRCBot();
-        }
-        bot.sendIrcMessage("World " + msg);
-    }   
 }

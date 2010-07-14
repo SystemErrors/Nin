@@ -16,7 +16,7 @@ public class PlayerIRC {
      * and open the template in the editor.
      
 
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private MapleCharacter player;
     private static Map<String, PlayerIRC> instances = new HashMap<String, PlayerIRC>();
 

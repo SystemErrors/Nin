@@ -35,8 +35,8 @@ import java.io.Serializable;
  */
 public class Pair<E, F> implements Serializable {
 	static final long serialVersionUID = 9179541993413738569L;
-	private E left;
-	private F right;
+	public E left;
+	public F right;
 
 	/**
 	 * Class constructor - pairs two objects together.

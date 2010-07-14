@@ -19,7 +19,7 @@ public class RPG_1 extends PircBot {
      * and open the template in the editor.
      */
 
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static RPG_1 instance = new RPG_1();
 
     public static RPG_1 getInstance() {

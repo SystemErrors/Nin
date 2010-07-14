@@ -51,7 +51,7 @@ public class MLIABot {
             }
 
             int toreturn = Integer.parseInt(send.toString());
-            toreturn = Randomizer.getInstance().nextInt(toreturn) + 1;
+            toreturn = Randomizer.nextInt(toreturn) + 1;
             return toreturn;
         } catch (Exception e) {
             System.err.println("[MLIA Bot] There has been an error displaying the FML.");
@@ -76,7 +76,7 @@ public class MLIABot {
             }
 
             final String find = "<div class=\"sc\">";
-            int random = Randomizer.getInstance().nextInt(10);
+            int random = Randomizer.nextInt(10);
             for (int i = 0; i < random; i++) {
                 String gb = sb.substring(sb.indexOf(find) + 1);
 

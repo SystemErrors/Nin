@@ -57,10 +57,10 @@ class IRCOpCommands {
                 }
                 if (target != null) {
                     String readableTargetName = MapleCharacterUtil.makeMapleReadable(target.getName());
-                    String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    String ip = target.getClient().getSessionIPAddress();
                     reason += " (IP: " + ip + ")";
                     target.ban(reason);
-                    ircMsg(sender + " IP Banned " + readableTargetName + " for " + ip + " reason: " + originalReason);
+                    ircMsg(sender + " IP Banned " + readableTargetName + ". Reason : " + reason);
                 } else {
                     if (MapleCharacter.ban(splitted[1], reason, false)) {
                         ircMsg(channel, sender + " Offline Banned " + splitted[1]);
@@ -122,7 +122,7 @@ class IRCOpCommands {
         } else if (command.equalsIgnoreCase("say")) {
             NoticeProcessor.sendYellowNotice("[" + sender + "] " + StringUtil.joinStringFrom(splitted, 1));
         } else if (command.equalsIgnoreCase("rpg")) {
-            RPG.getInstance().sendMessage("#ninjas", "OMG WTF BBQ");
+            RPG.getInstance().sendMessage("#ninjams", "OMG WTF BBQ");
         } else if (command.equalsIgnoreCase("nick")) {
             MainIRC.getInstance().changeNick(splitted[1]);
         } else if (command.equalsIgnoreCase("login")) {

@@ -13,10 +13,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.odinms.client.Enums.Status;
-import net.sf.odinms.client.Enums.Village;
+import net.sf.odinms.client.Status;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
+import net.sf.odinms.client.Village;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.channel.ChannelServer;
@@ -26,7 +26,6 @@ import net.sf.odinms.net.channel.OliveroMatic.TaoRankingInfo;
 import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.constants.GameConstants;
 import net.sf.odinms.server.constants.Rates;
-import net.sf.odinms.tools.StringUtil;
 
 /**
  *
@@ -48,24 +47,24 @@ public class CharInfoProcessor {
                 sb.add(" Overall Rank : #" + other.getTaorank());
                 sb.add(" Tao Amount : " + other.getTaoOfSight());
             }
-            sb.add("MapleStory Job: " + GameConstants.getJobName(other.getJob().getId()));
-            sb.add(" Village: " + other.getVillage().getName());
+            sb.add("MapleStory Job: " + GameConstants.getJobName(other.getJob()));
+            sb.add(" Village: " + Village.getName(other.getVillage()));
             if (other.getPreviousNames() != null) {
                 if (other.getPreviousNames().length() < 3) {
                     sb.add(other.getName() + " has also been known as..." + other.getPreviousNames());
                 }
             }
-            sb.add(" Str : " + other.getStr()
-                    + " Dex : " + other.getDex()
-                    + " Int : " + other.getInt()
-                    + " Luk : " + other.getLuk()
+            sb.add(" Str : " + other.getStat().getStr()
+                    + " Dex : " + other.getStat().getDex()
+                    + " Int : " + other.getStat().getInt()
+                    + " Luk : " + other.getStat().getLuk()
                     + " Remaining AP : "
                     + other.getRemainingAp() + " StorageAp : " + other.getStorageAp());
-            sb.add(" TStr : " + other.getTotalStr()
-                    + " TDex : " + other.getTotalDex()
-                    + " TInt : " + other.getTotalInt()
-                    + " TLuk : " + other.getTotalLuk()
-                    + " WA : " + other.getTotalWatk());
+            sb.add(" TStr : " + other.getStat().getTotalStr()
+                    + " TDex : " + other.getStat().getTotalDex()
+                    + " TInt : " + other.getStat().getTotalInt()
+                    + " TLuk : " + other.getStat().getTotalLuk()
+                    + " WA : " + other.getStat().getTotalWatk());
             sb.add(" MobKilled : " + other.getMobKilled()
                     + " BossKilled : " + other.getBossKilled()
                     + " level : " + other.getLevel()
@@ -88,7 +87,7 @@ public class CharInfoProcessor {
                     + " / " + Rates.getMesoRate(other)
                     + " / " + Rates.getDropRate(other)
                     + " / " + Rates.getBossDropRate(other));
-            sb.add(" This Player is : " + other.getGMStatus().getTitle()
+            sb.add(" This Player is : " + Status.getName(other.getGMLevel())
                     + " Player's Legend : " + other.getLegend() + " Player's GMS mode : " + other.getGMSMode());
             if (other.getDAmount() > 0) {
                 sb.add("Donated Amount : " + other.getDAmount() + " Dpoints : " + other.getDPoints());
@@ -196,7 +195,6 @@ public class CharInfoProcessor {
 
     public static void getNinjaGlare(MessageCallback mc, MapleCharacter other) {
         if (other != null) {
-            int clan = other.getClan().getId();
             mc.dropMessage("--------------- Player Name : " + other.getName()
                     + " (CharacterId :" + other.getId() + ")"
                     + " Created on : " + other.getCreateDate());
@@ -211,21 +209,20 @@ public class CharInfoProcessor {
                         + " Tao Amount : " + other.getTaoOfSight());
             }
             mc.dropMessage("MapleStory Job: "
-                    + GameConstants.getJobName(other.getJob().getId())
-                    + " ... Clan: " + other.getClan().getName());
+                    + GameConstants.getJobName(other.getJob()));
             mc.dropMessage(other.getPreviousNames().length() < 3 ? "This player has no alias." : other.getName()
                     + " has also been known as..." + other.getPreviousNames());
-            mc.dropMessage(" Str : " + other.getStr()
-                    + " Dex : " + other.getDex()
-                    + " Int : " + other.getInt()
-                    + " Luk : " + other.getLuk()
+            mc.dropMessage(" Str : " + other.getStat().getStr()
+                    + " Dex : " + other.getStat().getDex()
+                    + " Int : " + other.getStat().getInt()
+                    + " Luk : " + other.getStat().getLuk()
                     + " Remaining AP : "
                     + other.getRemainingAp() + " StorageAp : " + other.getStorageAp());
-            mc.dropMessage(" TStr : " + other.getStr()
-                    + " TDex : " + other.getDex()
-                    + " TInt : " + other.getInt()
-                    + " TLuk : " + other.getLuk()
-                    + " WA : " + other.getTotalWatk());
+            mc.dropMessage(" TStr : " + other.getStat().getTotalStr()
+                    + "; TDex : " + other.getStat().getTotalDex()
+                    + "; TInt : " + other.getStat().getTotalInt()
+                    + "; TLuk : " + other.getStat().getTotalLuk()
+                    + "; WA : " + other.getStat().getTotalWatk());
             mc.dropMessage(" MobKilled : " + other.getMobKilled()
                     + " BossKilled : " + other.getBossKilled()
                     + " level : " + other.getLevel()
@@ -248,7 +245,7 @@ public class CharInfoProcessor {
                     + " / " + Rates.getMesoRate(other)
                     + " / " + Rates.getDropRate(other)
                     + " / " + Rates.getBossDropRate(other));
-            mc.dropMessage(" This Player is : " + other.getGMStatus().getTitle()
+            mc.dropMessage(" This Player is : " + Status.getName(other.getGMLevel())
                     + " Player's Legend : " + other.getLegend() + " Player's GMS mode : " + other.getGMSMode());
             if (other.getDAmount() > 0) {
                 mc.dropMessage("Donated Amount : " + other.getDAmount() + " Dpoints : " + other.getDPoints());
@@ -290,7 +287,7 @@ public class CharInfoProcessor {
                 macs = rs.getString("macs");
                 accountname = rs.getString("name");
                 accountcreatedate = rs.getString("createdat");
-                gm = Status.getByLevel(rs.getInt("gm")).getTitle();
+                gm = Status.getName(rs.getByte("gm"));
                 damount = rs.getInt("damount");
                 dpoint = rs.getInt("dpoints");
                 tensu = rs.getInt("ninjatensu");
@@ -409,18 +406,18 @@ public class CharInfoProcessor {
             sb.append("\r\n#b Name of the Player : #r" + other.getName());
             sb.append("\r\n #bCreated on : #r" + other.getCreateDate());
             sb.append("\r\n #bCharacterId : #r" + other.getId());
-            sb.append("\r\n#b Ninja Rank : #r" + other.getGMStatus().getTitle());
-            sb.append("\r\n #bVillage: #r" + other.getVillage().getName());
+            sb.append("\r\n#b Ninja Rank : #r" + Status.getName(other.getGMLevel()));
+            sb.append("\r\n #bVillage: #r" + Village.getName(other.getVillage()));
 
-            sb.append("\r\n\r\n#e#d[STATS]#n\r\n #bWA : #r" + other.getTotalWatk());
-            sb.append("\r\n #bStr : #r" + other.getStr()
-                    + "; #bDex : #r" + other.getDex()
-                    + "; #bInt : #r" + other.getInt()
-                    + "; #bLuk : #r" + other.getLuk());
-            sb.append("\r\n #bTStr : #r" + other.getTotalStr()
-                    + "; #bTDex : #r" + other.getTotalDex()
-                    + "; #bTInt : #r" + other.getTotalInt()
-                    + "; #bTLuk : #r" + other.getTotalLuk());
+            sb.append("\r\n\r\n#e#d[STATS]#n\r\n #bWA : #r" + other.getStat().getTotalWatk());
+            sb.append("\r\n #bStr : #r" + other.getStat().getStr()
+                    + "; #bDex : #r" + other.getStat().getDex()
+                    + "; #bInt : #r" + other.getStat().getInt()
+                    + "; #bLuk : #r" + other.getStat().getLuk());
+            sb.append("\r\n #bTStr : #r" + other.getStat().getTotalStr()
+                    + "; #bTDex : #r" + other.getStat().getTotalDex()
+                    + "; #bTInt : #r" + other.getStat().getTotalInt()
+                    + "; #bTLuk : #r" + other.getStat().getTotalLuk());
             sb.append("\r\n #bRemaining AP : " + other.getRemainingAp()
                     + "; #bStorageAp : #r" + other.getStorageAp());
 
@@ -440,7 +437,7 @@ public class CharInfoProcessor {
             sb.append("\r\n#b Fame : #r" + other.getFame());
             sb.append("\r\n #blevel : #r" + other.getLevel()
                     + "; #bMesos : #r" + other.getMeso());
-            sb.append("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(other.getJob().getId()));
+            sb.append("\r\n #bMapleStory Job: #r" + GameConstants.getJobName(other.getJob()));
             sb.append("\r\n#b Player's Legend : #r" + other.getLegend());
             sb.append("\r\n #bShurikenItems : #r" + other.getMaxStatItems());
 
@@ -510,9 +507,10 @@ public class CharInfoProcessor {
         StringBuilder sb = new StringBuilder();
         Connection con = DatabaseConnection.getConnection();
         try {
-            int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0, gml = 0,
+            byte village = 0, gml = 0;
+            int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0, 
                     damount = 0, dpoint = 0, level = 0, rasengan = 0, tensu = 0,
-                    id = 0, accid = 0, mission = 0, village = 0, bqpoints = 0,
+                    id = 0, accid = 0, mission = 0, bqpoints = 0,
                     dojopoints = 0, jqfinished = 0, jqpoints = 0, rank = 0,
                     rb = 0, taorank = 0, taocheck = 0, msi = 0, mobkilled = 0,
                     bosskilled = 0, pvpkills = 0, pvpdeaths = 0, fame = 0,
@@ -554,8 +552,8 @@ public class CharInfoProcessor {
                 macs = rs.getString("macs");
                 accountname = rs.getString("name");
                 accountcreatedate = rs.getString("createdat");
-                gml = rs.getInt("gm");
-                gm = Status.getByLevel(gml).getTitle();
+                gml = rs.getByte("gm");
+                gm = Status.getName(gml);
                 damount = rs.getInt("damount");
                 dpoint = rs.getInt("dpoints");
                 tensu = rs.getInt("ninjatensu");
@@ -618,8 +616,8 @@ public class CharInfoProcessor {
             if (gml > 1) {
                 sb.append("\r\n #bAccount Id : #r" + accid);
             }
-            sb.append("\r\n #bNinja Rank : #r" + Status.getByLevel(gml).getTitle());
-            sb.append("\r\n #bVillage: #r" + Village.getById(village).getName());
+            sb.append("\r\n #bNinja Rank : #r" + Status.getName(gml));
+            sb.append("\r\n #bVillage: #r" + Village.getName(village));
             sb.append("\r\n\r\n#e#d[STATS]#n");
             sb.append("\r\n #bStr : #r" + str
                     + "; #bDex : #r" + dex
@@ -677,9 +675,10 @@ public class CharInfoProcessor {
         List<String> sb = new LinkedList<String>();
         Connection con = DatabaseConnection.getConnection();
         try {
-            int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0, gml = 0,
+            byte  village = 0, gml = 0;
+            int str = 0, dex = 0, int_ = 0, luk = 0, ap = 0, store = 0,
                     damount = 0, dpoint = 0, level = 0, rasengan = 0, tensu = 0,
-                    id = 0, accid = 0, mission = 0, village = 0, bqpoints = 0,
+                    id = 0, accid = 0, mission = 0, bqpoints = 0,
                     dojopoints = 0, jqfinished = 0, jqpoints = 0, rank = 0,
                     rb = 0, taorank = 0, taocheck = 0, msi = 0, mobkilled = 0,
                     bosskilled = 0, pvpkills = 0, pvpdeaths = 0, fame = 0,
@@ -721,8 +720,8 @@ public class CharInfoProcessor {
                 macs = rs.getString("macs");
                 accountname = rs.getString("name");
                 accountcreatedate = rs.getString("createdat");
-                gml = rs.getInt("gm");
-                gm = Status.getByLevel(gml).getTitle();
+                gml = rs.getByte("gm");
+                gm = Status.getName(gml);
                 damount = rs.getInt("damount");
                 dpoint = rs.getInt("dpoints");
                 tensu = rs.getInt("ninjatensu");
@@ -780,8 +779,8 @@ public class CharInfoProcessor {
             if (gml > 1) {
                 sb.add("\r\n #bAccount Id : #r" + accid);
             }
-            sb.add("\r\n #bNinja Rank : #r" + Status.getByLevel(gml).getTitle());
-            sb.add("\r\n #bVillage: #r" + Village.getById(village).getName());
+            sb.add("\r\n #bNinja Rank : #r" + Status.getName(gml));
+            sb.add("\r\n #bVillage: #r" + Village.getName(village));
             sb.add("\r\n\r\n#e#d[STATS]#n");
             sb.add("\r\n #bStr : #r" + str
                     + "; #bDex : #r" + dex

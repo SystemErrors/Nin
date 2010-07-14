@@ -21,5 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package net.sf.odinms.server.maps;
 
 public enum MapleMapObjectType {
-   NPC, MONSTER, ITEM, PLAYER, DOOR, SUMMON, SHOP, MINI_GAME, MIST, REACTOR, MERCHANT, PLAYER_NPC
+    NPC,
+    MONSTER,
+    ITEM,
+    PLAYER,
+    DOOR,
+    SUMMON,
+    SHOP,
+    MIST,
+    REACTOR,
+    MINI_GAME,
+    HIRED_MERCHANT;
 }

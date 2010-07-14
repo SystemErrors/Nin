@@ -28,7 +28,7 @@ public class Skills {
 
     public final static int[] BeginnerSkills = {Beginner.FollowTheLead, Beginner.BlessingOfTheFairy, Beginner.ThreeSnails,
         Beginner.Recovery, Beginner.NimbleFeet, Beginner.LegendarySpirit, Beginner.MonsterRider, Beginner.EchoOfHero,
-        Beginner.JumpDown, Beginner.Maker, /*Beginner.BambooRain, */Beginner.Invincibility, Beginner.PowerExplosion};
+        Beginner.JumpDown, Beginner.Maker, /*Beginner.BambooRain, */ Beginner.Invincibility, Beginner.PowerExplosion};
 
     public class Beginner {
 
@@ -840,7 +840,7 @@ public class Skills {
         public final static int Teleport = 9001002;
     }
     public final static int[] SuperGMSkills = {SuperGM.HealDispel, SuperGM.Haste, SuperGM.HolySymbol, SuperGM.Bless,
-    SuperGM.Hide, SuperGM.Resurrection, SuperGM.HyperBody};
+        SuperGM.Hide, SuperGM.Resurrection, SuperGM.HyperBody};
 
     public class SuperGM {
 
@@ -853,5 +853,261 @@ public class Skills {
         public final static int SuperDragonRoar = 9101006;
         public final static int Teleport = 9101007;
         public final static int HyperBody = 9101008;
+    }
+
+    /*    public static final boolean isThieve(final int job) {
+    switch (job) {
+    case 400:
+    case 410:
+    case 420:
+    case 411:
+    case 421:
+    case 412:
+    case 422:
+    case 1400:
+    case 1410:
+    case 1411:
+    case 1412:
+    return true;
+    }
+    return false;
+    }*/
+    public static final boolean isRecoveryIncSkill(final int id) {
+        switch (id) {
+            case 1110000:
+            case 2000000:
+            case 1210000:
+            case 11110000:
+            case 4100002:
+            case 4200001:
+                return true;
+        }
+        return false;
+    }
+
+    public static final boolean isLinkedAranSkill(final int id) {
+        switch (id) {
+            case 21110007:
+            case 21110008:
+            case 21120009:
+            case 21120010:
+                return true;
+        }
+        return false;
+    }
+
+    public static final int getLinkedAranSkill(final int id) {
+        switch (id) {
+            case 21110007:
+            case 21110008:
+                return 21110002;
+            case 21120009:
+            case 21120010:
+                return 21120002;
+        }
+        return id;
+    }
+
+    public static final int getBOF_ForJob(final int job) {
+        if (GameConstants.isAdventurer(job)) {
+            return 12;
+        } else if (GameConstants.isKOC(job)) {
+            return 10000012;
+        }
+        return 20000012;
+    }
+
+    public static final boolean isElementAmp_Skill(final int skill) {
+        switch (skill) {
+            case 2110001:
+            case 2210001:
+            case 12110001:
+                return true;
+        }
+        return false;
+    }
+
+    public static final short getSummonAttackDelay(final int id) {
+        switch (id) {
+            case 15001004: // Lightning
+            case 14001005: // Darkness
+            case 13001004: // Storm
+            case 12001004: // Flame
+            case 11001004: // Soul
+            case 3221005: // Freezer
+            case 3211005: // Golden Eagle
+            case 3121006: // Phoenix
+            case 3111005: // Silver Hawk
+            case 2321003: // Bahamut
+            case 2311006: // Summon Dragon
+            case 2221005: // Infrit
+            case 2121005: // Elquines
+                return 3030;
+            case 5211001: // Octopus
+            case 5211002: // Gaviota
+            case 5220002: // Support Octopus
+                return 1530;
+            case 3211002: // Puppet
+            case 3111002: // Puppet
+            case 1321007: // Beholder
+                return 0;
+        }
+        return 3030;
+    }
+
+    public static final short getAttackDelay(final int id) {
+        switch (id) { // Assume it's faster(2)
+            case 3121004: // Storm of Arrow
+            case 13111002: // Storm of Arrow
+            case 5221004: // Rapidfire
+                return 120;
+            case 5201006: // Recoil shot/ Back stab shot
+                return 300;
+            case 13101005: // Storm Break
+                return 360;
+            case 5001003: // Double Fire
+                return 390;
+            case 5001001: // Straight/ Flash Fist
+            case 15001001: // Straight/ Flash Fist
+            case 1321003: // Rush
+            case 1221007: // Rush
+            case 1121006: // Rush
+                return 450;
+            case 5211004: // Flamethrower
+            case 5211005: // Ice Splitter
+                return 480;
+            case 0: // Normal Attack, TODO delay for each weapon type
+            case 5111002: // Energy Blast
+            case 15101005: // Energy Blast
+            case 1001004: // Power Strike
+            case 11001002: // Power Strike
+            case 1001005: // Slash Blast
+            case 11001003: // Slash Blast
+            case 1311005: // Sacrifice
+                return 570;
+            case 3111006: // Strafe
+            case 311004: // Arrow Rain
+            case 13111000: // Arrow Rain
+            case 3111003: // Inferno
+            case 3101005: // Arrow Bomb
+            case 4001344: // Lucky Seven
+            case 14001004: // Lucky seven
+            case 4121007: // Triple Throw
+            case 14111005: // Triple Throw
+            case 4111004: // Shadow Meso
+            case 4101005: // Drain
+            case 4211004: // Band of Thieves
+            case 4201004: // Steal
+            case 4001334: // Double Stab
+            case 5221007: // Battleship Cannon
+            case 1211002: // Charged blow
+            case 2301002: // Heal
+            case 1311003: // Dragon Fury : Spear
+            case 1311004: // Dragon Fury : Pole Arm
+                return 600;
+            case 3211006: // Strafe
+            case 3211004: // Arrow Eruption
+            case 3211003: // Blizzard Arrow
+            case 3201005: // Iron Arrow
+            case 3221001: // Piercing
+            case 4111005: // Avenger
+            case 14111002: // Avenger
+            case 5201001: // Invisible shot
+            case 5101004: // Corkscrew Blow
+            case 15101003: // Corkscrew Blow
+            case 1121008: // Brandish
+            case 11111004: // Brandish
+            case 1221009: // Blast
+                return 630;
+            case 5201004: // Blank Shot/ Fake shot
+            case 5211000: // Burst Fire/ Triple Fire
+            case 5001002: // Sommersault Kick
+            case 15001002: // Sommersault Kick
+                return 660;
+            case 4221007: // Boomerang Stab
+            case 1311001: // Spear Crusher, 16~30 pts = 810
+            case 1311002: // PA Crusher, 16~30 pts = 810
+            case 2221006: // Chain Lightning
+                return 690;
+            case 4121008: // Ninja Storm
+            case 4201005: // Savage blow
+            case 5211006: // Homing Beacon
+            case 5221008: // Battleship Torpedo
+            case 5101002: // Backspin Blow
+            case 2001005: // Magic Claw
+            case 12001003: // Magic Claw
+            case 2001004: // Energy Bolt
+            case 2301005: // Holy Arrow
+            case 2121001: // Big Bang
+            case 2221001: // Big Bang
+            case 2321001: // Big Bang
+            case 2321007: // Angel's Ray
+            case 2101004: // Fire Arrow
+            case 12101002: // Fire Arrow
+            case 2101005: // Poison Breath
+            case 2121003: // Fire Demon
+            case 2221003: // Ice Demon
+            case 2121006: // Paralyze
+            case 2201005: // Thunderbolt
+            case 2201004: // Cold Beam
+                return 720;
+            case 4211006: // Meso Explosion
+            case 5121005: // Snatch
+            case 12111006: // Fire Strike
+            case 11101004: // Soul Blade
+                return 750;
+            case 15111007: // Shark Wave
+            case 2111006: // Elemental Composition
+            case 2211006: // Elemental Composition
+                return 810;
+            case 13111006: // Wind Piercing
+            case 4211002: // Assaulter
+            case 5101003: // Double Uppercut
+                return 900;
+            case 5121003: // Energy Orb
+            case 2311004: // Shining Ray
+            case 2211002: // Ice Strike
+                return 930;
+            case 13111007: // Wind Shot
+                return 960;
+            case 14101006: // Vampire
+            case 4121003: // Showdown
+            case 4221003: // Showdown
+                return 1020;
+            case 12101006: // Fire Pillar
+                return 1050;
+            case 5121001: // Dragon Strike
+                return 1080;
+            case 2211003: // Thunder Spear
+            case 1311006: // Dragon Roar
+                return 1140;
+            case 11111006: // Soul Driver
+                return 1230;
+            case 12111005: // Flame Gear
+                return 1260;
+            case 4221001: // Assasinate
+                return 1380;
+            case 2111003: // Poison Mist
+                return 1320;
+            case 5111006: // Shockwave
+            case 15111003: // Shockwave
+            case 2111002: // Explosion
+                return 1500;
+            case 5121007: // Barrage
+            case 15111004: // Barrage
+                return 1830;
+            case 5221003: // Ariel Strike
+                return 2160;
+            case 5121004: // Demolition
+                return 2340;
+            case 2321008: // Genesis
+                return 2700;
+            case 2121007: // Meteor Shower
+            case 10001011: // Meteo Shower
+            case 2221007: // Blizzard
+                return 3060;
+        }
+        // TODO delay for final attack, weapon type, swing,stab etc
+        return 330; // Default usually
     }
 }

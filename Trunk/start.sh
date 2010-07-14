@@ -1,5 +1,6 @@
-./world.sh &
-sleep 5 
-./login.sh &
-sleep 5
-./channel.sh &
+cd /home/server/ninja
+./l_world.sh &
+sleep 3
+./l_login.sh &
+sleep 3
+./l_channel.sh &

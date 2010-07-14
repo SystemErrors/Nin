@@ -35,7 +35,7 @@ public class BanCommands implements InternCommand {
             MapleCharacter target = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
             if (target != null) {
                 String readableTargetName = MapleCharacterUtil.makeMapleReadable(target.getName());
-                String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                String ip = target.getClient().getSessionIPAddress();
                 reason += " (IP: " + ip + ")";
                 target.ban(reason);
                 mc.dropMessage("Banned " + readableTargetName + " ipban for " + ip + " reason: " + originalReason);

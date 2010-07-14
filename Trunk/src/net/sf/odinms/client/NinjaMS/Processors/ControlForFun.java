@@ -21,11 +21,11 @@ import net.sf.odinms.server.MapleInventoryManipulator;
 public class ControlForFun {
      public boolean unequipEverything(MapleCharacter pl) {
         MapleInventory equipped = pl.getInventory(MapleInventoryType.EQUIPPED);
-        List<Byte> position = new ArrayList<Byte>();
+        List<Short> position = new ArrayList<Short>();
         for (IItem item : equipped.list()) {
             position.add(item.getPosition());
         }
-        for (byte pos : position) {
+        for (short pos : position) {
             if (pl.getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() > -1) {
                 MapleInventoryManipulator.unequip(pl.getClient(), pos, pl.getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
             } else {
@@ -39,11 +39,11 @@ public class ControlForFun {
 
     public boolean Strip(MapleClient c, MapleCharacter boss) {
         MapleInventory equipped = boss.getInventory(MapleInventoryType.EQUIPPED);
-        List<Byte> position = new ArrayList<Byte>();
+        List<Short> position = new ArrayList<Short>();
         for (IItem item : equipped.list()) {
             position.add(item.getPosition());
         }
-        for (byte pos : position) {
+        for (short pos : position) {
             if (boss.getInventory(MapleInventoryType.EQUIP).getNextFreeSlot() > -1) {
                 MapleInventoryManipulator.unequip(boss.getClient(), pos, boss.getInventory(MapleInventoryType.EQUIP).getNextFreeSlot());
             } else {

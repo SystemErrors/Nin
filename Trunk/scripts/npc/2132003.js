@@ -194,8 +194,8 @@ function action(mode, type, selection) {
                         cm.dispose();
                     }
                 } else if(curexp < 100){
-                    if(cm.haveItem(plates[8], 5) && cm.getPlayer().haveSight(1000)){
-                        cm.gainItem(plates[8], -5);
+                    if(cm.haveItem(plates[5], 5) && cm.getPlayer().haveSight(1000)){
+                        cm.gainItem(plates[5], -5);
                         cm.gainItem(tao, -1000);
                         cm.getPlayer().addExpBoost();
                         cm.getPlayer().addExpBoost();

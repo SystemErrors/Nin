@@ -23,7 +23,7 @@ package net.sf.odinms.net.channel.handler;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.server.MapleStatEffect;
+import net.sf.odinms.client.Buffs.MapleStatEffect;
 import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.tools.Pair;
 import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;

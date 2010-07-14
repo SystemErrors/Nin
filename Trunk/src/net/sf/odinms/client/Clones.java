@@ -4,9 +4,10 @@
  */
 package net.sf.odinms.client;
 
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.Inventory.IItem;
-import net.sf.odinms.client.Enums.MapleBuffStat;
+import net.sf.odinms.client.Buffs.MapleBuffStat;
 import net.sf.odinms.net.world.guild.MapleGuildSummary;
 
 /**
@@ -27,7 +28,7 @@ public class Clones{
         fakechr.setSkinColor(player.getSkinColor());
         fakechr.setName(player.getName());
         fakechr.setID(id + 1000000);
-        fakechr.setLevel(player.getLevel() + 1);
+        fakechr.setLevel((short)(player.getLevel() + 1));
         fakechr.setJob(player.getJob());
         fakechr.setMap(player.getMap());
         fakechr.setPosition(player.getPosition());

@@ -27,10 +27,6 @@ import net.sf.odinms.client.messages.AdminCommand;
 import net.sf.odinms.client.messages.AdminCommandDefinition;
 import net.sf.odinms.client.messages.CommandProcessor;
 import net.sf.odinms.client.messages.MessageCallback;
-import net.sf.odinms.net.ExternalCodeTableGetter;
-import net.sf.odinms.net.PacketProcessor;
-import net.sf.odinms.net.RecvPacketOpcode;
-import net.sf.odinms.net.SendPacketOpcode;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.scripting.portal.PortalScriptManager;
 import net.sf.odinms.scripting.reactor.ReactorScriptManager;
@@ -44,25 +40,7 @@ public class ReloadingCommands implements AdminCommand {
     @Override
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         ChannelServer cserv = c.getChannelServer();
-        if (splitted[0].equals("clearguilds")) {
-            try {
-                mc.dropMessage("Attempting to reload all guilds... this may take a while...");
-                cserv.getWorldInterface().clearGuilds();
-                mc.dropMessage("Completed.");
-            } catch (RemoteException re) {
-                mc.dropMessage("RemoteException occurred while attempting to reload guilds.");
-                log.error("RemoteException occurred while attempting to reload guilds.", re);
-            }
-        } else if (splitted[0].equals("reloadops")) {
-            try {
-                ExternalCodeTableGetter.populateValues(SendPacketOpcode.getDefaultProperties(), SendPacketOpcode.values());
-                ExternalCodeTableGetter.populateValues(RecvPacketOpcode.getDefaultProperties(), RecvPacketOpcode.values());
-            } catch (Exception e) {
-                log.error("Failed to reload props", e);
-            }
-            PacketProcessor.getProcessor(PacketProcessor.Mode.CHANNELSERVER).reset(PacketProcessor.Mode.CHANNELSERVER);
-            PacketProcessor.getProcessor(PacketProcessor.Mode.CHANNELSERVER).reset(PacketProcessor.Mode.CHANNELSERVER);
-        } else if (splitted[0].equals("clearPortalScripts")) {
+         if (splitted[0].equals("clearPortalScripts")) {
             PortalScriptManager.getInstance().clearScripts();
         } else if (splitted[0].equals("cleardrops")) {
             MapleMonsterInformationProvider.getInstance().clearDrops();
@@ -93,12 +71,11 @@ public class ReloadingCommands implements AdminCommand {
     public AdminCommandDefinition[] getDefinition() {
         return new AdminCommandDefinition[]{
                     new AdminCommandDefinition("clearguilds", "", ""),
-                    new AdminCommandDefinition("reloadops", "", ""),
                     new AdminCommandDefinition("clearPortalScripts", "", ""),
                     new AdminCommandDefinition("cleardrops", "", ""),
                     new AdminCommandDefinition("clearReactorDrops", "", ""),
                     new AdminCommandDefinition("clearshops", "", ""),
                     new AdminCommandDefinition("clearevents", "", ""),
-                    new AdminCommandDefinition("reloadcommands", "", ""),};
+                    new AdminCommandDefinition("reloadallcommands", "", ""),};
     }
 }

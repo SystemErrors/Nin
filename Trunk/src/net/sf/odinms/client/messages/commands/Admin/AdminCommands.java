@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
+import net.sf.odinms.client.Status;
 import net.sf.odinms.client.messages.AdminCommand;
 import net.sf.odinms.client.messages.AdminCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
@@ -64,7 +65,7 @@ public class AdminCommands implements AdminCommand {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    victim.setGMStatus(4);
+                    Status.setGMLevel(victim, (byte)4);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }
@@ -80,7 +81,7 @@ public class AdminCommands implements AdminCommand {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    victim.setGMStatus(3);
+                    Status.setGMLevel(victim,(byte) 3);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }
@@ -96,7 +97,7 @@ public class AdminCommands implements AdminCommand {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    victim.setGMStatus(2);
+                    Status.setGMLevel(victim,(byte) 2);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }
@@ -112,7 +113,7 @@ public class AdminCommands implements AdminCommand {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    victim.setGMStatus(1);
+                    Status.setGMLevel(victim,(byte) 1);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }
@@ -128,7 +129,7 @@ public class AdminCommands implements AdminCommand {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    victim.setGMStatus(0);
+                    Status.setGMLevel(victim,(byte) 0);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }

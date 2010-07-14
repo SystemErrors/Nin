@@ -24,21 +24,21 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.sf.odinms.client.Enums.MapleBuffStat;
+import net.sf.odinms.client.Buffs.MapleBuffStat;
 import net.sf.odinms.client.Enums.MapleJob;
 
-import net.sf.odinms.client.ISkill;
+import net.sf.odinms.client.Skills.ISkill;
 
 import net.sf.odinms.client.MapleCharacter;
 
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.server.constants.Skills;
 import net.sf.odinms.client.anticheat.CheatingOffense;
 import net.sf.odinms.client.status.MonsterStatus;
 import net.sf.odinms.client.status.MonsterStatusEffect;
 import net.sf.odinms.net.AbstractMaplePacketHandler;
 import net.sf.odinms.net.channel.pvp.MaplePvp;
-import net.sf.odinms.server.MapleStatEffect;
+import net.sf.odinms.client.Buffs.MapleStatEffect;
 import net.sf.odinms.server.TimerManager;
 import net.sf.odinms.server.constants.GameConstants;
 import net.sf.odinms.server.AutobanManager;

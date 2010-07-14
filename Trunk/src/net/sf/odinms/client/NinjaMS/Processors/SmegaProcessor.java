@@ -4,18 +4,17 @@
  */
 package net.sf.odinms.client.NinjaMS.Processors;
 
-import java.rmi.RemoteException;
 import java.util.List;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.tools.MaplePacketCreator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
+import net.sf.odinms.client.Status;
 import net.sf.odinms.net.MaplePacket;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.server.AutobanManager;
+import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.constants.Items;
 
 /**
@@ -41,12 +40,23 @@ public class SmegaProcessor {
                 msg = legend + msg;
             }
             if (c.getPlayer().getPrefixShit() == 1 || c.getPlayer().getPrefixShit() == 2) {
-                tag = "<" + c.getPlayer().getGMStatus().getTitle() + ">";
+                tag = "<" + Status.getName(c.getPlayer().getGMLevel()) + ">";
                 msg = tag + msg;
             }
         }
         broadcastSmega(MaplePacketCreator.getMegaphone(type, c.getChannel(), msg, item, ears));
-        MainIRC.getInstance().sendIrcMessage("#smega ~ " + msg);
+        String prefix = "#smega -";
+        if (type.equals(Items.MegaPhoneType.ITEMMEGAPHONE)) {
+            if (item != null) {
+                prefix = "#ismega - [";
+                MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+                prefix += ii.getName(item.getItemId());
+                prefix += "] ";
+            } else {
+                prefix = "#ismega - ";
+            }
+        }
+        MainIRC.getInstance().sendIrcMessage(prefix + msg);
         if (message.contains(".faillist") || message.contains(".gay?") || message.contains(".hit") || message.contains("fuck") || message.contains("sex")) {
             smegaReplies(c, message, type);
         }
@@ -61,13 +71,9 @@ public class SmegaProcessor {
             // already banned so do nothing
         } else {
             MaplePacket pkt = MaplePacketCreator.getAvatarMega(c.getPlayer(), c.getChannel(), itemId, lines);
-            MainIRC.getInstance().sendIrcMessage("#Asmega ~ " +c.getPlayer().getName()+ " : " + msg);
+            MainIRC.getInstance().sendIrcMessage("#Asmega ~ " + c.getPlayer().getName() + " : " + msg);
             for (ChannelServer cserv : ChannelServer.getAllInstances()) {
-                for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-                    if (!chr.inCS() && !chr.isAsmega() && !chr.isfake) {
-                        chr.getClient().getSession().write(pkt);
-                    }
-                }
+                    cserv.broadcastASmegaPacket(pkt);
             }
         }
     }
@@ -82,7 +88,7 @@ public class SmegaProcessor {
             }
         }
         if (c.getPlayer().getPrefixShit() == 1 || c.getPlayer().getPrefixShit() == 2) {
-            tag = c.getPlayer().getGMStatus().getTitle();
+            tag = Status.getName(c.getPlayer().getGMLevel());
             for (int i = 0; i < numlines; i++) {
                 message[i] = "<" + tag + ">" + message[i];
             }
@@ -95,11 +101,7 @@ public class SmegaProcessor {
         }
         MaplePacket pkt = MaplePacketCreator.getTripleMegaphone(c.getChannel(), message, numlines, true);
         for (ChannelServer cserv : ChannelServer.getAllInstances()) {
-            for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-                if (!chr.inCS() && !chr.isPsmega() && !chr.isfake) {
-                    chr.getClient().getSession().write(pkt);
-                }
-            }
+            cserv.getPlayerStorage().broadcastPacket(pkt);
         }
     }
 
@@ -196,22 +198,7 @@ public class SmegaProcessor {
 
     public static void broadcastSmega(MaplePacket pkt) {
         for (ChannelServer cserv : ChannelServer.getAllInstances()) {
-            for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-                if (!chr.inCS() && !chr.isPsmega() && !chr.isfake) {
-                    chr.getClient().getSession().write(pkt);
-                }
-            }
+            cserv.broadcastSmegaPacket(pkt);
         }
-    }
-
-    public static void broadcastIRCSmega(String sender, String msg) {
-        MaplePacket pkt = MaplePacketCreator.getMegaphone(Items.MegaPhoneType.SUPERMEGAPHONE, 69, sender + " : " + msg, null, false);
-        for (ChannelServer cserv : ChannelServer.getAllInstances()) {
-            for (MapleCharacter chr : cserv.getPlayerStorage().getAllCharacters()) {
-                if (!chr.inCS() && chr.isAdmin() && !chr.isfake) {
-                    chr.getClient().getSession().write(pkt);
-                }
-            }
-        }
-    }
+    }    
 }

@@ -26,14 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package net.sf.odinms.client.Inventory;
 
 import java.awt.Point;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
 
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sf.odinms.database.DatabaseConnection;
@@ -42,167 +41,197 @@ import net.sf.odinms.server.movement.AbsoluteLifeMovement;
 import net.sf.odinms.server.movement.LifeMovement;
 import net.sf.odinms.server.movement.LifeMovementFragment;
 
-/**
- *
- * @author Matze
- */
-public class MaplePet extends Item {
+public class MaplePet implements Serializable {
 
+    private static final long serialVersionUID = 9179541993413738569L;
     private String name;
-    private int uniqueid = -1;
-    private int closeness = 0;
-    private int level = 1;
-    private int Fh;
+    private int Fh, stance, fullness = 100, level = 1, closeness = 0, uniqueid, petitemid;
     private Point pos;
-    private int stance;
+    private short inventorypos;
+    private boolean summoned;
 
-    private MaplePet(int id, byte position, int uniqueid) {
-        super(id, position, (short) 1);
-        this.uniqueid = uniqueid;
+    private MaplePet() {
     }
 
-    public static MaplePet loadFromDb(int itemid, byte position, int petid) {
-        try {
-            MaplePet ret = new MaplePet(itemid, position, petid);
-            Connection con = DatabaseConnection.getConnection(); // Get a connection to the database
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM `pets` WHERE petid = ?"); // Get pet details..
-            ps.setInt(1, petid);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                ret.setName(rs.getString("name"));
-                ret.setCloseness(rs.getInt("closeness"));
-                ret.setLevel(rs.getInt("level"));
-            } else {
-                ret = null;
-            }
-            rs.close();
-            ps.close();
-            return ret;
-        } catch (SQLException ex) {
-            Logger.getLogger(MaplePet.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+    private MaplePet(final int petitemid, final int uniqueid, final short inventorypos) {
+	this.petitemid = petitemid;
+	this.uniqueid = uniqueid;
+	this.summoned = false;
+	this.inventorypos = inventorypos;
     }
 
-    public void saveToDb() {
-        try {
-            Connection con = DatabaseConnection.getConnection(); // Get a connection to the database
-            PreparedStatement ps = con.prepareStatement("UPDATE `pets` SET `name` = ?, `level` = ?, `closeness` = ? WHERE `petid` = ?"); // Prepare statement...
-            ps.setString(1, getName()); // Set name
-            ps.setInt(2, getLevel()); // Set Level
-            ps.setInt(3, getCloseness()); // Set Closeness
-            ps.setInt(4, getUniqueId()); // Set ID
-            ps.executeUpdate(); // Execute statement
-            ps.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(MaplePet.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public static final MaplePet loadFromDb(final int itemid, final int petid, final short inventorypos) {
+	try {
+	    final MaplePet ret = new MaplePet(itemid, petid, inventorypos);
+
+	    Connection con = DatabaseConnection.getConnection(); // Get a connection to the database
+	    PreparedStatement ps = con.prepareStatement("SELECT * FROM pets WHERE petid = ?"); // Get pet details..
+	    ps.setInt(1, petid);
+
+	    final ResultSet rs = ps.executeQuery();
+	    rs.next();
+
+	    ret.setName(rs.getString("name"));
+	    ret.setCloseness(rs.getInt("closeness"));
+	    ret.setLevel(rs.getInt("level"));
+	    ret.setFullness(rs.getInt("fullness"));
+
+	    rs.close();
+	    ps.close();
+
+	    return ret;
+	} catch (SQLException ex) {
+	    Logger.getLogger(MaplePet.class.getName()).log(Level.SEVERE, null, ex);
+	    return null;
+	}
     }
 
-    public static int createPet(int itemid) {
-        try {
-            MapleItemInformationProvider mii = MapleItemInformationProvider.getInstance();
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO pets (name, level, closeness, fullness) VALUES (?, ?, ?, ?)");
-            ps.setString(1, mii.getName(itemid));
-            ps.setInt(2, 1);
-            ps.setInt(3, 0);
-            ps.setInt(4, 100);
-            ps.executeUpdate();
-            ResultSet rs = ps.getGeneratedKeys();
-            rs.next();
-            int ret = rs.getInt(1);
-            rs.close();
-            ps.close();
-            return ret;
-        } catch (SQLException ex) {
-            Logger.getLogger(MaplePet.class.getName()).log(Level.SEVERE, null, ex);
-            return -1;
-        }
-
+    public final void saveToDb() {
+	try {
+	    final PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE pets SET name = ?, level = ?, closeness = ?, fullness = ? WHERE petid = ?");
+	    ps.setString(1, name); // Set name
+	    ps.setInt(2, level); // Set Level
+	    ps.setInt(3, closeness); // Set Closeness
+	    ps.setInt(4, fullness); // Set Fullness
+	    ps.setInt(5, uniqueid); // Set ID
+	    ps.executeUpdate(); // Execute statement
+	    ps.close();
+	} catch (final SQLException ex) {
+	    ex.printStackTrace();
+	}
     }
 
-    public String getName() {
-        return name;
+    public static final MaplePet createPet(final int itemid) {
+	int ret;
+	try { // Commit to db first
+	    final PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("INSERT INTO pets (name, level, closeness, fullness) VALUES (?, ?, ?, ?)", DatabaseConnection.RETURN_GENERATED_KEYS);
+	    ps.setString(1, MapleItemInformationProvider.getInstance().getName(itemid));
+	    ps.setInt(2, 1);
+	    ps.setInt(3, 0);
+	    ps.setInt(4, 100);
+	    ps.executeUpdate();
+
+	    final ResultSet rs = ps.getGeneratedKeys();
+	    rs.next();
+	    ret = rs.getInt(1);
+	    rs.close();
+	    ps.close();
+	} catch (final SQLException ex) {
+	    ex.printStackTrace();
+	    return null;
+	}
+	final MaplePet pet = new MaplePet();
+	pet.setName(MapleItemInformationProvider.getInstance().getName(itemid));
+	pet.setLevel(1);
+	pet.setCloseness(0);
+	pet.setFullness(100);
+	pet.setUniqueId(ret);
+
+	return pet;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public final String getName() {
+	return name;
     }
 
-    @Override
+    public final void setName(final String name) {
+	this.name = name;
+    }
+
+    public final boolean getSummoned() {
+	return summoned;
+    }
+
+    public final void setSummoned(final boolean summoned) {
+	this.summoned = summoned;
+    }
+
+    public final short getInventoryPosition() {
+	return inventorypos;
+    }
+
+    public final void setInventoryPosition(final short inventorypos) {
+	this.inventorypos = inventorypos;
+    }
+
     public int getUniqueId() {
-        return uniqueid;
+	return uniqueid;
     }
 
-    @Override
     public void setUniqueId(int id) {
-        this.uniqueid = id;
+	this.uniqueid = id;
     }
 
-    public int getCloseness() {
-        return closeness;
+    public final int getCloseness() {
+	return closeness;
     }
 
-    public void setCloseness(int closeness) {
-        this.closeness = closeness;
+    public final void setCloseness(final int closeness) {
+	this.closeness = closeness;
     }
 
-    public int getLevel() {
-        return level;
+    public final int getLevel() {
+	return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public final void setLevel(final int level) {
+	this.level = level;
     }
 
-    public int getFullness() {
-        return 100;
+    public final int getFullness() {
+	return fullness;
     }
 
-    public int getFh() {
-        return Fh;
+    public final void setFullness(final int fullness) {
+	this.fullness = fullness;
     }
 
-    public void setFh(int Fh) {
-        this.Fh = Fh;
+    public final int getFh() {
+	return Fh;
     }
 
-    public Point getPos() {
-        return pos;
+    public final void setFh(final int Fh) {
+	this.Fh = Fh;
     }
 
-    public void setPos(Point pos) {
-        this.pos = pos;
+    public final Point getPos() {
+	return pos;
     }
 
-    public int getStance() {
-        return stance;
+    public final void setPos(final Point pos) {
+	this.pos = pos;
     }
 
-    public void setStance(int stance) {
-        this.stance = stance;
+    public final int getStance() {
+	return stance;
     }
 
-    public boolean canConsume(int itemId) {
-        MapleItemInformationProvider mii = MapleItemInformationProvider.getInstance();
-        for (int petId : mii.petsCanConsume(itemId)) {
-            if (petId == this.getItemId()) {
-                return true;
-            }
-        }
-        return false;
+    public final void setStance(final int stance) {
+	this.stance = stance;
     }
 
-    public void updatePosition(List<LifeMovementFragment> movement) {
-        for (LifeMovementFragment move : movement) {
-            if (move instanceof LifeMovement) {
-                if (move instanceof AbsoluteLifeMovement) {
-                    Point position = ((LifeMovement) move).getPosition();
-                    this.setPos(position);
-                }
-                this.setStance(((LifeMovement) move).getNewstate());
-            }
-        }
+    public final int getPetItemId() {
+	return petitemid;
+    }
+
+    public final boolean canConsume(final int itemId) {
+	final MapleItemInformationProvider mii = MapleItemInformationProvider.getInstance();
+	for (final int petId : mii.petsCanConsume(itemId)) {
+	    if (petId == petitemid) {
+		return true;
+	    }
+	}
+	return false;
+    }
+
+    public final void updatePosition(final List<LifeMovementFragment> movement) {
+	for (final LifeMovementFragment move : movement) {
+	    if (move instanceof LifeMovement) {
+		if (move instanceof AbsoluteLifeMovement) {
+		    setPos(((LifeMovement) move).getPosition());
+		}
+		setStance(((LifeMovement) move).getNewstate());
+	    }
+	}
     }
 }

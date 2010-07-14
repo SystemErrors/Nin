@@ -68,7 +68,7 @@ public class MapMonitor {
 
 	public void cancelAction() {
 		monitorSchedule.cancel(false);
-		map.killAllMonsters();
+                map.killAllMonsters(true);
 		if (portal != null) {
 			portal.setPortalStatus(MaplePortal.OPEN);
 		}

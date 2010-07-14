@@ -29,7 +29,9 @@ import java.awt.Point;
 
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
+import net.sf.odinms.client.anticheat.CheatingOffense;
+import net.sf.odinms.server.constants.Skills;
 import net.sf.odinms.tools.MaplePacketCreator;
 
 /**
@@ -37,66 +39,120 @@ import net.sf.odinms.tools.MaplePacketCreator;
  * @author Jan
  */
 public class MapleSummon extends AbstractAnimatedMapleMapObject {
-
-    private MapleCharacter owner;
-    private int skillLevel;
-    private int skill;
-    private int hp;
+    private final int ownerid;
+    private final int skillLevel;
+    private final int skill;
+    private short hp;
     private SummonMovementType movementType;
 
-    public MapleSummon(MapleCharacter owner, int skill, Point pos, SummonMovementType movementType) {
-        super();
-        this.owner = owner;
-        this.skill = skill;
-        this.skillLevel = owner.getSkillLevel(SkillFactory.getSkill(skill));
-        if (skillLevel == 0) {
-            throw new RuntimeException("Trying to create a summon for a char without the skill");
-        }
-        this.movementType = movementType;
-        setPosition(pos);
-    }
+    // Since player can have more than 1 summon [Pirate]
+    // Let's put it here instead of cheat tracker
+    private int lastSummonTickCount;
+    private byte Summon_tickResetCount;
+    private long Server_ClientSummonTickDiff;
 
-    public void sendSpawnData(MapleClient client) {
-        if (client.getPlayer().isfake) {
-            return;
-        }
-        client.getSession().write(MaplePacketCreator.spawnSpecialMapObject(this, skillLevel, false));
-    }
+    public MapleSummon(final MapleCharacter owner, final int skill, final Point pos, final SummonMovementType movementType) {
+	super();
+	this.ownerid = owner.getId();
+	this.skill = skill;
+	this.skillLevel = owner.getSkillLevel(SkillFactory.getSkill(skill));
+	if (skillLevel == 0) {
+	    return;
+	}
+	this.movementType = movementType;
+	setPosition(pos);
 
-    public void sendDestroyData(MapleClient client) {
-        client.getSession().write(MaplePacketCreator.removeSpecialMapObject(this, false));
-    }
-
-    public MapleCharacter getOwner() {
-        return this.owner;
-    }
-
-    public int getSkill() {
-        return this.skill;
-    }
-
-    public int getHP() {
-        return this.hp;
-    }
-
-    public void addHP(int delta) {
-        this.hp += delta;
-    }
-
-    public SummonMovementType getMovementType() {
-        return movementType;
-    }
-
-    public boolean isPuppet() {
-        return (skill == 3111002 || skill == 3211002);
-    }
-
-    public int getSkillLevel() {
-        return skillLevel;
+	if (!isPuppet()) { // Safe up 12 bytes of data, since puppet doesn't attack.
+	    lastSummonTickCount = 0;
+	    Summon_tickResetCount = 0;
+	    Server_ClientSummonTickDiff = 0;
+	}
     }
 
     @Override
-    public MapleMapObjectType getType() {
-        return MapleMapObjectType.SUMMON;
+    public final void sendSpawnData(final MapleClient client) {
+	client.getSession().write(MaplePacketCreator.spawnSummon(this, skillLevel, false));
+    }
+
+    @Override
+    public final void sendDestroyData(final MapleClient client) {
+	client.getSession().write(MaplePacketCreator.removeSummon(this, false));
+    }
+
+    public final int getOwnerId() {
+	return ownerid;
+    }
+
+    public final int getSkill() {
+	return skill;
+    }
+
+    public final short getHP() {
+	return hp;
+    }
+
+    public final void addHP(final short delta) {
+	this.hp += delta;
+    }
+
+    public final SummonMovementType getMovementType() {
+	return movementType;
+    }
+
+    public final boolean isPuppet() {
+	switch (skill) {
+	    case 3111002:
+	    case 3211002:
+	    case 13111004:
+		return true;
+	}
+	return false;
+    }
+
+    public final boolean isSummon() {
+	switch (skill) {
+	    case 12111004:
+	    case 2311006:
+	    case 2321003:
+	    case 2121005:
+	    case 2221005:
+	    case 5211001: // Pirate octopus summon
+	    case 5211002:
+	    case 5220002: // wrath of the octopi
+	    case 13111004:
+	    case 11001004:
+	    case 12001004:
+	    case 13001004:
+	    case 14001005:
+		return true;
+	}
+	return false;
+    }
+
+     public final int getSkillLevel() {
+	return skillLevel;
+    }
+
+    @Override
+    public final MapleMapObjectType getType() {
+	return MapleMapObjectType.SUMMON;
+    }
+
+    public final void CheckSummonAttackFrequency(final MapleCharacter chr, final int tickcount) {
+	final int tickdifference = (tickcount - lastSummonTickCount);
+	if (tickdifference < Skills.getSummonAttackDelay(skill)) {
+	    chr.getCheatTracker().registerOffense(CheatingOffense.FAST_SUMMON_ATTACK);
+	}
+	final long STime_TC = System.currentTimeMillis() - tickcount;
+	final long S_C_Difference = Server_ClientSummonTickDiff - STime_TC;
+	if (S_C_Difference > 200) {
+	    chr.getCheatTracker().registerOffense(CheatingOffense.FAST_SUMMON_ATTACK);
+	}
+	Summon_tickResetCount++;
+	if (Summon_tickResetCount > 4) {
+	    Summon_tickResetCount = 0;
+	    Server_ClientSummonTickDiff = STime_TC;
+	}
+	lastSummonTickCount = tickcount;
     }
 }

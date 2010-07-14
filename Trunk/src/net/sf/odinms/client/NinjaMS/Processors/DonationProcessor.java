@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
+import net.sf.odinms.client.Status;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.remote.WorldLocation;
@@ -38,7 +39,7 @@ public class DonationProcessor {
                 }
                 // rewards package
                 if (victim.getDAmount() >= 20 && !victim.isGenin()) {
-                    victim.setGMStatus(1);
+                    Status.setGMLevel(victim, (byte)1);
                     victim.showMessage(5, "[TheBass]You have successfully gained Donator Status! See #commands for your commands!");
                     c.dropMessage("[TheBass]" + victim.getName() + " has gained donator points.");
                 }
@@ -46,7 +47,7 @@ public class DonationProcessor {
                 // complete
                 victim.showMessage(5, "[TheBass]Donation process complete.");
                 c.dropMessage("[TheBass]Donation process complete.");
-                victim.forceSave(true, false);
+                victim.saveToDB(false, false);
             } else {
                 c.dropMessage("[Anbu] Ninja named '" + name + "' does not exist, is CCing, or is offline.");
             }

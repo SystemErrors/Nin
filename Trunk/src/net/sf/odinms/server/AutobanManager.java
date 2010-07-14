@@ -101,7 +101,7 @@ public class AutobanManager implements Runnable {
 			StringBuilder banReason = new StringBuilder("Autoban for char ");
 			banReason.append(name);
 			banReason.append(" (IP ");
-			banReason.append(c.getSession().getRemoteAddress().toString());
+			banReason.append(c.getSessionIPAddress());
 			banReason.append("): ");
 			for (String s : reasons.get(acc)) {
 				banReason.append(s);
@@ -111,15 +111,10 @@ public class AutobanManager implements Runnable {
 			if (c.getPlayer().isJounin()) {
 				log.warn("[h4x] Trying to a/b gm - something fishy going on: {}", banReason.toString());
 			} else {
-				c.getPlayer().ban(banReason.toString());
-				try {
-					c.getChannelServer().getWorldInterface().broadcastMessage(null, 
-						MaplePacketCreator.serverNotice(0, "[Autoban] " + name + " banned by the system (Reason: " + reason + ")").getBytes());
-				} catch (RemoteException e) {
-					c.getChannelServer().reconnectWorld();
-				}
-                                MainIRC.getInstance().sendGlobalMessage("[Autoban] " + name + " banned by the system (Reason: " + reason + ")");
-				log.warn("[h4x] Autobanned player {} (accountid {})", name, acc);
+				c.getPlayer().ban(banReason.toString());				
+				c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(0, "[Autoban] " + name + " banned by the system (Reason: " + reason + ")"));
+				MainIRC.getInstance().sendGlobalMessage("[Autoban] " + name + " banned by the system (Reason: " + reason + ")");
+				//log.warn("[h4x] Autobanned player {} (accountid {})", name, acc);
 			}
 			return;
 		}

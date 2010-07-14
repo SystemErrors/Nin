@@ -35,17 +35,7 @@ public class InfoCommands implements AdminCommand {
             for (ChannelServer cs : ChannelServer.getAllInstances()) {
                 sb = new StringBuilder();
                 sb.append("Channel " + cs.getChannel() +" : ");
-                for (MapleCharacter chr : cs.getPlayerStorage().getAllCharacters()) {
-                    if (sb.length() > 150) {
-                        sb.setLength(sb.length() - 2);
-                        mc.dropMessage(sb.toString());
-                        sb = new StringBuilder();
-                    }
-                    if (!chr.isJounin()) {
-                        sb.append(MapleCharacterUtil.makeMapleReadable(chr.getName()));
-                        sb.append(", ");
-                    }
-                }
+                sb.append(cs.getPlayerStorage().getOnlinePlayers(true));
                 if (sb.length() >= 2) {
                     sb.setLength(sb.length() - 2);
                     mc.dropMessage(sb.toString());

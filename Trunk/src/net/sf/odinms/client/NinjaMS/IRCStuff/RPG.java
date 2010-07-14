@@ -20,7 +20,7 @@ public class RPG extends PircBot {
      */
 
     private String channel = "#irpg";
-    private String channel1 = "#ninjas";
+    private String channel1 = "#ninjams";
     private String channel2 = "#mudkipz";
     private static RPG instance = new RPG();
 

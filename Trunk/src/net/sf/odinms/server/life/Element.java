@@ -22,22 +22,26 @@
 package net.sf.odinms.server.life;
 
 public enum Element {
-	NEUTRAL, FIRE, ICE, LIGHTING, POISON, HOLY;
-	
-	public static Element getFromChar(char c) {
-		switch (Character.toUpperCase(c)) {
-			case 'F':
-				return FIRE;
-			case 'I':
-				return ICE;
-			case 'L':
-				return LIGHTING;
-			case 'S':
-			case 'P':
-				return POISON;
-			case 'H':
-				return HOLY;
-		}
-		throw new IllegalArgumentException("unknown elemnt char " + c);
+    NEUTRAL, PHYSICAL, FIRE, ICE, LIGHTING, POISON, HOLY, DARKNESS;
+
+    public static Element getFromChar(char c) {
+	switch (Character.toUpperCase(c)) {
+	    case 'F':
+		return FIRE;
+	    case 'I':
+		return ICE;
+	    case 'L':
+		return LIGHTING;
+	    case 'S':
+		return POISON;
+	    case 'H':
+		return HOLY;
+	    case 'P':
+		return PHYSICAL;
+	    case 'D': // Added on v.92 MSEA
+		return DARKNESS;
 	}
+	throw new IllegalArgumentException("unknown element char " + c);
+    }
 }
+

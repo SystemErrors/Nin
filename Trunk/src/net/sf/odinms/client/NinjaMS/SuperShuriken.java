@@ -6,6 +6,7 @@ package net.sf.odinms.client.NinjaMS;
 
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.server.MapleItemInformationProvider;
+import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.server.constants.Items;
 
 /**
@@ -97,7 +98,7 @@ public class SuperShuriken {
                 break;
             }
         }
-        if (MapleItemInformationProvider.getInstance().isCashEquip(itemId)) {
+        if (InventoryConstants.isCashEquip(itemId)) {
             cat += 100;
         }
         return cat;

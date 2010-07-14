@@ -42,11 +42,10 @@ public class EventInstanceManager {
     private long timeStarted = 0;
     private long eventTime = 0;
 
-    public EventInstanceManager(EventManager em, String name) {
-        this.em = em;
-        this.name = name;
-        mapFactory = new MapleMapFactory(MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Map.wz")), MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")));
-        mapFactory.setChannel(em.getChannelServer().getChannel());
+    public EventInstanceManager(EventManager em, String name, MapleMapFactory factory) {
+	this.em = em;
+	this.name = name;
+	mapFactory = factory;
     }
 
     public void registerPlayer(MapleCharacter chr) {
@@ -76,7 +75,7 @@ public class EventInstanceManager {
 
     public void registerParty(MapleParty party, MapleMap map) {
         for (MaplePartyCharacter pc : party.getMembers()) {
-            MapleCharacter c = map.getCharacterById(pc.getId());
+            MapleCharacter c = map.getCharacterById_InMap(pc.getId());
             registerPlayer(c);
         }
     }
@@ -311,7 +310,7 @@ public class EventInstanceManager {
 
     public void registerSquad(MapleSquad squad, MapleMap map) {
         for (MapleCharacter player : squad.getMembers()) {
-            if (map.getCharacterById(player.getId()) != null) {
+            if (map.getCharacterById_InMap(player.getId()) != null) {
                 registerPlayer(player);
             }
         }

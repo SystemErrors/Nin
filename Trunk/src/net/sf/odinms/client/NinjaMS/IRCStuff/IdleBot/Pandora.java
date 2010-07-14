@@ -21,7 +21,7 @@ public class Pandora extends PircBot {
      * and open the template in the editor.
      */
 
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Pandora instance = new Pandora();
 
     public static Pandora getInstance() {

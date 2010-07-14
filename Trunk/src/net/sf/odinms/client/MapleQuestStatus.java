@@ -30,160 +30,151 @@
 
 package net.sf.odinms.client;
 
-import java.util.Collections;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import net.sf.odinms.server.quest.MapleQuest;
-import net.sf.odinms.tools.StringUtil;
 
 /**
  *
  * @author Matze
  */
-public class MapleQuestStatus {
+public class MapleQuestStatus implements Serializable {
 
-	public enum Status {
-		UNDEFINED(-1),
-		NOT_STARTED(0),
-		STARTED(1),
-		COMPLETED(2);
-		
-		final int status;
-		
+    private static final long serialVersionUID = 91795419934134L;
+    private transient MapleQuest quest;
+    private byte status;
+    private Map<Integer, Integer> killedMobs = null;
+    private int npc;
+    private long completionTime;
+    private int forfeited = 0;
+    private boolean custom;
+    private String customData;
 
-		private Status(int id) {
-			status = id;
-		}
+    /** Creates a new instance of MapleQuestStatus */
+    public MapleQuestStatus(final MapleQuest quest, final byte status) {
+	this.quest = quest;
+	this.custom = quest.getId() > 99999;
+	this.setStatus(status);
+	this.completionTime = System.currentTimeMillis();
+	if (status == 1) { // Started
+	    if (quest.getRelevantMobs().size() > 0) {
+		killedMobs = new LinkedHashMap<Integer, Integer>();
+		registerMobs();
+	    }
+	}
+    }
 
-		public int getId() {
-			return status;
-		}
+    public MapleQuestStatus(final MapleQuest quest, final byte status, final int npc) {
+	this.quest = quest;
+	this.custom = quest.getId() > 99999;
+	this.setStatus(status);
+	this.setNpc(npc);
+	this.completionTime = System.currentTimeMillis();
+	if (status == 1) { // Started
+	    if (quest.getRelevantMobs().size() > 0) {
+		killedMobs = new LinkedHashMap<Integer, Integer>();
+		registerMobs();
+	    }
+	}
+    }
 
-		public static Status getById(int id) {
-			for (Status l : Status.values()) {
-				if (l.getId() == id) {
-					return l;
-				}
-			}
-			return null;
-		}
-	}
-	
-	private MapleQuest quest;
-	private Status status;
-	private Map<Integer,Integer> killedMobs = new LinkedHashMap<Integer,Integer>();
-	private int npc;
-	private long completionTime;
-	private int forfeited = 0;
-	
-	/** Creates a new instance of MapleQuestStatus */
-	public MapleQuestStatus(MapleQuest quest, Status status) {
-		this.quest = quest;
-		this.setStatus(status);
-		this.completionTime = System.currentTimeMillis();
-		if (status == Status.STARTED)
-			registerMobs();
-	}
-	
-	public MapleQuestStatus(MapleQuest quest, Status status, int npc) {
-		this.quest = quest;
-		this.setStatus(status);
-		this.setNpc(npc);
-		this.completionTime = System.currentTimeMillis();
-		if (status == Status.STARTED)
-			registerMobs();
-	}
+    public final MapleQuest getQuest() {
+	return quest;
+    }
 
-	public MapleQuest getQuest() {
-		return quest;
-	}
+    public final byte getStatus() {
+	return status;
+    }
 
-	public Status getStatus() {
-		return status;
-	}
+    public final void setStatus(final byte status) {
+	this.status = status;
+    }
 
-	public void setStatus(Status status) {
-		this.status = status;
-	}
+    public final boolean isCustomQuest() {
+	return custom;
+    }
 
-	public int getNpc() {
-		return npc;
-	}
+    public final int getNpc() {
+	return npc;
+    }
 
-	public void setNpc(int npc) {
-		this.npc = npc;
-	}
-	
-	private void registerMobs() {
-		List<Integer> relevants = quest.getRelevantMobs();
-		for (int i : relevants) {
-			killedMobs.put(i, 0);
-		}
-	}
-	
-	public boolean mobKilled(int id) {
-		if (killedMobs.get(id) != null) {
-			killedMobs.put(id, killedMobs.get(id) + 1);
-			return true;
-		}
-		return false;
-	}
-	
-	public void setMobKills(int id, int count) {
-		killedMobs.put(id, count);
-	}
-	
-	public boolean hasMobKills() {
-		return killedMobs.size() > 0;
-	}
-	
-	public int getMobKills(int id) {
-		if (killedMobs.get(id) == null) return 0;
-		return killedMobs.get(id);
-	}
-	
-	public Map<Integer,Integer> getMobKills() {
-		return Collections.unmodifiableMap(killedMobs);
-	}
-	
-	public int getMobNum(int id) {
-		int i = 0;
-		for (int kMob : killedMobs.values()) {
-			i++;
-			if (kMob == id) return i;
-		}
-		return i;
-	}
-	
-	public long getCompletionTime() {
-		return completionTime;
-	}
+    public final void setNpc(final int npc) {
+	this.npc = npc;
+    }
 
-	public void setCompletionTime(long completionTime) {
-		this.completionTime = completionTime;
+    private final void registerMobs() {
+	for (final int i : quest.getRelevantMobs().keySet()) {
+	    killedMobs.put(i, 0);
 	}
-	
-	public int getForfeited() {
-		return forfeited;
-	}
+    }
 
-	public void setForfeited(int forfeited) {
-		if (forfeited >= this.forfeited) {
-			this.forfeited = forfeited;
-		} else {
-			throw new IllegalArgumentException("Can't set forfeits to something lower than before.");
-		}
+    private final int maxMob(final int mobid) {
+	for (final Map.Entry<Integer, Integer> qs : quest.getRelevantMobs().entrySet()) {
+	    if (qs.getKey() == mobid) {
+		return qs.getValue();
+	    }
 	}
-	
-	public String getQuestData() {
-		if (killedMobs.size() == 0) {
-			return "";
-		}
-		StringBuilder str = new StringBuilder();
-		for (Integer mob : killedMobs.values()) {
-			str.append(StringUtil.getLeftPaddedStr(mob.toString(), '\30', 3));
-		}
-		return str.toString();
+	return 0;
+    }
+
+    public final boolean mobKilled(final int id) {
+	final Integer mob = killedMobs.get(id);
+	if (mob != null) {
+	    killedMobs.put(id, Math.min(mob + 1, maxMob(id)));
+	    return true;
 	}
+	return false;
+    }
+
+    public final void setMobKills(final int id, final int count) {
+	killedMobs.put(id, count);
+    }
+
+    public final boolean hasMobKills() {
+	if (killedMobs == null) {
+	    return false;
+	}
+	return killedMobs.size() > 0;
+    }
+
+    public final int getMobKills(final int id) {
+	final Integer mob = killedMobs.get(id);
+	if (mob == null) {
+	    return 0;
+	}
+	return mob;
+    }
+
+    public final Map<Integer, Integer> getMobKills() {
+	return killedMobs;
+    }
+
+    public final long getCompletionTime() {
+	return completionTime;
+    }
+
+    public final void setCompletionTime(final long completionTime) {
+	this.completionTime = completionTime;
+    }
+
+    public final int getForfeited() {
+	return forfeited;
+    }
+
+    public final void setForfeited(final int forfeited) {
+	if (forfeited >= this.forfeited) {
+	    this.forfeited = forfeited;
+	} else {
+	    throw new IllegalArgumentException("Can't set forfeits to something lower than before.");
+	}
+    }
+
+    public final void setCustomData(final String customData) {
+	this.customData = customData;
+    }
+
+    public final String getCustomData() {
+	return customData;
+    }
 }

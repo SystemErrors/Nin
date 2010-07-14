@@ -36,27 +36,26 @@ package net.sf.odinms.server;
  */
 public class MapleShopItem {
 
-		private int maxSlot;
-        private int itemId;
-        private int price;
-        
-        /** Creates a new instance of MapleShopItem */
-        public MapleShopItem(int itemId, int price, int maxSlot) {
-                this.itemId = itemId;
-                this.price = price;
-				this.maxSlot = maxSlot;
-        }
+    private short buyable;
+    private int itemId;
+    private int price;
 
-        public int getMaxSlot() {
-                return maxSlot;
-        }
+    public MapleShopItem(short buyable, int itemId, int price) {
+	this.buyable = buyable;
+	this.itemId = itemId;
+	this.price = price;
+    }
 
-        public int getItemId() {
-                return itemId;
-        }
+    public short getBuyable() {
+	return buyable;
+    }
 
-        public int getPrice() {
-                return price;
-        }
+    public int getItemId() {
+	return itemId;
+    }
+
+    public int getPrice() {
+	return price;
+    }
         
 }

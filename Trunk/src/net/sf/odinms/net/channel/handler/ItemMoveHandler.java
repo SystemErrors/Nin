@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package net.sf.odinms.net.channel.handler;
 
 import net.sf.odinms.client.Inventory.Equip;
-import net.sf.odinms.client.Enums.MapleBuffStat;
+import net.sf.odinms.client.Buffs.MapleBuffStat;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.Inventory.MaplePet;

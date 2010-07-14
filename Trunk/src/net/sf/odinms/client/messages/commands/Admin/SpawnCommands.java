@@ -20,7 +20,6 @@ import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.server.life.MapleLifeFactory;
 import net.sf.odinms.server.life.MapleMonster;
 import net.sf.odinms.server.life.MapleNPC;
-import net.sf.odinms.server.life.PlayerNPCs;
 import net.sf.odinms.server.maps.MapleMap;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
@@ -43,9 +42,9 @@ public class SpawnCommands implements AdminCommand {
         MapleCharacter player = c.getPlayer();
         ChannelServer cserv = c.getChannelServer();
         if (splitted[0].equalsIgnoreCase("newmob")) {
-        int npcId = Integer.parseInt(splitted[1]);
+        int mobId = Integer.parseInt(splitted[1]);
             int mobTime = Integer.parseInt(splitted[2]);
-            MapleMonster mob = MapleLifeFactory.getMonster(npcId);
+            MapleMonster mob = MapleLifeFactory.getMonster(mobId);
             int xpos = player.getPosition().x;
             int ypos = player.getPosition().y;
             if (mob != null && !mob.getName().equals("MISSINGNO")) {
@@ -57,7 +56,7 @@ public class SpawnCommands implements AdminCommand {
                 try {
                     Connection con = DatabaseConnection.getConnection();
                     PreparedStatement ps = con.prepareStatement("INSERT INTO spawns ( idd, f, fh, cy, rx0, rx1, type, x, y, mid, mobtime ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
-                    ps.setInt(1, npcId);
+                    ps.setInt(1, mobId);
                     ps.setInt(2, 0);
                     ps.setInt(3, player.getMap().getFootholds().findBelow(player.getPosition()).getId());
                     ps.setInt(4, ypos);
@@ -73,7 +72,7 @@ public class SpawnCommands implements AdminCommand {
                     mc.dropMessage("Mob Placed.");
                 } catch (Exception ex) {
                 }
-                player.getMap().addMonsterSpawn(mob, mobTime);
+                player.getMap().addMonsterSpawn(mob, mobTime, (byte)-1, null);
             } else {
                 mc.dropMessage("You have entered an invalid mob-ID.");
             }
@@ -125,9 +124,11 @@ public class SpawnCommands implements AdminCommand {
             if (victim == null) {
                 mc.dropMessage("The character is not in this channel");
             } else {
+                Connection con = DatabaseConnection.getConnection();
+                PreparedStatement ps = null;
+                ResultSet rs = null;
                 try {
-                    Connection con = DatabaseConnection.getConnection();
-                    PreparedStatement ps = con.prepareStatement("INSERT INTO playernpcs (name, hair, face, skin, x, cy, map, ScriptId, Foothold, rx0, rx1, gender, dir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    ps = con.prepareStatement("INSERT INTO playernpcs (name, hair, face, skin, x, cy, map, ScriptId, Foothold, rx0, rx1, gender, dir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     MapleNPC npc = MapleLifeFactory.getNPC(scriptId);
                     if (npc == null) {
                         c.showMessage("Invalid NPCId.");
@@ -140,7 +141,7 @@ public class SpawnCommands implements AdminCommand {
                     }
                     ps.setInt(2, victim.getHair());
                     ps.setInt(3, victim.getFace());
-                    ps.setInt(4, victim.getSkinColor().getId());
+                    ps.setInt(4, victim.getSkinColor());
                     ps.setInt(5, player.getPosition().x);
                     ps.setInt(6, player.getPosition().y);
                     ps.setInt(7, player.getMapId());
@@ -151,7 +152,7 @@ public class SpawnCommands implements AdminCommand {
                     ps.setInt(12, victim.getGender());
                     ps.setInt(13, player.isFacingLeft() ? 1 : 0);
                     ps.executeUpdate();
-                    ResultSet rs = ps.getGeneratedKeys();
+                    rs = ps.getGeneratedKeys();
                     rs.next();
                     npcId = rs.getInt(1);
                     ps.close();
@@ -168,22 +169,21 @@ public class SpawnCommands implements AdminCommand {
                     ps = con.prepareStatement("SELECT * FROM playernpcs WHERE ScriptId = ?");
                     ps.setInt(1, scriptId);
                     rs = ps.executeQuery();
-                    rs.next();
-                    PlayerNPCs pn = new PlayerNPCs(rs);
-
-                    for (ChannelServer channel : ChannelServer.getAllInstances()) {
-                        MapleMap map = channel.getMapFactory().getMap(player.getMapId());
-                        map.broadcastMessage(MaplePacketCreator.spawnPlayerNPC(pn));
-                        map.broadcastMessage(MaplePacketCreator.getPlayerNPC(pn));
-                        map.addMapObject(pn);
-                    }
-
-                    ps.close();
+                    rs.next();                     
                     rs.close();
 
                     mc.dropMessage("Successfully executed!");
                 } catch (SQLException e) {
                     mc.dropMessage("" + e + e.getErrorCode() + e.getSQLState() + e.getNextException());
+                } finally {
+                    try {
+                    if(rs != null)
+                        rs.close();
+                    if (ps != null)
+                        ps.close();
+                    } catch(SQLException ex){
+                        ex.printStackTrace();
+                    }
                 }
             }
         }

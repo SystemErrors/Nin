@@ -28,14 +28,14 @@ import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.GMCommand;
 import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
-import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.server.life.MapleLifeFactory;
 import net.sf.odinms.server.life.MapleMonster;
-import net.sf.odinms.server.life.MapleMonsterStats;
+import net.sf.odinms.server.life.OverrideMonsterStats;
 
 public class SpawnMonsterCommand implements GMCommand {
+
     @Override
-    public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception{
+    public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         if (splitted[0].equals("mob")) {
             HashMap<String, Integer> mobs = new HashMap<String, Integer>();
             mobs.put("anego", 9400121);
@@ -91,59 +91,66 @@ public class SpawnMonsterCommand implements GMCommand {
                 }
                 mc.dropMessage(builder.toString());
             } else if (mobs.containsKey(splitted[1])) {
-                c.getPlayer().getMap().spawnMonsterOnGroudBelow(MapleLifeFactory.getMonster(mobs.get(splitted[1])), c.getPlayer().getPosition());
+                c.getPlayer().getMap().spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(mobs.get(splitted[1])), c.getPlayer().getPosition());
             } else {
                 mc.dropMessage("Invalid mob, try something else.");
             }
         } else if (splitted[0].equalsIgnoreCase("spawn")) {
-            int mid = Integer.parseInt(splitted[1]);
-            if(SpecialStuff.getInstance().isGMSpawnBlocked(c.getPlayer(), mid)){
-                mc.dropMessage("You cannot spawn this");
-                return;
-            }
-            int num = Math.min(getOptionalIntArg(splitted, 2, 1), 500);
+            final int mid = Integer.parseInt(splitted[1]);
+            final int num = Math.min(getOptionalIntArg(splitted, 2, 1), 50);
+
             Integer hp = getNamedIntArg(splitted, 1, "hp");
             Integer exp = getNamedIntArg(splitted, 1, "exp");
             Double php = getNamedDoubleArg(splitted, 1, "php");
             Double pexp = getNamedDoubleArg(splitted, 1, "pexp");
-            MapleMonster onemob = MapleLifeFactory.getMonster(mid);
-            int newhp;
-            int newexp;
-            double oldExpRatio = ((double) onemob.getHp() / onemob.getExp());
+
+            final MapleMonster onemob = MapleLifeFactory.getMonster(mid);
+
+            int newhp = 0, newexp = 0;
+            final double oldExpRatio = ((double) onemob.getHp() / onemob.getMobExp());
 
             if (hp != null) {
-                newhp = hp;
+                newhp = hp.intValue();
             } else if (php != null) {
-                newhp = (int) (onemob.getMaxHp() * (php / 100));
+                newhp = (int) (onemob.getMobMaxHp() * (php.doubleValue() / 100));
             } else {
-                newhp = onemob.getMaxHp();
+                newhp = onemob.getMobMaxHp();
             }
             if (exp != null) {
-                newexp = exp;
+                newexp = exp.intValue();
             } else if (pexp != null) {
-                newexp = (int) (onemob.getExp() * (pexp / 100));
+                newexp = (int) (onemob.getMobExp() * (pexp.doubleValue() / 100));
             } else {
-                newexp = onemob.getExp();
+                newexp = onemob.getMobExp();
             }
+
             if (newhp < 1) {
                 newhp = 1;
             }
-            double newExpRatio = ((double) newhp / newexp);
-            if (newExpRatio < oldExpRatio && newexp > 0) {
-                mc.dropMessage("The new hp/exp ratio is better than the old one. (" + newExpRatio + " < " +
-                        oldExpRatio + ") Please don't do this");
+            final double newExpRatio = ((double) newhp / newexp);
+
+            c.getPlayer().dropMessage(6, "Ratio : (" + newExpRatio + " < " + oldExpRatio + ")");
+
+            if (newExpRatio < oldExpRatio * 3 && newexp > 0) {
+                c.getPlayer().dropMessage(6, "You are not allowed to spawn a better monster of 4x ratio than the original.");
                 return;
+            } else if (c.getPlayer().getGMLevel() <= 2) {
+                if (mid == 9400203) {
+                    c.getPlayer().dropMessage(6, "This monster is blocked.");
+                    return;
+                }
             }
-            MapleMonsterStats overrideStats = new MapleMonsterStats();
-            overrideStats.setHp(newhp);
-            overrideStats.setExp(newexp);
-            overrideStats.setMp(onemob.getMaxMp());
-            overrideStats.setGMSpawn();
+            final OverrideMonsterStats overrideStats = new OverrideMonsterStats();
+            overrideStats.setOHp(newhp);
+            overrideStats.setOExp(newexp);
+            overrideStats.setOMp(onemob.getMobMaxMp());
+            overrideStats.setGmSpawn();
             for (int i = 0; i < num; i++) {
                 MapleMonster mob = MapleLifeFactory.getMonster(mid);
                 mob.setHp(newhp);
+
                 mob.setOverrideStats(overrideStats);
-                c.getPlayer().getMap().spawnMonsterOnGroudBelow(mob, c.getPlayer().getPosition());
+                c.getPlayer().getMap().spawnMonsterOnGroundBelow(mob, c.getPlayer().getPosition());
             }
         }
     }

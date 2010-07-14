@@ -7,7 +7,7 @@ package net.sf.odinms.client.NinjaMS;
 import net.sf.odinms.client.*;
 import net.sf.odinms.net.world.remote.WorldChannelInterface;
 import net.sf.odinms.server.MapleInventoryManipulator;
-import net.sf.odinms.server.MapleItemInformationProvider;
+import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.tools.MaplePacketCreator;
 
 /**
@@ -28,11 +28,7 @@ public class JumpQuest {
                 lastjqcompare = System.currentTimeMillis() - lastjqcomplete;
                 if (lastjqcompare < completiontimes[i]) {
                     //AutobanManager.getInstance().autoban(c, "Abnormal Completion of JQ. Finished Jq map " + jqmaps[i] + "in " + lastjqcompare);
-                    WorldChannelInterface wci = c.getChannelServer().getWorldInterface();
-                    try {
-                        wci.broadcastGMMessage(null, MaplePacketCreator.serverNotice(5, "Abnormal Completion Of Jq map " + jqmaps[i] + " in " + lastjqcompare).getBytes());
-                    } catch (Exception ex) {
-                    }
+                    c.getChannelServer().broadcastStaffPacket(MaplePacketCreator.serverNotice(5, "Abnormal Completion Of Jq map " + jqmaps[i] + " in " + lastjqcompare));
                 } else {
                     lastjqcomplete = System.currentTimeMillis();
                 }
@@ -73,7 +69,7 @@ public class JumpQuest {
         }
         i = 0;
         for (i = 0; i < pages.length; i++) {
-            MapleInventoryManipulator.removeById(c, MapleItemInformationProvider.getInstance().getInventoryType(pages[i]), pages[i], 1, true, false);
+            MapleInventoryManipulator.removeById(c, InventoryConstants.getInventoryType(pages[i]), pages[i], 1, true, false);
         }
         int type = (int) Math.floor(Math.random() * 5200 + 1);
         if (type < 500) {

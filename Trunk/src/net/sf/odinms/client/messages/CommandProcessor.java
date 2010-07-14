@@ -29,13 +29,15 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.client.messages.commands.donator.HelpDonatorCommand;
 import net.sf.odinms.client.messages.commands.Admin.HelpAdminCommand;
 import net.sf.odinms.client.messages.commands.Jounin.HelpGMCommand;
@@ -53,12 +55,9 @@ import net.sf.odinms.tools.MockIOSession;
 import net.sf.odinms.tools.Pair;
 import net.sf.odinms.tools.StringUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CommandProcessor implements CommandProcessorMBean {
 
-    private static final Logger log = LoggerFactory.getLogger(GeneralChatHandler.class);
     private static List<Pair<MapleCharacter, String>> gmlog = new LinkedList<Pair<MapleCharacter, String>>();
     private Map<String, DefinitionPlayerCommandPair> playercommands = new LinkedHashMap<String, DefinitionPlayerCommandPair>();
     private Map<String, DefinitionDonatorCommandPair> donatorcommands = new LinkedHashMap<String, DefinitionDonatorCommandPair>();
@@ -68,6 +67,7 @@ public class CommandProcessor implements CommandProcessorMBean {
     private Map<String, DefinitionSanninCommandPair> sannincommands = new LinkedHashMap<String, DefinitionSanninCommandPair>();
     private static CommandProcessor instance = new CommandProcessor();
     private static Runnable persister;
+    private static final Lock rl = new ReentrantLock();
 
     static {
         persister = new PersistingTask();
@@ -83,7 +83,7 @@ public class CommandProcessor implements CommandProcessorMBean {
 
         @Override
         public void run() {
-            synchronized (gmlog) {
+           rl.lock();
                 Connection con = DatabaseConnection.getConnection();
                 try {
                     PreparedStatement ps = con.prepareStatement("INSERT INTO gmlog (cid, command) VALUES (?, ?)");
@@ -93,11 +93,14 @@ public class CommandProcessor implements CommandProcessorMBean {
                         ps.executeUpdate();
                     }
                     ps.close();
+                    gmlog.clear();
                 } catch (SQLException e) {
-                    log.error("error persisting cheatlog", e);
-                }
+                    System.err.println("error persisting cheatlog"+ e);
+                } finally {
                 gmlog.clear();
-            }
+                    rl.unlock();
+                }
+            
 
             /*   synchronized (gmchatlog) {
             Connection con = DatabaseConnection.getConnection();
@@ -110,7 +113,7 @@ public class CommandProcessor implements CommandProcessorMBean {
             }
             ps.close();
             } catch (SQLException e) {
-            log.error("error persisting chatlog", e);
+            System.err.println("error persisting chatlog", e);
             }
             gmchatlog.clear();
             }*/
@@ -122,7 +125,7 @@ public class CommandProcessor implements CommandProcessorMBean {
         try {
             mBeanServer.registerMBean(instance, new ObjectName("net.sf.odinms.client.messages:name=CommandProcessor"));
         } catch (Exception e) {
-            log.error("Error registering CommandProcessor MBean");
+            System.err.println("Error registering CommandProcessor MBean");
         }
     }
 
@@ -252,12 +255,12 @@ public class CommandProcessor implements CommandProcessorMBean {
                         AdminCommand newInstance = (AdminCommand) clasz.newInstance();
                         registerAdminCommand(newInstance);
                     } catch (Exception e) {
-                        log.error("ERROR INSTANCIATING COMMAND CLASS", e);
+                        System.err.println("ERROR INSTANCIATING COMMAND CLASS" + e);
                     }
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.error("THROW", e);
+            System.err.println("THROW" + e);
         }
     }
 
@@ -274,12 +277,12 @@ public class CommandProcessor implements CommandProcessorMBean {
                         GMCommand newInstance = (GMCommand) clasz.newInstance();
                         registerGMCommand(newInstance);
                     } catch (Exception e) {
-                        log.error("ERROR INSTANCIATING COMMAND CLASS", e);
+                        System.err.println("ERROR INSTANCIATING COMMAND CLASS" + e);
                     }
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.error("THROW", e);
+            System.err.println("THROW" +  e);
         }
     }
 
@@ -296,12 +299,12 @@ public class CommandProcessor implements CommandProcessorMBean {
                         InternCommand newInstance = (InternCommand) clasz.newInstance();
                         registerInternCommand(newInstance);
                     } catch (Exception e) {
-                        log.error("ERROR INSTANCIATING COMMAND CLASS", e);
+                        System.err.println("ERROR INSTANCIATING COMMAND CLASS" + e);
                     }
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.error("THROW", e);
+            System.err.println("THROW" + e);
         }
     }
 
@@ -318,12 +321,12 @@ public class CommandProcessor implements CommandProcessorMBean {
                         SanninCommand newInstance = (SanninCommand) clasz.newInstance();
                         registerSanninCommand(newInstance);
                     } catch (Exception e) {
-                        log.error("ERROR INSTANCIATING COMMAND CLASS", e);
+                        System.err.println("ERROR INSTANCIATING COMMAND CLASS" + e);
                     }
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.error("THROW", e);
+            System.err.println("THROW" + e);
         }
 
     }
@@ -341,12 +344,12 @@ public class CommandProcessor implements CommandProcessorMBean {
                         DonatorCommand newInstance = (DonatorCommand) clasz.newInstance();
                         registerDonatorCommand(newInstance);
                     } catch (Exception e) {
-                        log.error("ERROR INSTANCIATING COMMAND CLASS", e);
+                        System.err.println("ERROR INSTANCIATING COMMAND CLASS" + e);
                     }
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.error("THROW", e);
+            System.err.println("THROW" + e);
         }
     }
 
@@ -363,12 +366,12 @@ public class CommandProcessor implements CommandProcessorMBean {
                         PlayerCommand newInstance = (PlayerCommand) clasz.newInstance();
                         registerPlayerCommand(newInstance);
                     } catch (Exception e) {
-                        log.error("ERROR INSTANCIATING COMMAND CLASS", e);
+                        System.err.println("ERROR INSTANCIATING COMMAND CLASS" + e);
                     }
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.error("THROW", e);
+            System.err.println("THROW" + e);
         }
     }
 
@@ -527,10 +530,10 @@ public class CommandProcessor implements CommandProcessorMBean {
                 dropHelpForAdminDefinition(mc, definitionCommandPair.getDefinition());
             } catch (NullPointerException exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             } catch (Exception exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             }
             return true;
         } else {
@@ -556,10 +559,10 @@ public class CommandProcessor implements CommandProcessorMBean {
                 dropHelpForGMDefinition(mc, definitionCommandPair.getDefinition());
             } catch (NullPointerException exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             } catch (Exception exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             }
             return true;
         } else {
@@ -584,10 +587,10 @@ public class CommandProcessor implements CommandProcessorMBean {
                 dropHelpForInternDefinition(mc, definitionCommandPair.getDefinition());
             } catch (NullPointerException exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             } catch (Exception exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             }
             return true;
         } else {
@@ -612,10 +615,10 @@ public class CommandProcessor implements CommandProcessorMBean {
                 dropHelpForSanninDefinition(mc, definitionCommandPair.getDefinition());
             } catch (NullPointerException exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             } catch (Exception exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             }
             return true;
         } else {
@@ -640,10 +643,10 @@ public class CommandProcessor implements CommandProcessorMBean {
                 dropHelpForDonatorDefinition(mc, definitionCommandPair.getDefinition());
             } catch (NullPointerException exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             } catch (Exception exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             }
             return true;
         } else {
@@ -668,10 +671,10 @@ public class CommandProcessor implements CommandProcessorMBean {
                 dropHelpForPlayerDefinition(mc, definitionCommandPair.getDefinition());
             } catch (NullPointerException exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             } catch (Exception exx) {
                 mc.dropMessage("An error occured: " + exx.getClass().getName() + " " + exx.getMessage());
-                log.error("COMMAND ERROR", exx);
+                System.err.println("COMMAND ERROR" + exx);
             }
             return true;
         } else {
@@ -687,11 +690,9 @@ public class CommandProcessor implements CommandProcessorMBean {
             splitted[0] = splitted[0].substring(1);
             String lol = StringUtil.joinStringFrom(splitted, 0);
             if (lol.length() > 1) {
-                try {
-                    c.getChannelServer().getWorldInterface().broadcastStaffMessage(null, MaplePacketCreator.multiChat(player.getName() + " [GMChat] ", lol, 3).getBytes());
-                } catch (Exception ex) {
-                    mc.dropMessage("GM Chat Error: Unable to broadcast message.");
-                }
+                for(ChannelServer cserv : ChannelServer.getAllInstances())
+                cserv.broadcastStaffPacket(MaplePacketCreator.multiChat(player.getName() + " [GMChat] ", lol, 3));
+              
             }
             return true;
         } else if (line.charAt(0) == '/' && player.isAdmin()) {
@@ -699,9 +700,12 @@ public class CommandProcessor implements CommandProcessorMBean {
             splitted[0] = splitted[0].toLowerCase().substring(1);
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processAdminCommand(c, mc, splitted);
-                synchronized (gmlog) {
+                rl.lock();
+                try{
                     gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
-                }
+                } finally {
+		    rl.unlock();
+		}
                 return true;
             }
         } else if (line.charAt(0) == '%' && (player.isSannin() || player.getName().equalsIgnoreCase("system"))) {
@@ -709,11 +713,10 @@ public class CommandProcessor implements CommandProcessorMBean {
             splitted[0] = splitted[0].toLowerCase().substring(1);
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processSanninCommand(c, mc, splitted);
-                //  if (!c.getPlayer().isAdmin()) {
-                synchronized (gmlog) {
+                rl.lock();
                     gmlog.add(new Pair<MapleCharacter, String>(player, line));
-                    //    }
-                }
+rl.unlock();
+                
                 return true;
             }
         } else if (line.charAt(0) == '!' && (player.isJounin() || player.getName().equalsIgnoreCase("system"))) {
@@ -722,10 +725,10 @@ public class CommandProcessor implements CommandProcessorMBean {
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processGMCommand(c, mc, splitted);
                 //if (!c.getPlayer().isAdmin()) {
-                synchronized (gmlog) {
+                rl.lock();
                     gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
                     //  }
-                }
+                rl.unlock();
                 return true;
             }
         } else if (line.charAt(0) == '$' && player.isChunin() && !player.inJail()) {
@@ -734,9 +737,9 @@ public class CommandProcessor implements CommandProcessorMBean {
             if (splitted.length > 0 && splitted[0].length() > 1) {
                 processInternCommand(c, mc, splitted);
                 //if (!c.getPlayer().isAdmin()) {
-                synchronized (gmlog) {
+                rl.lock();
                     gmlog.add(new Pair<MapleCharacter, String>(c.getPlayer(), line));
-                }
+                rl.unlock();
                 //}
                 return true;
             }

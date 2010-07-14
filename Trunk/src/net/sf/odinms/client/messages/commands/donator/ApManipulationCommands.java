@@ -6,7 +6,7 @@ package net.sf.odinms.client.messages.commands.donator;
 
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 import net.sf.odinms.client.messages.DonatorCommand;
 import net.sf.odinms.client.messages.DonatorCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
@@ -21,20 +21,20 @@ public class ApManipulationCommands implements DonatorCommand {
         MapleCharacter player = c.getPlayer();
         switch (stat) {
             case 1: // STR
-                player.setStr(player.getStr() - amount);
-                player.updateSingleStat(MapleStat.STR, player.getStr());
+                player.getStat().setStr(player.getStat().getStr() - amount);
+                player.updateSingleStat(MapleStat.STR, player.getStat().getStr());
                 break;
             case 2: // DEX
-                player.setDex(player.getDex() - amount);
-                player.updateSingleStat(MapleStat.DEX, player.getDex());
+                player.getStat().setDex(player.getStat().getDex() - amount);
+                player.updateSingleStat(MapleStat.DEX, player.getStat().getDex());
                 break;
             case 3: // INT
-                player.setInt(player.getInt() - amount);
-                player.updateSingleStat(MapleStat.INT, player.getInt());
+                player.getStat().setInt(player.getStat().getInt() - amount);
+                player.updateSingleStat(MapleStat.INT, player.getStat().getInt());
                 break;
             case 4: // LUK
-                player.setLuk(player.getLuk() - amount);
-                player.updateSingleStat(MapleStat.LUK, player.getLuk());
+                player.getStat().setLuk(player.getStat().getLuk() - amount);
+                player.updateSingleStat(MapleStat.LUK, player.getStat().getLuk());
                 break;
             case 5:
                 player.setStorageAp(player.getStorageAp() - amount);
@@ -63,39 +63,39 @@ public class ApManipulationCommands implements DonatorCommand {
         short amount = 0;
         switch (stat) {
             case 1: // STR
-                amount = (short) (player.getStr() - 4);
+                amount = (short) (player.getStat().getStr() - 4);
                 if ((player.getRemainingAp() + amount) > 32767) {
                     c.showMessage("Trying to get negative AP? you cannot have more than 32767 free AP. now go fap");
                     return;
                 }
-                player.setStr(4);
+                player.getStat().setStr(4);
                 player.updateSingleStat(MapleStat.STR, 4);
                 break;
             case 2: // DEX
-                amount = (short) (player.getDex() - 4);
+                amount = (short) (player.getStat().getDex() - 4);
                 if ((player.getRemainingAp() + amount) > 32767) {
                     c.showMessage("Trying to get negative AP? you cannot have more than 32767 free AP. now go fap");
                     return;
                 }
-                player.setDex(4);
+                player.getStat().setDex(4);
                 player.updateSingleStat(MapleStat.DEX, 4);
                 break;
             case 3: // INT
-                amount = (short) (player.getInt() - 4);
+                amount = (short) (player.getStat().getInt() - 4);
                 if ((player.getRemainingAp() + amount) > 32767) {
                     c.showMessage("Trying to get negative AP? you cannot have more than 32767 free AP. now go fap");
                     return;
                 }
-                player.setInt(4);
+                player.getStat().setInt(4);
                 player.updateSingleStat(MapleStat.INT, 4);
                 break;
             case 4: // LUK
-                amount = (short) (player.getLuk() - 4);
+                amount = (short) (player.getStat().getLuk() - 4);
                 if ((player.getRemainingAp() + amount) > 32767) {
                     c.showMessage("Trying to get negative AP? you cannot have more than 32767 free AP. now go fap");
                     return;
                 }
-                player.setLuk(4);
+                player.getStat().setLuk(4);
                 player.updateSingleStat(MapleStat.LUK, 4);
                 break;
         }
@@ -107,20 +107,20 @@ public class ApManipulationCommands implements DonatorCommand {
         MapleCharacter player = c.getPlayer();
         switch (stat) {
             case 1: // STR
-                player.setStr(player.getStr() + amount);
-                player.updateSingleStat(MapleStat.STR, player.getStr());
+                player.getStat().setStr(player.getStat().getStr() + amount);
+                player.updateSingleStat(MapleStat.STR, player.getStat().getStr());
                 break;
             case 2: // DEX
-                player.setDex(player.getDex() + amount);
-                player.updateSingleStat(MapleStat.DEX, player.getDex());
+                player.getStat().setDex(player.getStat().getDex() + amount);
+                player.updateSingleStat(MapleStat.DEX, player.getStat().getDex());
                 break;
             case 3: // INT
-                player.setInt(player.getInt() + amount);
-                player.updateSingleStat(MapleStat.INT, player.getInt());
+                player.getStat().setInt(player.getStat().getInt() + amount);
+                player.updateSingleStat(MapleStat.INT, player.getStat().getInt());
                 break;
             case 4: // LUK
-                player.setLuk(player.getLuk() + amount);
-                player.updateSingleStat(MapleStat.LUK, player.getLuk());
+                player.getStat().setLuk(player.getStat().getLuk() + amount);
+                player.updateSingleStat(MapleStat.LUK, player.getStat().getLuk());
                 break;
             case 5:
                 player.setStorageAp(player.getStorageAp() + amount);
@@ -146,13 +146,13 @@ public class ApManipulationCommands implements DonatorCommand {
                 return;
             }
             if (x > 0 && x <= player.getRemainingAp() && x < Short.MAX_VALUE) {
-                if (splitted[0].equals("str") && x + player.getStr() <= max) {
+                if (splitted[0].equals("str") && x + player.getStat().getStr() <= max) {
                     addAP(c, (byte) 1, x);
-                } else if (splitted[0].equals("dex") && x + player.getDex() <= max) {
+                } else if (splitted[0].equals("dex") && x + player.getStat().getDex() <= max) {
                     addAP(c, (byte) 2, x);
-                } else if (splitted[0].equals("int") && x + player.getInt() <= max) {
+                } else if (splitted[0].equals("int") && x + player.getStat().getInt() <= max) {
                     addAP(c, (byte) 3, x);
-                } else if (splitted[0].equals("luk") && x + player.getLuk() <= max) {
+                } else if (splitted[0].equals("luk") && x + player.getStat().getLuk() <= max) {
                     addAP(c, (byte) 4, x);
                 } else if (splitted[0].equalsIgnoreCase("storeap")) {
                     addAP(c, (byte) 5, x);
@@ -173,13 +173,13 @@ public class ApManipulationCommands implements DonatorCommand {
                 return;
             }
             if (x > 0 && x < Short.MAX_VALUE && x + player.getRemainingAp() < Short.MAX_VALUE) {
-                if (splitted[0].equals("reducestr") && player.getStr() - x >= 4) {
+                if (splitted[0].equals("reducestr") && player.getStat().getStr() - x >= 4) {
                     reduceAP(c, (byte) 1, x);
-                } else if (splitted[0].equals("reducedex") && player.getDex() - x >= 4) {
+                } else if (splitted[0].equals("reducedex") && player.getStat().getDex() - x >= 4) {
                     reduceAP(c, (byte) 2, x);
-                } else if (splitted[0].equals("reduceint") && player.getInt() - x >= 4) {
+                } else if (splitted[0].equals("reduceint") && player.getStat().getInt() - x >= 4) {
                     reduceAP(c, (byte) 3, x);
-                } else if (splitted[0].equals("reduceluk") && player.getLuk() - x >= 4) {
+                } else if (splitted[0].equals("reduceluk") && player.getStat().getLuk() - x >= 4) {
                     reduceAP(c, (byte) 4, x);
                 } else {
                     mc.dropMessage("Make sure the stat you are trying to raise will not be over 30000.");
@@ -212,10 +212,10 @@ public class ApManipulationCommands implements DonatorCommand {
                 x = 4;
                 msg = splitted[1] + " is not a valid option. Your auto ap has been set to auto add in storage Ap";
             }
-            c.getPlayer().autoAp(x);
+            c.getPlayer().setAutoAp(x);
             mc.dropMessage(msg);
         } else if (splitted[0].equalsIgnoreCase("autoapoff")) {
-            c.getPlayer().autoAp((byte) 0);
+            c.getPlayer().setAutoAp((byte) 0);
             mc.dropMessage("You have turned off Auto Ap");
         } else if (splitted[0].equalsIgnoreCase("restoreap")) {
             if(player.getGMSMode() > 0){

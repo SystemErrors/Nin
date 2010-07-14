@@ -5,7 +5,7 @@
 package net.sf.odinms.client.messages.commands.players;
 
 import java.rmi.RemoteException;
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.IllegalCommandSyntaxException;

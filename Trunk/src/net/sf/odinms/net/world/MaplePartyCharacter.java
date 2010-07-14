@@ -43,7 +43,7 @@ public class MaplePartyCharacter implements Serializable {
         this.level = maplechar.getLevel();
         this.channel = maplechar.getClient().getChannel();
         this.id = maplechar.getId();
-        this.jobid = maplechar.getJob().getId();
+        this.jobid = maplechar.getJob();
         this.mapid = maplechar.getMapId();
         this.online = true;
         if (maplechar.getDoors().size() > 0) {

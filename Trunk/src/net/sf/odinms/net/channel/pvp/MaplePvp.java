@@ -21,18 +21,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package net.sf.odinms.net.channel.pvp;
 
 import java.util.Collections;
-import net.sf.odinms.client.Enums.MapleBuffStat;
-import net.sf.odinms.client.Enums.MapleJob;
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleBuffStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 
 import net.sf.odinms.client.MapleCharacter;
+import net.sf.odinms.client.NinjaMS.NinjaMath;
 
 import net.sf.odinms.net.world.guild.MapleGuild;
 import net.sf.odinms.net.channel.handler.AbstractDealDamageHandler;
+import net.sf.odinms.net.channel.handler.AbstractDealDamageHandler.AttackInfo;
 import net.sf.odinms.server.life.MapleMonster;
 import net.sf.odinms.server.life.MapleLifeFactory;
 import net.sf.odinms.server.maps.MapleMap;
 import net.sf.odinms.tools.MaplePacketCreator;
+import net.sf.odinms.tools.Packets.MobPacket;
 
 public class MaplePvp {
 
@@ -239,7 +241,7 @@ public class MaplePvp {
             pvpDamage /= 1.50;
         }
         //class balances
-        if (player.getJob().equals(MapleJob.MAGICIAN)) {
+        if (NinjaMath.greaterAndLess(player.getJob(), 200, 300)) {
             pvpDamage *= 1.20;
         }
         //buff modifiers
@@ -248,12 +250,12 @@ public class MaplePvp {
         if (mguard != null) {
             int mploss = (int) (pvpDamage / .5);
             pvpDamage *= .70;
-            if (mploss > attackedPlayers.getMp()) {
+            if (mploss > attackedPlayers.getStat().getMp()) {
                 pvpDamage /= .70;
                 attackedPlayers.cancelBuffStats(MapleBuffStat.MAGIC_GUARD);
             } else {
-                attackedPlayers.setMp(attackedPlayers.getMp() - mploss);
-                attackedPlayers.updateSingleStat(MapleStat.MP, attackedPlayers.getMp());
+                attackedPlayers.getStat().setMp(attackedPlayers.getStat().getMp() - mploss);
+                attackedPlayers.updateSingleStat(MapleStat.MP, attackedPlayers.getStat().getMp());
             }
         } else if (mesoguard != null) {
             int mesoloss = (int) (pvpDamage * .75);
@@ -270,13 +272,13 @@ public class MaplePvp {
         MapleMonster pvpMob = MapleLifeFactory.getMonster(9400711);
         map.spawnMonsterOnGroundBelow(pvpMob, attackedPlayers.getPosition());
         for (int attacks = 0; attacks < attack.numDamage; attacks++) {
-            map.broadcastMessage(MaplePacketCreator.damageMonster(pvpMob.getObjectId(), pvpDamage));
+            map.broadcastMessage(MobPacket.damageMonster(pvpMob.getObjectId(), pvpDamage));
             attackedPlayers.addHP(-pvpDamage);
         }
         int attackedDamage = pvpDamage * attack.numDamage;
-        map.killMonster(pvpMob, player, false);
+        map.killMonster(pvpMob, player, false, false, (byte)1);
         //rewards
-        if (attackedPlayers.getHp() <= 0 && !attackedPlayers.isAlive()) {
+        if (attackedPlayers.getStat().getHp() <= 0 && !attackedPlayers.isAlive()) {
             int expReward = attackedPlayers.getLevel() * 100;
             int gpReward = (int) (Math.floor(Math.random() * (200 - 50) + 50));
             if (player.getPvpKills() * .25 >= player.getPvpDeaths()) {
@@ -297,7 +299,7 @@ public class MaplePvp {
         }
     }
 
-    public static void doPvP(MapleCharacter player, MapleMap map, AbstractDealDamageHandler.AttackInfo attack) {
+  /*  public static void doPvP(MapleCharacter player, MapleMap map, AttackInfo attack) {
         DamageBalancer(attack);
         getDirection(attack);
         for (MapleCharacter attackedPlayers : player.getMap().getNearestPvpChar(player.getPosition(), maxDis, maxHeight, Collections.unmodifiableCollection(player.getMap().getCharacters()))) {
@@ -305,5 +307,5 @@ public class MaplePvp {
                 monsterBomb(player, attackedPlayers, map, attack);
             }
         }
-    }
+    }*/
 }

@@ -22,7 +22,7 @@
 package net.sf.odinms.net.world;
 
 import java.io.Serializable;
-import net.sf.odinms.server.MapleStatEffect;
+import net.sf.odinms.client.Buffs.MapleStatEffect;
 
 /**
  *

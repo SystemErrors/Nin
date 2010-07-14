@@ -1,74 +1,57 @@
 /*
-This file is part of the OdinMS Maple Story Server
-Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
-Matthias Butz <matze@odinms.de>
-Jan Christian Meyer <vimes@odinms.de>
+	This file is part of the OdinMS Maple Story Server
+    Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc>
+                       Matthias Butz <matze@odinms.de>
+                       Jan Christian Meyer <vimes@odinms.de>
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License version 3
-as published by the Free Software Foundation. You may not use, modify
-or distribute this program under any other version of the
-GNU Affero General Public License.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation. You may not use, modify
+    or distribute this program under any other version of the
+    GNU Affero General Public License.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package net.sf.odinms.net.channel;
 
-import java.util.logging.Level;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 
 import net.sf.odinms.client.MapleCharacter;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Amen;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Angy;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Buddha;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Huggable;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Kyra;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Pandora;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Sunnylar;
-import net.sf.odinms.client.NinjaMS.IRCStuff.IdleBot.Syste;
-import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
-import net.sf.odinms.client.NinjaMS.IRCStuff.RPG;
-import net.sf.odinms.client.NinjaMS.IRCStuff.RPG_1;
-import net.sf.odinms.client.messages.CommandProcessor;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.MaplePacket;
 import net.sf.odinms.net.MapleServerHandler;
-import net.sf.odinms.net.PacketProcessor;
-import net.sf.odinms.net.channel.OliveroMatic.AutomagicShit;
+import net.sf.odinms.net.ServerConstants;
+import net.sf.odinms.net.ServerType;
 import net.sf.odinms.net.channel.remote.ChannelWorldInterface;
 import net.sf.odinms.net.mina.MapleCodecFactory;
 import net.sf.odinms.net.world.MapleParty;
@@ -78,720 +61,574 @@ import net.sf.odinms.net.world.guild.MapleGuildCharacter;
 import net.sf.odinms.net.world.guild.MapleGuildSummary;
 import net.sf.odinms.net.world.remote.WorldChannelInterface;
 import net.sf.odinms.net.world.remote.WorldRegistry;
-import net.sf.odinms.provider.MapleDataProviderFactory;
 import net.sf.odinms.scripting.event.EventScriptManager;
 import net.sf.odinms.server.AutobanManager;
+import net.sf.odinms.server.ItemMakerFactory;
+import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MapleSquad;
-import net.sf.odinms.server.MapleSquadType;
-import net.sf.odinms.server.MapleTrade;
 import net.sf.odinms.server.ShutdownServer;
 import net.sf.odinms.server.TimerManager;
-import net.sf.odinms.server.constants.SpecialStuff;
-import net.sf.odinms.server.maps.MapMonitor;
-import net.sf.odinms.server.maps.MapleMap;
+import net.sf.odinms.server.constants.RandomRewards;
+import net.sf.odinms.server.maps.MapTimer;
 import net.sf.odinms.server.maps.MapleMapFactory;
-import net.sf.odinms.server.quest.MapleQuest;
+import net.sf.odinms.server.shops.HiredMerchant;
 import net.sf.odinms.tools.MaplePacketCreator;
-import net.sf.odinms.net.channel.storage.*;
-
 import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.common.CloseFuture;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.SimpleByteBufferAllocator;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.nio.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
-import org.jibble.pircbot.Colors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ChannelServer implements Runnable, ChannelServerMBean {
+public class ChannelServer {
 
-    private static int uniqueID = 1;
-    private int port = 7575;
+    private byte expRate, mesoRate, dropRate;
+    private short port = 7575;
+    private int channel, running_MerchantID = 0;
+    private String serverMessage, key, ip;
+    private Boolean worldReady = true;
+    private boolean shutdown = false, finishedShutdown = false, MegaphoneMuteState = false;
+    private static InetSocketAddress InetSocketadd;
     private static Properties initialProp;
-    private static final Logger log = LoggerFactory.getLogger(ChannelServer.class);
-    private static ServerPlayerStorage serverplayerstorage = new ServerPlayerStorage();
-    //private static ThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(5);
     private static WorldRegistry worldRegistry;
-    private PlayerStorage players = new PlayerStorage();
-    // private Map<String, MapleCharacter> clients = new LinkedHashMap<String, MapleCharacter>();
-    private String serverMessage = " Welcome to NinjaMS - Sunny";
-    private int expRate;
-    private int mesoRate;
-    private int dropRate;
-    private int bossdropRate;
-    private int petExpRate;
-    private boolean gmWhiteText;
-    private boolean cashshop;
-    private boolean dropUndroppables;
-    private boolean moreThanOne;
-    private int channel;
-    private String key;
+    private PlayerStorage players;
     private Properties props = new Properties();
     private ChannelWorldInterface cwi;
     private WorldChannelInterface wci = null;
     private IoAcceptor acceptor;
-    private String ip;
-    private boolean shutdown = false;
-    private boolean finishedShutdown = false;
-    private MapleMapFactory mapFactory;
+    private final MapleMapFactory mapFactory = new MapleMapFactory();
     private EventScriptManager eventSM;
-    private static Map<Integer, ChannelServer> instances = new HashMap<Integer, ChannelServer>();
-    private static Map<String, ChannelServer> pendingInstances = new HashMap<String, ChannelServer>();
-    private Map<Integer, MapleGuildSummary> gsStore = new HashMap<Integer, MapleGuildSummary>();
-    private Boolean worldReady = true;
-    private Map<MapleSquadType, MapleSquad> mapleSquads = new HashMap<MapleSquadType, MapleSquad>();
-    private static boolean shuttingdown;
-    private Map<Integer, MapMonitor> mapMonitors = new HashMap<Integer, MapMonitor>();
-    private boolean isRebooting = false;
-    private static String arrayString = " ";
+    private static final Map<Integer, ChannelServer> instances = new HashMap<Integer, ChannelServer>();
+    private static final Map<String, ChannelServer> pendingInstances = new HashMap<String, ChannelServer>();
+    private final Map<Integer, MapleGuildSummary> gsStore = new HashMap<Integer, MapleGuildSummary>();
+    private final Map<String, MapleSquad> mapleSquads = new HashMap<String, MapleSquad>();
+    private final Map<Integer, HiredMerchant> merchants = new HashMap<Integer, HiredMerchant>();
+    private final Lock merchant_mutex = new ReentrantLock();
 
-    public void addMapMonitor(int mapId, MapMonitor monitor) {
-        mapMonitors.put(mapId, monitor);
+    private ChannelServer(final String key) {
+	this.key = key;
     }
 
-    public void removeMapMonitor(int mapId) {
-        if (mapMonitors.containsKey(mapId)) {
-            mapMonitors.remove(mapId);
-        }
+    public static final WorldRegistry getWorldRegistry() {
+	return worldRegistry;
     }
 
-    private ChannelServer(String key) {
-        mapFactory = new MapleMapFactory(MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Map.wz")), MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")));
-        this.key = key;
+    public final void reconnectWorld() {
+	// check if the connection is really gone
+	try {
+	    wci.isAvailable();
+	} catch (RemoteException ex) {
+	    synchronized (worldReady) {
+		worldReady = false;
+	    }
+	    synchronized (cwi) {
+		synchronized (worldReady) {
+		    if (worldReady) {
+			return;
+		    }
+		}
+		System.out.println("Reconnecting to world server");
+		synchronized (wci) {
+		    // completely re-establish the rmi connection
+		    try {
+			initialProp = new Properties();
+			FileReader fr = new FileReader(System.getProperty("net.sf.odinms.channel.config"));
+			initialProp.load(fr);
+			fr.close();
+			final Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"),
+				Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
+			worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
+			cwi = new ChannelWorldInterfaceImpl(this);
+			wci = worldRegistry.registerChannelServer(key, cwi);
+			props = wci.getGameProperties();
+			expRate = Byte.parseByte(props.getProperty("net.sf.odinms.world.exp"));
+			mesoRate = Byte.parseByte(props.getProperty("net.sf.odinms.world.meso"));
+			dropRate = Byte.parseByte(props.getProperty("net.sf.odinms.world.drop"));
+			serverMessage = props.getProperty("net.sf.odinms.world.serverMessage");
+			Properties dbProp = new Properties();
+			fr = new FileReader("db.properties");
+			dbProp.load(fr);
+			fr.close();
+			DatabaseConnection.setProps(dbProp);
+			DatabaseConnection.getConnection();
+			wci.serverReady();
+		    } catch (Exception e) {
+			System.err.println("Reconnecting failed" + e);
+		    }
+		    worldReady = true;
+		}
+	    }
+	    synchronized (worldReady) {
+		worldReady.notifyAll();
+	    }
+	}
     }
 
-    public static WorldRegistry getWorldRegistry() {
-        return worldRegistry;
+    public final void run_startup_configurations() {
+	try {
+	    cwi = new ChannelWorldInterfaceImpl(this);
+	    wci = worldRegistry.registerChannelServer(key, cwi);
+	    props = wci.getGameProperties();
+	    expRate = Byte.parseByte(props.getProperty("net.sf.odinms.world.exp"));
+	    mesoRate = Byte.parseByte(props.getProperty("net.sf.odinms.world.meso"));
+	    dropRate = Byte.parseByte(props.getProperty("net.sf.odinms.world.drop"));
+	    serverMessage = props.getProperty("net.sf.odinms.world.serverMessage");
+	    eventSM = new EventScriptManager(this, props.getProperty("net.sf.odinms.channel.events").split(","));
+	    final Properties dbProp = new Properties();
+	    final FileReader fileReader = new FileReader("db.properties");
+	    dbProp.load(fileReader);
+	    fileReader.close();
+	    DatabaseConnection.setProps(dbProp);
+	    DatabaseConnection.getConnection();
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	}
+	port = Short.parseShort(props.getProperty("net.sf.odinms.channel.net.port"));
+	ip = props.getProperty("net.sf.odinms.channel.net.interface") + ":" + port;
+
+	ByteBuffer.setUseDirectBuffers(false);
+	ByteBuffer.setAllocator(new SimpleByteBufferAllocator());
+
+	acceptor = new SocketAcceptor();
+	final SocketAcceptorConfig acceptor_config = new SocketAcceptorConfig();
+	acceptor_config.getSessionConfig().setTcpNoDelay(true);
+	acceptor_config.setDisconnectOnUnbind(true);
+	acceptor_config.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
+
+	TimerManager.getInstance().start();
+	TimerManager.getInstance().register(AutobanManager.getInstance(), 60000);
+	MapTimer.getInstance().start();
+	ItemMakerFactory.getInstance();
+	MapleItemInformationProvider.getInstance(); // Load\
+	RandomRewards.getInstance();
+	SkillFactory.getSkill(99999999); // Load
+	players = new PlayerStorage();
+	try {
+	    final MapleServerHandler serverHandler = new MapleServerHandler(ServerType.CHANNEL, channel);
+	    InetSocketadd = new InetSocketAddress(port);
+	    acceptor.bind(InetSocketadd, serverHandler, acceptor_config);
+	    System.out.println("Channel " + getChannel() + ": Listening on port " + port + "");
+	    wci.serverReady();
+	    eventSM.init();
+	} catch (IOException e) {
+	    System.out.println("Binding to port " + port + " failed (ch: " + getChannel() + ")" + e);
+	}
+	Runtime.getRuntime().addShutdownHook(new Thread(new ShutDownListener()));
     }
 
-    public void reconnectWorld() {
-        // check if the connection is really gone
-        try {
-            wci.isAvailable();
-        } catch (RemoteException ex) {
-            synchronized (worldReady) {
-                worldReady = false;
-            }
-            synchronized (cwi) {
-                synchronized (worldReady) {
-                    if (worldReady) {
-                        return;
-                    }
-                }
-                log.warn("Reconnecting to world server");
-                synchronized (wci) {
-                    // completely re-establish the rmi connection
-                    try {
-                        initialProp = new Properties();
-                        FileReader fr = new FileReader(System.getProperty("net.sf.odinms.channel.config"));
-                        initialProp.load(fr);
-                        fr.close();
-                        Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"),
-                                Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
-                        worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
-                        cwi = new ChannelWorldInterfaceImpl(this);
-                        wci = worldRegistry.registerChannelServer(key, cwi);
-                        props = wci.getGameProperties();
-                        expRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.exp"));
-                        mesoRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.meso"));
-                        dropRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.drop"));
-                        bossdropRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.bossdrop"));
-                        petExpRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.petExp"));
-                        dropUndroppables = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.alldrop", "false"));
-                        moreThanOne = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.morethanone", "false"));
-                        gmWhiteText = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.gmWhiteText", "false"));
-                        cashshop = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.cashshop", "false"));
-                        Properties dbProp = new Properties();
-                        fr = new FileReader("db.properties");
-                        dbProp.load(fr);
-                        fr.close();
-                        DatabaseConnection.setProps(dbProp);
-                        DatabaseConnection.getConnection();
-                        wci.serverReady();
-                    } catch (Exception e) {
-                        log.error("Reconnecting failed", e);
-                    }
-                    worldReady = true;
-                }
-            }
-            synchronized (worldReady) {
-                worldReady.notifyAll();
-            }
-        }
-    }
+//    public void startSpawnTask(TimerManager m) {
+//	m.register(new respawnMaps(), 10000);
+//    }
+
+    /*    private class respawnMaps implements Runnable {
 
     @Override
     public void run() {
-        try {
-            cwi = new ChannelWorldInterfaceImpl(this);
-            wci = worldRegistry.registerChannelServer(key, cwi);
-            props = wci.getGameProperties();
-            expRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.exp"));
-            mesoRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.meso"));
-            dropRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.drop"));
-            bossdropRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.bossdrop"));
-            petExpRate = Integer.parseInt(props.getProperty("net.sf.odinms.world.petExp"));
-            dropUndroppables = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.alldrop", "false"));
-            moreThanOne = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.morethanone", "false"));
-            eventSM = new EventScriptManager(this, props.getProperty("net.sf.odinms.channel.events").split(","));
-            gmWhiteText = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.gmWhiteText", "false"));
-            cashshop = Boolean.parseBoolean(props.getProperty("net.sf.odinms.world.cashshop", "false"));
-            Properties dbProp = new Properties();
-            FileReader fileReader = new FileReader("db.properties");
-            dbProp.load(fileReader);
-            fileReader.close();
-            DatabaseConnection.setProps(dbProp);
-            DatabaseConnection.getConnection();
-            // MapleShopFactory.getInstance().loadAllShops();
-            try {
-                Connection con = DatabaseConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement("UPDATE accounts SET loggedin = 0");
-                ps.executeUpdate();
-                ps.close();
-                ps = con.prepareStatement("UPDATE characters SET mutality = 0");
-                ps.executeUpdate();
-                ps.close();
-            } catch (SQLException ex) {
-                System.err.println("Could not reset databases loggedin state" + ex);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        port = Integer.parseInt(props.getProperty("net.sf.odinms.channel.net.port"));
-        ip = props.getProperty("net.sf.odinms.channel.net.interface") + ":" + port;
-        ByteBuffer.setUseDirectBuffers(false);
-        ByteBuffer.setAllocator(new SimpleByteBufferAllocator());
-        acceptor = new SocketAcceptor();
-        SocketAcceptorConfig cfg = new SocketAcceptorConfig();
-        // cfg.setThreadModel(ThreadModel.MANUAL); // *fingers crossed*, I hope the executor filter handles everything
-        // executor = new ThreadPoolExecutor(16, 16, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-        // cfg.getFilterChain().addLast("executor", new ExecutorFilter(executor));
-        cfg.getFilterChain().addLast("codec", new ProtocolCodecFilter(new MapleCodecFactory()));
-        cfg.getSessionConfig().setTcpNoDelay(true);
-        // Item.loadInitialDataFromDB();
-        TimerManager tMan = TimerManager.getInstance();
-        tMan.start();
-        tMan.register(AutobanManager.getInstance(), 60000);
-        if (channel == 1) {
-            AutomagicShit.getInstance().start();
-        }
-        if (channel == 9) {
-            sendIRCNotice();
-            RPG.getInstance();
-            RPG_1.getInstance();
-            Pandora.getInstance();
-        }
-        tMan.register(new spawnMobs(), 2500);
-        tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));
-        try {
-            MapleServerHandler serverHandler = new MapleServerHandler(PacketProcessor.getProcessor(PacketProcessor.Mode.CHANNELSERVER), channel);
-            acceptor.bind(new InetSocketAddress(port), serverHandler, cfg);
-            log.info("Channel {}: Listening on port {}", getChannel(), port);
-            wci.serverReady();
-            eventSM.init();
-        } catch (IOException e) {
-            log.error("Binding to port " + port + " failed (ch: " + getChannel() + ")", e);
-        }
-    }
-
-    public void shutdown() {
-        // dc all clients by hand so we get sessionClosed...
-        shutdown = true;
-        List<CloseFuture> futures = new LinkedList<CloseFuture>();
-        Collection<MapleCharacter> allchars = players.getAllCharacters();
-        MapleCharacter chrs[] = allchars.toArray(new MapleCharacter[allchars.size()]);
-        for (MapleCharacter chr : chrs) {
-            if (chr.getTrade() != null) {
-                MapleTrade.cancelTrade(chr);
-            }
-            if (chr.getEventInstance() != null) {
-                chr.getEventInstance().playerDisconnected(chr);
-            }
-            chr.forceSave(true, true);
-            if (chr.getCheatTracker() != null) {
-                chr.getCheatTracker().dispose();
-            }
-            removePlayer(chr);
-        }
-        for (MapleCharacter chr : chrs) {
-            futures.add(chr.getClient().getSession().close());
-        }
-        for (CloseFuture future : futures) {
-            future.join(500);
-        }
-        try {
-            getWorldRegistry().deregisterChannelServer(channel);
-        } catch (RemoteException ex) {
-            java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finishedShutdown = true;
-        wci = null;
-        cwi = null;
+    for (Entry<Integer, MapleMap> map : mapFactory.getMaps().entrySet()) {
+    map.getValue().respawn(false);
     }
-
-    public void unbind() {
-        acceptor.unbindAll();
+    for (Entry<Integer, MapleMap> map : mapFactory.getInstanceMaps().entrySet()) {
+    map.getValue().respawn(false);
     }
-
-    public boolean hasFinishedShutdown() {
-        return finishedShutdown;
     }
+    }*/
+    public final void shutdown() {
+	// dc all clients by hand so we get sessionClosed...
+	shutdown = true;
 
-    public MapleMapFactory getMapFactory() {
-        return mapFactory;
-    }
+	System.out.println("Channel " + channel + ", Saving hired merchants...");
 
-    public static ChannelServer newInstance(String key) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
-        ChannelServer instance = new ChannelServer(key);
-        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-        mBeanServer.registerMBean(instance, new ObjectName("net.sf.odinms.net.channel:type=ChannelServer,name=ChannelServer" + uniqueID++));
-        pendingInstances.put(key, instance);
-        return instance;
-    }
+	closeAllMerchant();
 
-    public static ChannelServer getInstance(int channel) {
-        return instances.get(channel);
-    }
+	System.out.println("Channel " + channel + ", Saving characters...");
 
-    public void addPlayer(MapleCharacter chr) {
-        players.registerPlayer(chr);
-        chr.getClient().getSession().write(MaplePacketCreator.serverMessage(serverMessage));
-    }
+	players.disconnectAll();
 
-    public IPlayerStorage getPlayerStorage() {
-        return players;
-    }
+	System.out.println("Channel " + channel + ", Unbinding ports...");
 
-    public void removePlayer(MapleCharacter chr) {
-        players.deregisterPlayer(chr);
-    }
+	finishedShutdown = true;
 
-    public int getConnectedClients() {
-        return players.getAllCharacters().size();
+	wci = null;
+	cwi = null;
     }
 
-    @Override
-    public String getServerMessage() {
-        return serverMessage;
+    public final void unbind() {
+	acceptor.unbindAll();
     }
 
-    @Override
-    public void setServerMessage(String newMessage) {
-        serverMessage = newMessage;
-        broadcastPacket(MaplePacketCreator.serverMessage(serverMessage));
+    public final boolean hasFinishedShutdown() {
+	return finishedShutdown;
     }
 
-    public static void setArrayString(String newMessage) {
-        arrayString = newMessage;
+    public final MapleMapFactory getMapFactory() {
+	return mapFactory;
     }
 
-    public static String getArrayString() {
-        return arrayString;
+    public static final ChannelServer newInstance(final String key) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
+	final ChannelServer instance = new ChannelServer(key);
+	pendingInstances.put(key, instance);
+	return instance;
     }
 
-    public void broadcastPacket(MaplePacket data) {
-        for (MapleCharacter chr : players.getAllCharacters()) {
-            chr.getClient().getSession().write(data);
-        }
+    public static final ChannelServer getInstance(final int channel) {
+	return instances.get(channel);
     }
 
-    @Override
-    public int getExpRate() {
-        return expRate;
+    public final void addPlayer(final MapleCharacter chr) {
+	players.registerPlayer(chr);
+	chr.getClient().getSession().write(MaplePacketCreator.serverMessage(serverMessage));
     }
 
-    @Override
-    public void setExpRate(int expRate) {
-        this.expRate = expRate;
+    public final PlayerStorage getPlayerStorage() {
+	return players;
     }
 
-    public int getChannel() {
-        return channel;
+    public final void removePlayer(final MapleCharacter chr) {
+	players.deregisterPlayer(chr);
     }
 
-    public void setChannel(int channel) {
-        if (pendingInstances.containsKey(key)) {
-            pendingInstances.remove(key);
-        }
-        if (instances.containsKey(channel)) {
-            instances.remove(channel);
-        }
-        instances.put(channel, this);
-        this.channel = channel;
-        this.mapFactory.setChannel(channel);
+    public final String getServerMessage() {
+	return serverMessage;
     }
 
-    public static Collection<ChannelServer> getAllInstances() {
-        return Collections.unmodifiableCollection(instances.values());
+    public final void setServerMessage(final String newMessage) {
+	serverMessage = newMessage;
+	broadcastPacket(MaplePacketCreator.serverMessage(serverMessage));
     }
 
-    public String getIP() {
-        return ip;
+    public final void broadcastPacket(final MaplePacket data) {
+	players.broadcastPacket(data);
     }
 
-    public String getIP(int channel) {
-        try {
-            return getWorldInterface().getIP(channel);
-        } catch (RemoteException e) {
-            log.error("Lost connection to world server", e);
-            throw new RuntimeException("Lost connection to world server");
-        }
+    public final void broadcastSmegaPacket(final MaplePacket data) {
+	players.broadcastSmegaPacket(data);
     }
 
-    public WorldChannelInterface getWorldInterface() {
-        synchronized (worldReady) {
-            while (!worldReady) {
-                try {
-                    worldReady.wait();
-                } catch (InterruptedException ignored) {
-                }
-            }
-        }
-        return wci;
+    public final void broadcastGMPacket(final MaplePacket data) {
+	players.broadcastGMPacket(data);
     }
 
-    public String getProperty(String name) {
-        return props.getProperty(name);
+    public final void broadcastStaffPacket(final MaplePacket data) {
+	players.broadcastStaffPacket(data);
     }
 
-    public boolean isShutdown() {
-        return shutdown;
+    public void broadcastASmegaPacket(MaplePacket pkt) {
+        players.broadcastASmegaPacket(pkt);
     }
 
-    @Override
-    public void shutdown(int time) {
-        broadcastPacket(MaplePacketCreator.serverNotice(0, "The world will be shut down in " + (time / 60000) + " minutes, please log off safely"));
-        TimerManager.getInstance().schedule(new ShutdownServer(getChannel()), time);
-    }
 
-    @Override
-    public void shutdownWorld(int time) {
-        try {
-            getWorldInterface().shutdown(time);
-        } catch (RemoteException e) {
-            reconnectWorld();
-        }
+    public final byte getExpRate() {
+	return expRate;
     }
 
-    public int getLoadedMaps() {
-        return mapFactory.getLoadedMaps();
+    public final void setExpRate(final byte expRate) {
+	this.expRate = expRate;
     }
 
-    public EventScriptManager getEventSM() {
-        return eventSM;
+    public final int getChannel() {
+	return channel;
     }
 
-    public void reloadEvents() {
-        eventSM.cancel();
-        eventSM = new EventScriptManager(this, props.getProperty("net.sf.odinms.channel.events").split(","));
-        eventSM.init();
-    }
+    public final void setChannel(final int channel) {
+	if (pendingInstances.containsKey(key)) {
+	    pendingInstances.remove(key);
+	}
 
-    @Override
-    public int getMesoRate() {
-        return mesoRate;
-    }
+	if (instances.containsKey(channel)) {
+	    instances.remove(channel);
+	}
 
-    @Override
-    public void setMesoRate(int mesoRate) {
-        this.mesoRate = mesoRate;
+	instances.put(channel, this);
+	this.channel = channel;
+	this.mapFactory.setChannel(channel);
     }
 
-    @Override
-    public int getDropRate() {
-        return dropRate;
+    public static final Collection<ChannelServer> getAllInstances() {
+	return Collections.unmodifiableCollection(instances.values());
     }
 
-    @Override
-    public void setDropRate(int dropRate) {
-        this.dropRate = dropRate;
+    public final String getIP() {
+	return ip;
     }
 
-    @Override
-    public int getBossDropRate() {
-        return bossdropRate;
+    public final String getIP(final int channel) {
+	try {
+	    return getWorldInterface().getIP(channel);
+	} catch (RemoteException e) {
+	    System.err.println("Lost connection to world server" + e);
+	    throw new RuntimeException("Lost connection to world server");
+	}
     }
 
-    @Override
-    public void setBossDropRate(int bossdropRate) {
-        this.bossdropRate = bossdropRate;
+    public final WorldChannelInterface getWorldInterface() {
+	synchronized (worldReady) {
+	    while (!worldReady) {
+		try {
+		    worldReady.wait();
+		} catch (InterruptedException e) {
+		}
+	    }
+	}
+	return wci;
     }
 
-    @Override
-    public int getPetExpRate() {
-        return petExpRate;
+    public final String getProperty(final String name) {
+	return props.getProperty(name);
     }
 
-    @Override
-    public void setPetExpRate(int petExpRate) {
-        this.petExpRate = petExpRate;
+    public final boolean isShutdown() {
+	return shutdown;
     }
 
-    public boolean allowUndroppablesDrop() {
-        return dropUndroppables;
+    public final void shutdown(final int time) {
+	TimerManager.getInstance().schedule(new ShutdownServer(getChannel()), time);
     }
 
-    public boolean allowMoreThanOne() {
-        return moreThanOne;
+    public final void shutdownWorld(final int time) {
+	try {
+	    getWorldInterface().shutdown(time);
+	} catch (RemoteException e) {
+	    reconnectWorld();
+	}
     }
 
-    public boolean allowGmWhiteText() {
-        return gmWhiteText;
+    public final void shutdownLogin() {
+	try {
+	    getWorldInterface().shutdownLogin();
+	} catch (RemoteException e) {
+	    reconnectWorld();
+	}
     }
 
-    public boolean allowCashshop() {
-        return cashshop;
+    public final int getLoadedMaps() {
+	return mapFactory.getLoadedMaps();
     }
 
-    public MapleGuild getGuild(MapleGuildCharacter mgc) {
-        int gid = mgc.getGuildId();
-        MapleGuild g = null;
-        try {
-            g = this.getWorldInterface().getGuild(gid, mgc);
-        } catch (RemoteException re) {
-            log.error("RemoteException while fetching MapleGuild.", re);
-            return null;
-        }
-        if (gsStore.get(gid) == null) {
-            gsStore.put(gid, new MapleGuildSummary(g));
-        }
-        return g;
+    public final EventScriptManager getEventSM() {
+	return eventSM;
     }
-
-    public MapleGuildSummary getGuildSummary(int gid) {
-        if (gsStore.containsKey(gid)) {
-            return gsStore.get(gid);
-        } else {		//this shouldn't happen much, if ever, but if we're caught
-            //without the summary, we'll have to do a worldop
-            try {
-                MapleGuild g = this.getWorldInterface().getGuild(gid, null);
-                if (g != null) {
-                    gsStore.put(gid, new MapleGuildSummary(g));
-                }
-                return gsStore.get(gid);	//if g is null, we will end up returning null
 
-            } catch (RemoteException re) {
-                log.error("RemoteException while fetching GuildSummary.", re);
-                return null;
-            }
-        }
+    public final void reloadEvents() {
+	eventSM.cancel();
+	eventSM = new EventScriptManager(this, props.getProperty("net.sf.odinms.channel.events").split(","));
+	eventSM.init();
     }
 
-    public void updateGuildSummary(int gid, MapleGuildSummary mgs) {
-        gsStore.put(gid, mgs);
+    public final byte getMesoRate() {
+	return mesoRate;
     }
 
-    public void reloadGuildSummary() {
-        try {
-            MapleGuild g;
-            for (int i : gsStore.keySet()) {
-                g = this.getWorldInterface().getGuild(i, null);
-                if (g != null) {
-                    gsStore.put(i, new MapleGuildSummary(g));
-                } else {
-                    gsStore.remove(i);
-                }
-            }
-        } catch (RemoteException re) {
-            log.error("RemoteException while reloading GuildSummary.", re);
-        }
+    public final void setMesoRate(final byte mesoRate) {
+	this.mesoRate = mesoRate;
     }
 
-    public static void main(String args[]) throws FileNotFoundException, IOException, NotBoundException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
-        initialProp = new Properties();
-        initialProp.load(new FileReader(System.getProperty("net.sf.odinms.channel.config")));
-        Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
-        worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
-        for (int i = 0; i < Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count", "0")); i++) {
-            newInstance(initialProp.getProperty("net.sf.odinms.channel." + i + ".key")).run();
-        }
-        DatabaseConnection.getConnection(); // touch - so we see database problems early...
-        CommandProcessor.registerMBean();
-        MapleQuest.getAllQuests();
-        SpecialStuff.getInstance();
-        MainIRC.getInstance();
+    public final byte getDropRate() {
+	return dropRate;
     }
 
-    public MapleSquad getMapleSquad(MapleSquadType type) {
-        return mapleSquads.get(type);
+    public final void setDropRate(final byte dropRate) {
+	this.dropRate = dropRate;
     }
 
-    public boolean addMapleSquad(MapleSquad squad, MapleSquadType type) {
-        if (mapleSquads.get(type) == null) {
-            mapleSquads.remove(type);
-            mapleSquads.put(type, squad);
-            return true;
-        } else {
-            return false;
-        }
-    }
+    public final MapleGuild getGuild(final MapleGuildCharacter mgc) {
+	final int gid = mgc.getGuildId();
+	MapleGuild g = null;
+	try {
+	    g = getWorldInterface().getGuild(gid, mgc);
+	} catch (RemoteException re) {
+	    System.err.println("RemoteException while fetching MapleGuild." + re);
+	    return null;
+	}
 
-    public boolean removeMapleSquad(MapleSquad squad, MapleSquadType type) {
-        if (mapleSquads.containsKey(type)) {
-            if (mapleSquads.get(type) == squad) {
-                mapleSquads.remove(type);
-                return true;
-            }
-        }
-        return false;
-    }
+	if (gsStore.get(gid) == null) {
+	    gsStore.put(gid, new MapleGuildSummary(g));
+	}
 
-    public static boolean isShuttingDown() {
-        return shuttingdown;
+	return g;
     }
 
-    public void setShuttingDown(boolean fuck) {
-        shuttingdown = fuck;
-    }
+    public final MapleGuildSummary getGuildSummary(final int gid) {
+	if (gsStore.containsKey(gid)) {
+	    return gsStore.get(gid);
+	}
+	//this shouldn't happen much, if ever, but if we're caught
+	//without the summary, we'll have to do a worldop
+	try {
+	    final MapleGuild g = this.getWorldInterface().getGuild(gid, null);
+	    if (g != null) {
+		gsStore.put(gid, new MapleGuildSummary(g));
+	    }
+	    return gsStore.get(gid);	//if g is null, we will end up returning null
+	} catch (RemoteException re) {
+	    System.err.println("RemoteException while fetching GuildSummary." + re);
+	    return null;
 
-    public void broadcastGMPacket(MaplePacket data) {
-        for (MapleCharacter chr : players.getAllCharacters()) {
-            if (chr.isJounin()) {
-                chr.getClient().getSession().write(data);
-            }
-        }
+	}
     }
 
-    public void broadcastGMMessage(String msg) {
-        for (MapleCharacter chr : players.getAllCharacters()) {
-            if (chr.isJounin()) {
-                chr.getClient().dropMessage(msg);
-            }
-        }
+    public final void updateGuildSummary(final int gid, final MapleGuildSummary mgs) {
+	gsStore.put(gid, mgs);
     }
 
-    public void broadcastStaffMessage(String msg) {
-        for (MapleCharacter chr : players.getAllCharacters()) {
-            if (chr.isChunin()) {
-                chr.getClient().dropMessage(msg);
-            }
-        }
-    }
+    public static final void startChannel_Main() {
+	try {
+	    initialProp = new Properties();
+	    final FileReader channelConfig = new FileReader(System.getProperty("net.sf.odinms.channel.config"));
+	    initialProp.load(channelConfig);
+	    channelConfig.close();
+	    final Registry registry = LocateRegistry.getRegistry(initialProp.getProperty("net.sf.odinms.world.host"), Registry.REGISTRY_PORT, new SslRMIClientSocketFactory());
+	    worldRegistry = (WorldRegistry) registry.lookup("WorldRegistry");
 
-    public void broadcastStaffPacket(MaplePacket data) {
-        for (MapleCharacter chr : players.getAllCharacters()) {
-            if (chr.isChunin()) {
-                chr.getClient().getSession().write(data);
-            }
-        }
+	    for (int i = 0; i < Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count", "0")); i++) {
+		newInstance(ServerConstants.Channel_Key[i]).run_startup_configurations();
+	    }
+//	    newInstance(initialProp.getProperty("net.sf.odinms.channel."+ new File(System.getProperty("net.sf.odinms.channelToLaunch")) +".key")).run();
+	    DatabaseConnection.getConnection(); // touch - so we see database problems early...
+	} catch (FileNotFoundException fnfe) {
+	    System.out.println("[EXCEPTION] Channel configuration not found.");
+	} catch (IOException ioe) {
+	    System.out.println("[EXCEPTION] Unable to load configuration properties, please check if the file is in use");
+	} catch (NotBoundException nbe) {
+	    System.out.println("[EXCEPTION] The host channel IPs is out of bounds.");
+	} catch (InstanceAlreadyExistsException iaee) {
+	    System.out.println("[EXCEPTION] The channel instance is already opened!");
+	} catch (MBeanRegistrationException nmre) {
+	    System.out.println("[EXCEPTION] Something went wrong with Java MBEAN Registration.");
+	} catch (NotCompliantMBeanException ncmbe) {
+	    System.out.println("[EXCEPTION] Something went wrong with Java MBEAN.");
+	} catch (MalformedObjectNameException mone) {
+	    System.out.println("[EXCEPTION] The channel IPs is invalid.");
+	}
     }
 
-    private class spawnMobs implements Runnable {
 
-        @Override
-        public void run() {
-            for (Entry<Integer, MapleMap> map : mapFactory.getMaps().entrySet()) {
-                if (map.getValue() == null) {
-                    log.error("Channel " + getChannel() + " mob factory failed to load " + map.getValue().getMapName() + " (" + map.getValue().getId() + ").");
-                    map.getValue().deleteAndReloadMap();
-                    continue;
-                }
-                map.getValue().respawn();
-            }
-        }
-    }
+    private final class ShutDownListener implements Runnable {
+
+	@Override
+	public void run() {
+	    System.out.println("Saving all Hired Merchant...");
 
-    private class autoSave implements Runnable {
+	    closeAllMerchant();
 
-        @Override
-        public void run() {
-            int i = 0;
-            for (final MapleCharacter lols : getPlayerStorage().getAllCharacters()) {
-                i++;
-                TimerManager.getInstance().schedule(new Runnable() {
+	    System.out.println("Saving all connected clients...");
 
-                    @Override
-                    public void run() {
-                        if (lols != null) {
-                            lols.runAutoSave();
-                            lols.dropMessage(5, "Your Progress Has been saved AutoMagically.");
-                        }
-                    }
-                }, i * 1000);
-            }
-            log.info("Saving characters to database for channel " + channel);
-        }
+	    /*	    synchronized (players.mutex) {
+	    for (final MapleCharacter chr : players.getAllCharacters()) {
+	    if (chr.getClient().isLoggedIn() && chr != null) {
+	    System.out.println("Saving character : " + chr.getName());
+	    try {
+	    chr.getClient().disconnect(false);
+	    } catch (Exception e) {
+	    chr.saveToDB(true); // At least try to save.
+	    }
+	    }
+	    }
+	    }*/
+	    players.disconnectAll();
+
+	    acceptor.unbindAll();
+	    finishedShutdown = true;
+	    wci = null;
+	    cwi = null;
+	}
     }
 
-    public boolean isIsRebooting() {
-        return isRebooting;
+    public final MapleSquad getMapleSquad(final String type) {
+	return mapleSquads.get(type);
     }
 
-    public void setIsRebooting(boolean isRebooting) {
-        this.isRebooting = isRebooting;
+    public final boolean addMapleSquad(final MapleSquad squad, final String type) {
+	if (mapleSquads.get(type) == null) {
+	    mapleSquads.remove(type);
+	    mapleSquads.put(type, squad);
+	    return true;
+	}
+	return false;
     }
 
-    public void scheduleReboot() {
-        this.isRebooting = true;
-        int i = this.channel;
-        for (ChannelServer cserv : getAllInstances()) {
-            cserv.broadcastPacket(MaplePacketCreator.serverNotice(6, "The Channel Is Now Rebooting in 30 seconds. Please CC safely to avoid problems"));
-        }
-        TimerManager.getInstance().schedule(new scheduleReboot(), 30 * 1000);
+    public final boolean removeMapleSquad(final String type) {
+	if (mapleSquads.containsKey(type)) {
+	    mapleSquads.remove(type);
+	    return true;
+	}
+	return false;
     }
 
-    private class scheduleReboot implements Runnable {
+    public final void closeAllMerchant() {
+	merchant_mutex.lock();
+
+	final Iterator<HiredMerchant> merchants_ = merchants.values().iterator();
+	try {
+	    while (merchants_.hasNext()) {
+		merchants_.next().closeShop(true, false);
+		merchants_.remove();
+	    }
+	} finally {
+	    merchant_mutex.unlock();
+	}
+    }
 
-        final int i = channel;
+    public final int addMerchant(final HiredMerchant hMerchant) {
+	merchant_mutex.lock();
 
-        @Override
-        public void run() {
-            instances.get(i).shutdown();
-            instances.remove(i);
-            log.info("Channel " + i + "Shut Down");
-            try {
-                newInstance(initialProp.getProperty("net.sf.odinms.channel." + i + ".key")).run();
-            } catch (InstanceAlreadyExistsException ex) {
-                java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MBeanRegistrationException ex) {
-                java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (NotCompliantMBeanException ex) {
-                java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (MalformedObjectNameException ex) {
-                java.util.logging.Logger.getLogger(ChannelServer.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            log.info("Channel " + i + "Rebooted");
-        }
+	int runningmer = 0;
+	try {
+	    runningmer = running_MerchantID;
+	    merchants.put(running_MerchantID, hMerchant);
+	    running_MerchantID++;
+	} finally {
+	    merchant_mutex.unlock();
+	}
+	return runningmer;
     }
 
-    public void restarttimers() {
-        TimerManager tMan = TimerManager.getInstance();
-        tMan.start();
-        tMan.register(AutobanManager.getInstance(), 60000);
-        tMan.register(new spawnMobs(), 2500);
-        tMan.register(new autoSave(), 5 * 1000 * 60 * Integer.parseInt(initialProp.getProperty("net.sf.odinms.channel.count")), 10 * 1000 * 60 * (channel - 1) + (60000));
+    public final void removeMerchant(final HiredMerchant hMerchant) {
+	merchant_mutex.lock();
+
+	try {
+	    merchants.remove(hMerchant.getStoreId());
+	} finally {
+	    merchant_mutex.unlock();
+	}
     }
+
+    public final boolean constainsMerchant(final int accid) {
+	boolean contains = false;
+
+	merchant_mutex.lock();
+	try {
+	    final Iterator itr = merchants.values().iterator();
 
-    private void sendIRCNotice() {
-        MainIRC.getInstance().sendGlobalMessage(Colors.DARK_GREEN + Colors.REVERSE + "The Server will be up in 2 minutes. Thank you for your patience");
-        MainIRC.getInstance().sendGlobalMessage("******************************************************************************** ");
+	    while (itr.hasNext()) {
+		if (((HiredMerchant) itr.next()).getOwnerAccId() == accid) {
+		    contains = true;
+		    break;
+		}
+	    }
+	} finally {
+	    merchant_mutex.unlock();
+	}
+	return contains;
     }
 
-    public void yellowWorldMessage(String msg) {
-        for (MapleCharacter mc : getPlayerStorage().getAllCharacters()) {
-            mc.getClient().getSession().write(MaplePacketCreator.sendYellowTip(msg));
-        }
-        if (channel == 1) {
-            MainIRC.getInstance().sendMessage("#ninjashelp", "# Ninja Tip :" + msg);
-        }
+    public final void toggleMegaponeMuteState() {
+	this.MegaphoneMuteState = !this.MegaphoneMuteState;
     }
 
-    public List<MapleCharacter> getPartyMembers(MapleParty party) {
-        List<MapleCharacter> partym = new LinkedList<MapleCharacter>();
-        for (MaplePartyCharacter partychar : party.getMembers()) {
-            if (partychar.getChannel() == getChannel()) { // Make sure the thing doesn't get duplicate plays due to ccing bug.
-                MapleCharacter chr = getPlayerStorage().getCharacterByName(partychar.getName());
-                if (chr != null) {
-                    partym.add(chr);
-                }
-            }
-        }
-        return partym;
+    public final boolean getMegaphoneMuteState() {
+	return MegaphoneMuteState;
     }
 
-    public static ServerPlayerStorage getServerPlayerStorage() {
-        return serverplayerstorage;
+    public final List<MapleCharacter> getPartyMembers(final MapleParty party) {
+	List<MapleCharacter> partym = new LinkedList<MapleCharacter>();
+	for (final MaplePartyCharacter partychar : party.getMembers()) {
+	    if (partychar.getChannel() == getChannel()) { // Make sure the thing doesn't get duplicate plays due to ccing bug.
+		MapleCharacter chr = getPlayerStorage().getCharacterByName(partychar.getName());
+		if (chr != null) {
+		    partym.add(chr);
+		}
+	    }
+	}
+	return partym;
     }
 }

@@ -7,8 +7,8 @@ package net.sf.odinms.client.NinjaMS;
 import java.util.ArrayList;
 import java.util.List;
 import net.sf.odinms.client.Enums.MapleJob;
-import net.sf.odinms.client.Enums.MapleStat;
-import net.sf.odinms.client.Enums.Village;
+import net.sf.odinms.client.Buffs.MapleStat;
+
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.NinjaMS.Processors.NoticeProcessor;
 import net.sf.odinms.server.MapleInventoryManipulator;
@@ -26,7 +26,7 @@ public class Rebirths {
         if (pl.getMapId() < 4) {
             pl.dropMessage("You cannot rebirth from training camp");
             return;
-        } else if (pl.getVillage().equals(Village.UNDECIDED)) {
+        } else if (pl.getVillage() < 1) {
             pl.dropMessage("You need to be in a Village to rebirth.");
             return;
         } else if (pl.getLevel() < pl.getMaxLevel()) {
@@ -38,12 +38,13 @@ public class Rebirths {
         }
         missionReminder(pl);
         pl.addReborn();
-        pl.setLevel(1);
-        pl.setExp(1);
-        pl.setHp(1);
-        pl.setMp(1);
+        short x = 1;
+        pl.setLevel(x);
+        pl.setExp(x);
+        pl.getStat().setHp(x);
+        pl.getStat().setMp(x);
         if (changejob) {
-            if (pl.getPath() != 2) {
+            if (pl.getJob() < 911) {
                 pl.changeJob(MapleJob.BEGINNER);
             } else {
                 pl.changeJob(MapleJob.NOBLESSE);
@@ -85,7 +86,7 @@ public class Rebirths {
         if (pl.isRebirthing()) {
             return;
         }
-        if (pl.getVillage().equals(Village.UNDECIDED)) {
+        if (pl.getVillage() < 1) {
             pl.dropMessage("You need to be in a Village to rebirth.");
             return;
         }

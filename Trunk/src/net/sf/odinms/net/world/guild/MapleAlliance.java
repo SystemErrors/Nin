@@ -1,15 +1,14 @@
 /*
 	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc>
-		       Matthias Butz <matze@odinms.de>
-		       Jan Christian Meyer <vimes@odinms.de>
+    Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
+                       Matthias Butz <matze@odinms.de>
+                       Jan Christian Meyer <vimes@odinms.de>
 
     This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as
-    published by the Free Software Foundation version 3 as published by
-    the Free Software Foundation. You may not use, modify or distribute
-    this program under any other version of the GNU Affero General Public
-    License.
+    it under the terms of the GNU Affero General Public License version 3
+    as published by the Free Software Foundation. You may not use, modify
+    or distribute this program under any other version of the
+    GNU Affero General Public License.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,270 +20,194 @@
 */
 package net.sf.odinms.net.world.guild;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.rmi.RemoteException;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.database.DatabaseConnection;
+import net.sf.odinms.net.MaplePacket;
 
 
-/**
- *
- * @author XoticStory.
- */
 public class MapleAlliance implements java.io.Serializable {
-    private static final long serialVersionUID = 5875666601310345395L;
-    private int[] guilds = new int[6];
-    private int allianceId = -1;
-    private int capacity;
+
+    private List<MapleGuild> guilds = new ArrayList<MapleGuild>();
+    private String rankTitles[] = new String[5];
+    private int guildId[] = new int[6];
     private String name;
-    private String notice = "";
-    private String rankTitles[] = new String[6];
-    private List<MapleGuild> guildlist = new ArrayList<MapleGuild>();
-    
-    public MapleAlliance(String name, int id, int guild1, int guild2) {
-        this.name = name;
-        allianceId = id;
-        int[] guild = {guild1, guild2, -1, -1, -1};
-        String[] ranks = {"Master", "Jr.Master", "Member", "Member", "Member"};
-        for (int i = 0; i < 5; i++) {
-            guilds[i] = guild[i];
-            rankTitles[i] = ranks[i];
-        }
+    private String notice;
+    private int id;
+
+    public MapleAlliance(MapleClient c, int id) {
+	guilds = new ArrayList<MapleGuild>();
+	this.id = id;
+
+	try {
+	    Connection con = DatabaseConnection.getConnection();
+	    PreparedStatement ps = con.prepareStatement("SELECT * FROM alliances WHERE id = ? ");
+	    ps.setInt(1, id);
+	    ResultSet rs = ps.executeQuery();
+
+	    if (!rs.first()) { // no result... most likely to be someone from a disbanded alliance that got rolled back
+		rs.close();
+		ps.close();
+		return;
+	    }
+	    notice = rs.getString("notice");
+	    name = rs.getString("name");
+
+	    for (int i = 1; i <= 5; i++) {
+		guildId[i] = rs.getInt("guild" + i);
+		rankTitles[i - 1] = rs.getString("rank" + i);
+	    }
+	    rs.close();
+	    ps.close();
+	} catch (SQLException ex) {
+	    System.err.println("loading Guild info failed " + ex);
+	}
+
+	for (int i = 1; i <= 5; i++) {
+	    if (guildId[i] != 0) {
+		if (c != null && guildId[i] == c.getPlayer().getGuildId()) {
+		    try {
+			guilds.add(c.getChannelServer().getWorldInterface().getGuild(guildId[i], c.getPlayer().getMGC()));
+		    } catch (RemoteException e) {
+			c.getChannelServer().reconnectWorld();
+		    }
+		} else {
+		    guilds.add(new MapleGuild(guildId[i]));
+		}
+	    } else {
+		guilds.add(null);
+	    }
+	}
     }
 
-    public MapleAlliance(MapleClient c, int id) {        
-        this.allianceId = id;
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM alliances WHERE id = ? ");
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.first()) { // no result... most likely to be someone from a disbanded alliance that got rolled back
-                rs.close();
-                ps.close();
-                return;
-            }
-            notice = rs.getString("notice");
-            name = rs.getString("name");
-            for (int i = 1; i <= 5; i++) {
-                guilds[i] = rs.getInt("guild" + i);
-                String rank = rs.getString("rank_title" + i);
-                if (rank != null) {
-                    rankTitles[i - 1] = rank;
-                }
-                rank = null;
-            }
-            rs.close();
-            ps.close();
-        } catch (SQLException ex) {
-            System.err.println("loading Guild info failed " + ex);
-        }
-
-        for (int i = 1; i <= 5; i++) {
-            if (guilds[i] != 0) {
-                if (c != null && guilds[i] == c.getPlayer().getGuildId()) {
-                    try {
-                        guildlist.add(c.getChannelServer().getWorldInterface().getGuild(guilds[i], c.getPlayer().getMGC()));
-                    } catch (Exception e) {
-                        c.getChannelServer().reconnectWorld();
-                    }
-                } else {
-                    guildlist.add(new MapleGuild(guilds[i]));
-                }
-            } else {
-                guildlist.add(null);
-            }
-        }
+    public void addGuild(MapleClient c, int guildid) {
+	for (int i = 0; i < 5; i++) {
+	    if (guilds.get(i) == null) {
+		try {
+		    guilds.add(c.getChannelServer().getWorldInterface().getGuild(guildid, c.getPlayer().getMGC()));
+		} catch (Exception e) {
+		    c.getChannelServer().reconnectWorld();
+		}
+		broadcast(null);
+		break;
+	    }
+	}
+	try {
+	    Connection con = DatabaseConnection.getConnection();
+	    PreparedStatement ps = con.prepareStatement("UPDATE alliances SET guild1 = ?, guild2 = ?, guild3 = ?, guild4 = ?, guild5 = ?, rank1 = ?, rank2 = ?, rank3 = ?, rank4 = ?, rank5 = ?, notice = ? WHERE id = ?");
+	    ps.setInt(1, guilds.get(0) != null ? guilds.get(0).getId() : 0);
+	    ps.setInt(2, guilds.get(1) != null ? guilds.get(1).getId() : 0);
+	    ps.setInt(3, guilds.get(2) != null ? guilds.get(2).getId() : 0);
+	    ps.setInt(4, guilds.get(3) != null ? guilds.get(3).getId() : 0);
+	    ps.setInt(5, guilds.get(4) != null ? guilds.get(4).getId() : 0);
+	    for (int a = 6; a < 11; a++) {
+		ps.setString(a, rankTitles[a - 6]);
+	    }
+	    ps.setString(11, notice);
+	    ps.setInt(12, id);
+	    ps.execute();
+	    ps.close();
+	} catch (SQLException e) {
+	    System.err.println("error while saving alliances" + e);
+	}
     }
 
-    public static MapleAlliance loadAlliance(int id) {
-        if (id <= 0) {
-            return null;
-        }
-        MapleAlliance alliance = new MapleAlliance(null, -1, -1, -1);
-        try {
-            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM alliance WHERE id = ?");
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return null;
-            }
-            alliance.allianceId = id;
-            alliance.capacity = rs.getInt("capacity");
-            alliance.name = rs.getString("name");
-            alliance.notice = rs.getString("notice");
-            for (int i = 1; i <= 5; i++) {
-                alliance.rankTitles[i - 1] = rs.getString("rank_title" + i);
-            }
-            for (int i = 1; i <= 5; i++) {
-                alliance.guilds[i - 1] = rs.getInt("guild" + i);
-            }
-            ps.close();
-            rs.close();
-        } catch (SQLException e) {
-        }
-        return alliance;
+    public void setTitles(String[] titles) {
+	for (int i = 0; i < 5; i++) {
+	    rankTitles[i] = titles[i];
+	}
+	broadcast(null);
+
+	try {
+	    Connection con = DatabaseConnection.getConnection();
+	    PreparedStatement ps = con.prepareStatement("UPDATE alliances SET rank1 = ?, rank2 = ?, rank3 = ?, rank4 = ?, rank5 = ? WHERE id = ?");
+	    for (int i = 1; i <= 5; i++) {
+		ps.setString(i, rankTitles[i - 1]);
+	    }
+	    ps.setInt(6, id);
+	    ps.execute();
+	    ps.close();
+	} catch (SQLException e) {
+	    System.err.println("error while saving alliance titles" + e);
+	}
     }
 
-    public void saveToDB() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("capacity = ?, ");
-        sb.append("notice = ?, ");
-        for (int i = 1; i <= 5; i++) {
-            sb.append("rank_title" + i + " = ?, ");
-        }
-        for (int i = 1; i <= 5; i++) {
-            sb.append("guild" + i + " = ?, ");
-        }
-        try {
-            PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement("UPDATE `alliance` SET " + sb.toString() + " WHERE id = ?");
-            ps.setInt(1, this.capacity);
-            ps.setString(2, this.notice);
-            for (int i = 0; i < rankTitles.length; i++) {
-                ps.setString(i + 3, rankTitles[i]);
-            }
-            for (int i = 0; i < guilds.length; i++) {
-                ps.setInt(i + 8, guilds[i]);
-            }
-            ps.setInt(13, this.allianceId);
-            ps.executeQuery();
-            ps.close();
-        } catch (SQLException e) {
-        }
+    public void broadcast(MaplePacket packet) {
+	for (int i = 0; i < 5; i++) {
+	    if (guilds.get(i) != null) {
+		guilds.get(i).guildMessage(packet);
+	    }
+	}
     }
 
-    public boolean addRemGuildFromDB(int gid, boolean add) {
-        Connection con = DatabaseConnection.getConnection();
-        boolean ret = false;
-        try {
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM alliance WHERE id = ?");
-            ps.setInt(1, this.allianceId);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                int avail = -1;
-                for (int i = 1; i <= 5; i++) {
-                    int guildId = rs.getInt("guild" + i);
-                    if (add) {
-                        if (guildId == -1) {
-                            avail = i;
-                            break;
-                        }
-                    } else if (guildId == gid) {
-                        avail = i;
-                        break;
-                    }
-                }
-                rs.close();
-                if (avail != -1) { // empty slot
-                    ps = con.prepareStatement("UPDATE alliance SET guild" + avail + " = ? WHERE id = ?");
-                    if (add) {
-                        ps.setInt(1, gid);
-                    } else {
-                        ps.setInt(1, -1);
-                    }
-                    ps.setInt(2, this.allianceId);
-                    ps.executeUpdate();
-                    ret = true;
-                }
-                ps.close();
-            }
-        } catch (SQLException e) {
-        }
-        return ret;
-    }
-
-    public boolean removeGuild(int gid) {
-        synchronized (guilds) {
-            int gIndex = getGuildIndex(gid);
-            if (gIndex != -1) {
-                guilds[gIndex] = -1;
-            }
-            return addRemGuildFromDB(gid, false);
-        }
-    }
-
-    public boolean addGuild(int gid) {
-        synchronized (guilds) {
-            if (getGuildIndex(gid) == -1) {
-                int emptyIndex = getGuildIndex(-1);
-                if (emptyIndex != -1) {
-                    guilds[emptyIndex] = gid;
-                    return addRemGuildFromDB(gid, true);
-                }
-            }
-        }
-        return false;
-    }
-
-    private int getGuildIndex(int gid) {
-        for (int i = 0; i < guilds.length; i++) {
-            if (guilds[i] == gid) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public void setRankTitle(String[] ranks) {
-        rankTitles = ranks;
-    }
-
-    public void setNotice(String notice) {
-        this.notice = notice;
+    public String[] getTitles() {
+	return rankTitles;
     }
 
     public int getId() {
-        return allianceId;
+	return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getRankTitle(int rank) {
-        return rankTitles[rank - 1];
-    }
-
-    public String getAllianceNotice() {
-        return notice;
-    }
-
-    public List<Integer> getGuilds() {
-        List<Integer> guilds_ = new LinkedList<Integer>();
-        for (int guild : guilds) {
-            if (guild != -1) {
-                guilds_.add(guild);
-            }
-        }
-        return guilds_;
+    public void setId(int idd) {
+	this.id = idd;
     }
 
     public String getNotice() {
-        return notice;
+	if (notice == null) {
+	    return "";
+	}
+	return notice;
     }
 
-    public void increaseCapacity(int inc) {
-        capacity += inc;
+    public void setNotice(String noticee) {
+	this.notice = noticee;
+	broadcast(null);
+
+	try {
+	    Connection con = DatabaseConnection.getConnection();
+	    PreparedStatement ps = con.prepareStatement("UPDATE alliances SET notice = ? WHERE id = ?");
+	    ps.setString(1, notice);
+	    ps.setInt(2, id);
+	    ps.execute();
+	    ps.close();
+	} catch (SQLException e) {
+	    System.err.println("error while saving alliance notice" + e);
+	}
     }
 
-    public int getCapacity() {
-        return capacity;
+    public String getName() {
+	return name;
     }
 
-    public List<MapleGuild> getGuildlist() {
-        List<MapleGuild> guildlis_ = new LinkedList<MapleGuild>();
-        for (MapleGuild guild : guildlist) {
-            if (guild != null) {
-                guildlis_.add(guild);
-            }
-        }
-        return guildlis_;
+    public void setName(String namee) {
+	this.name = namee;
+    }
+
+    public List<MapleGuild> getGuilds() {
+	return guilds;
+    }
+
+    public void broadcastMessage(MaplePacket packet) {
+	for (int i = 0; i < 5; i++) {
+	    if (guilds.get(i) != null) {
+		guilds.get(i).broadcast(packet);
+	    }
+	}
+    }
+
+    public int getAmountOfGuilds() {
+	int a = 0;
+	for (int i = 0; i < 5; i++) {
+	    if (guilds.get(i) != null) {
+		a++;
+	    }
+	}
+	return a;
     }
 }

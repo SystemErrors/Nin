@@ -31,7 +31,7 @@ function action(mode, type, selection) {
             } else if (cm.getPlayer().getGMSMode() != 4){
                 cm.sendOk("You need to be in GMS mode 4 to be able to enter Ninja Shiken. Talk to NPC duru to turn on GMS mode");
             } else {
-                em.getInstance("lolcastle5").registerPlayer(cm.getChar());
+                em.getInstance("lolcastle").registerPlayer(cm.getPlayer());
             }
             cm.dispose();
         }

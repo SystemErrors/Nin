@@ -18,7 +18,7 @@ public class Buddha extends PircBot {
      * and open the template in the editor.
      */
 /*
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Buddha instance = new Buddha();
 
     public static Buddha getInstance() {

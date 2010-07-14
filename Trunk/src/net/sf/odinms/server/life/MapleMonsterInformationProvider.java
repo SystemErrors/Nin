@@ -29,6 +29,8 @@ package net.sf.odinms.server.life;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +38,6 @@ import java.util.Map;
 
 import net.sf.odinms.database.DatabaseConnection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -45,72 +45,102 @@ import org.slf4j.LoggerFactory;
  */
 public class MapleMonsterInformationProvider {
 
-//TODO   add meso entry
-	public static class DropEntry {
-		public DropEntry(int itemId, int chance) {
-			this.itemId = itemId;
-			this.chance = chance;
+   private static final MapleMonsterInformationProvider instance = new MapleMonsterInformationProvider();
+    private final Map<Integer, List<MonsterDropEntry>> drops = new HashMap<Integer, List<MonsterDropEntry>>();
+    private final List<MonsterGlobalDropEntry> globaldrops = new ArrayList<MonsterGlobalDropEntry>();
+
+    protected MapleMonsterInformationProvider() {
+	retrieveGlobal();
+    }
+
+    public static final MapleMonsterInformationProvider getInstance() {
+	return instance;
+    }
+
+    public final List<MonsterGlobalDropEntry> getGlobalDrop() {
+	return globaldrops;
+    }
+
+    private final void retrieveGlobal() {
+	PreparedStatement ps = null;
+	ResultSet rs = null;
+
+	try {
+	    final Connection con = DatabaseConnection.getConnection();
+	    ps = con.prepareStatement("SELECT * FROM drop_data_global WHERE chance > 0");
+	    rs = ps.executeQuery();
+
+	    while (rs.next()) {
+		globaldrops.add(
+			new MonsterGlobalDropEntry(
+			rs.getInt("itemid"),
+			rs.getInt("chance"),
+			rs.getInt("continent"),
+			rs.getByte("dropType"),
+			rs.getInt("minimum_quantity"),
+			rs.getInt("maximum_quantity"),
+			rs.getShort("questid")));
+	    }
+	    rs.close();
+	    ps.close();
+	} catch (SQLException e) {
+	    System.err.println("Error retrieving drop" + e);
+	} finally {
+	    try {
+		if (ps != null) {
+		    ps.close();
 		}
-		
-		public int itemId;
-		public int chance;
-		public int assignedRangeStart;
-		public int assignedRangeLength;
-		
-		@Override
-		public String toString() {
-			return itemId + " chance: " + chance;
+		if (rs != null) {
+		    rs.close();
 		}
+	    } catch (SQLException ignore) {
+	    }
 	}
-	
-	public static final int APPROX_FADE_DELAY = 90;
-	
-	private static MapleMonsterInformationProvider instance = null;
-	
-	private Map<Integer,List<DropEntry>> drops = new HashMap<Integer, List<DropEntry>>();
-	
-	private static final Logger log = LoggerFactory.getLogger(MapleMonsterInformationProvider.class);
-	
-	private MapleMonsterInformationProvider() {
-			// util
+    }
+
+    public final List<MonsterDropEntry> retrieveDrop(final int monsterId) {
+	if (drops.containsKey(monsterId)) {
+	    return drops.get(monsterId);
 	}
-	
-	public static MapleMonsterInformationProvider getInstance() {
-		if (instance == null) instance = new MapleMonsterInformationProvider();
-		return instance;
-	}
-	
-	public List<DropEntry> retrieveDropChances(int monsterId) {
-		if (drops.containsKey(monsterId)) return drops.get(monsterId);
-		List<DropEntry> ret = new LinkedList<DropEntry>();
-		try {
-			Connection con = DatabaseConnection.getConnection();
-			PreparedStatement ps = con.prepareStatement("SELECT itemid, chance, monsterid FROM monsterdrops WHERE (monsterid = ? AND chance >= 0) OR (monsterid <= 0)");
-			ps.setInt(1, monsterId);
-			ResultSet rs = ps.executeQuery();
-			MapleMonster theMonster = null;
-			while (rs.next()) {
-				int rowMonsterId = rs.getInt("monsterid");
-				int chance = rs.getInt("chance");
-				if (rowMonsterId != monsterId && rowMonsterId != 0) {
-					if (theMonster == null) {
-						theMonster = MapleLifeFactory.getMonster(monsterId);
-					}
-					chance += theMonster.getLevel() *  rowMonsterId;
-				}
-				ret.add(new DropEntry(rs.getInt("itemid"), chance));
-			}
-			rs.close();
-			ps.close();
-		} catch (Exception e) {
-			log.error("lulz", e);
+	final List<MonsterDropEntry> ret = new LinkedList<MonsterDropEntry>();
+
+	PreparedStatement ps = null;
+	ResultSet rs = null;
+	try {
+	    ps = DatabaseConnection.getConnection().prepareStatement("SELECT * FROM drop_data WHERE dropperid = ?");
+	    ps.setInt(1, monsterId);
+	    rs = ps.executeQuery();
+
+	    while (rs.next()) {
+		ret.add(
+			new MonsterDropEntry(
+			rs.getInt("itemid"),
+			rs.getInt("chance"),
+			rs.getInt("minimum_quantity"),
+			rs.getInt("maximum_quantity"),
+			rs.getShort("questid")));
+	    }
+	} catch (SQLException e) {
+	    return ret;
+	} finally {
+	    try {
+		if (ps != null) {
+		    ps.close();
 		}
-		drops.put(monsterId, ret);
+		if (rs != null) {
+		    rs.close();
+		}
+	    } catch (SQLException ignore) {
 		return ret;
+	    }
 	}
+	drops.put(monsterId, ret);
+	return ret;
+    }
 
-
-	public void clearDrops() {
-		drops.clear();
-	}
+    public final void clearDrops() {
+	drops.clear();
+	globaldrops.clear();
+	retrieveGlobal();
+    }
 }

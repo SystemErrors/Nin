@@ -30,11 +30,10 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import net.sf.odinms.client.Inventory.IItem;
 
-import net.sf.odinms.net.MaplePacket;
 import net.sf.odinms.net.channel.remote.ChannelWorldInterface;
 import net.sf.odinms.net.world.CharacterIdChannelPair;
+import net.sf.odinms.net.world.CharacterTransfer;
 import net.sf.odinms.net.world.MapleMessenger;
 import net.sf.odinms.net.world.MapleMessengerCharacter;
 import net.sf.odinms.net.world.MapleParty;
@@ -42,7 +41,7 @@ import net.sf.odinms.net.world.MaplePartyCharacter;
 import net.sf.odinms.net.world.PartyOperation;
 import net.sf.odinms.net.world.PlayerBuffValueHolder;
 import net.sf.odinms.net.world.PlayerCoolDownValueHolder;
-import net.sf.odinms.net.world.guild.MapleAlliance;
+import net.sf.odinms.net.world.PlayerDiseaseValueHolder;
 import net.sf.odinms.net.world.guild.MapleGuild;
 import net.sf.odinms.net.world.guild.MapleGuildCharacter;
 
@@ -58,11 +57,21 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
 
     public void serverReady() throws RemoteException;
 
+    public void shutdownLogin() throws RemoteException;
+
+    public String getCSIP() throws RemoteException;
+
     public String getIP(int channel) throws RemoteException;
+
+    public void toggleMegaphoneMuteState() throws RemoteException;
+
+    public boolean hasMerchant(int accountId) throws RemoteException;
 
     public int find(String charName) throws RemoteException;
 
     public int find(int characterId) throws RemoteException;
+
+    public boolean isCharacterInCS(String name) throws RemoteException;
 
     public Map<Integer, Integer> getConnected() throws RemoteException;
 
@@ -82,9 +91,9 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
 
     public CharacterIdChannelPair[] multiBuddyFind(int charIdFrom, int[] characterIds) throws RemoteException;
 
-    public MapleGuild getGuild(int id, MapleGuildCharacter mgc) throws RemoteException;
+    public void ChannelChange_Data(CharacterTransfer data, int characterid, int toChannel) throws RemoteException;
 
-    public void clearGuilds() throws RemoteException;
+    public MapleGuild getGuild(int id, MapleGuildCharacter mgc) throws RemoteException;
 
     public void setGuildMemberOnline(MapleGuildCharacter mgc, boolean bOnline, int channel) throws RemoteException;
 
@@ -93,6 +102,8 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
     public void leaveGuild(MapleGuildCharacter mgc) throws RemoteException;
 
     public void guildChat(int gid, String name, int cid, String msg) throws RemoteException;
+
+    public void allianceChat(int gid, String name, int cid, String msg) throws RemoteException;
 
     public void changeRank(int gid, int cid, int newRank) throws RemoteException;
 
@@ -132,26 +143,6 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
 
     public void updateMessenger(int messengerid, String namefrom, int fromchannel) throws RemoteException;
 
-    public MapleAlliance getAlliance(int id) throws RemoteException;
-
-    public void addAlliance(int id, MapleAlliance addAlliance) throws RemoteException;
-
-    public void disbandAlliance(int id) throws RemoteException;
-
-    public void allianceMessage(int id, MaplePacket packet, int exception, int guildex) throws RemoteException;
-
-    public boolean setAllianceNotice(int aId, String notice) throws RemoteException;
-
-    public boolean setAllianceRanks(int aId, String[] ranks) throws RemoteException;
-
-    public boolean removeGuildFromAlliance(int aId, int guildId) throws RemoteException;
-
-    public boolean addGuildtoAlliance(int aId, int guildId) throws RemoteException;
-
-    public boolean setGuildAllianceId(int gId, int aId) throws RemoteException;
-
-    public boolean increaseAllianceCapacity(int aId, int inc) throws RemoteException;
-
     public void addBuffsToStorage(int chrid, List<PlayerBuffValueHolder> toStore) throws RemoteException;
 
     public List<PlayerBuffValueHolder> getBuffsFromStorage(int chrid) throws RemoteException;
@@ -160,7 +151,7 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
 
     public List<PlayerCoolDownValueHolder> getCooldownsFromStorage(int chrid) throws RemoteException;
 
-    public void broadcastGMMessage(String sender, byte[] message) throws RemoteException;
+    public void addDiseaseToStorage(int chrid, List<PlayerDiseaseValueHolder> toStore) throws RemoteException;
 
-    public void broadcastStaffMessage(String sender, byte[] message) throws RemoteException;
+    public List<PlayerDiseaseValueHolder> getDiseaseFromStorage(int chrid) throws RemoteException;
 }

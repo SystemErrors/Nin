@@ -24,7 +24,7 @@ public class MainIRC extends PircBot {
      */
 
     private String channel = "#ninjahelp";
-    private String channel1 = "#ninjas";
+    private String channel1 = "#ninjams";
     private String channel2 = "#ninjastaff";
     private String channel3 = "#mudkipz";
     private static MainIRC instance = new MainIRC();
@@ -103,7 +103,7 @@ public class MainIRC extends PircBot {
 
     @Override
     protected void onTopic(String channel, String topic, String setBy, long date, boolean changed) {
-        if (channel.equals("#ninjas")){
+        if (channel.equals("#ninjams")){
             for (ChannelServer cs : ChannelServer.getAllInstances()){
                 cs.setServerMessage(topic);                
             }

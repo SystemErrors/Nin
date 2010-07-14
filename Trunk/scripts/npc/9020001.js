@@ -35,8 +35,6 @@ importPackage(java.awt);
 
 var status;
 var curMap;
-var playerStatus;
-var chatState;
 var questions = Array("Here's the question. Collect the same number of pass as how many ninjatensu needed to get patriot medal from Charles",
     "Here's the question. Collect the same number of pass as how many ninjatensu needed to get patriot medal from Charles",
     "Here's the question. Collect the same number of pass as how many ninjatensu needed to get patriot medal from Charles",
@@ -380,6 +378,7 @@ function getPrize(eim,cm) {
         var seld = Math.floor(Math.random()*itemSet.length);
         cm.gainItem(itemSet[seld], 1);
     }
+    cm.getPlayer().gainKpqPoints();
     var map = eim.getMapInstance(103000805);
     var portal = map.getPortal("sp");
     cm.getPlayer().changeMap(map,portal);

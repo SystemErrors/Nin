@@ -24,58 +24,70 @@ package net.sf.odinms.client.status;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 
-import net.sf.odinms.client.ISkill;
+import net.sf.odinms.client.Skills.ISkill;
+import net.sf.odinms.server.life.MobSkill;
 import net.sf.odinms.tools.ArrayMap;
 
 
 public class MonsterStatusEffect {
-	private Map<MonsterStatus, Integer> stati;
-	private ISkill skill;
-	private boolean monsterSkill;
-	private ScheduledFuture<?> cancelTask;
-	private ScheduledFuture<?> poisonSchedule;
-	
-	public MonsterStatusEffect(Map<MonsterStatus, Integer> stati, ISkill skillId, boolean monsterSkill) {
-		this.stati = new ArrayMap<MonsterStatus, Integer>(stati);
-		this.skill = skillId;
-		this.monsterSkill = monsterSkill;
-	}
 
-	public Map<MonsterStatus, Integer> getStati() {
-		return stati;
-	}
-	
-	public Integer setValue(MonsterStatus status, Integer newVal) {
-		return stati.put(status, newVal);
-	}
+    private final Map<MonsterStatus, Integer> stati;
+    private final ISkill skill;
+    private final MobSkill mobskill;
+    private final boolean monsterSkill;
+    private ScheduledFuture<?> cancelTask;
+    private ScheduledFuture<?> poisonSchedule;
 
-	public ISkill getSkill() {
-		return skill;
-	}
-	
-	public boolean isMonsterSkill() {
-		return monsterSkill;
-	}
+    public MonsterStatusEffect(final Map<MonsterStatus, Integer> stati, final ISkill skillId, final MobSkill mobskill, final boolean monsterSkill) {
+	this.stati = new ArrayMap<MonsterStatus, Integer>(stati);
+	this.skill = skillId;
+	this.monsterSkill = monsterSkill;
+	this.mobskill = mobskill;
+    }
 
-	public ScheduledFuture<?> getCancelTask() {
-		return cancelTask;
-	}
+    public final Map<MonsterStatus, Integer> getStati() {
+	return stati;
+    }
 
-	public void setCancelTask(ScheduledFuture<?> cancelTask) {
-		this.cancelTask = cancelTask;
-	}
-	
-	public void removeActiveStatus(MonsterStatus stat) {
-		stati.remove(stat);
-	}
+    public final Integer setValue(final MonsterStatus status, final Integer newVal) {
+	return stati.put(status, newVal);
+    }
 
-	public void setPoisonSchedule(ScheduledFuture<?> poisonSchedule) {
-		this.poisonSchedule = poisonSchedule;
+    public final ISkill getSkill() {
+	return skill;
+    }
+
+    public final MobSkill getMobSkill() {
+	return mobskill;
+    }
+
+    public final boolean isMonsterSkill() {
+	return monsterSkill;
+    }
+
+    public final void setCancelTask(final ScheduledFuture<?> cancelTask) {
+	this.cancelTask = cancelTask;
+    }
+
+    public final void removeActiveStatus(final MonsterStatus stat) {
+        stati.remove(stat);
+    }
+
+    public final void setPoisonSchedule(final ScheduledFuture<?> poisonSchedule) {
+	this.poisonSchedule = poisonSchedule;
+    }
+
+    public final void cancelTask() {
+	if (cancelTask != null) {
+	    cancelTask.cancel(false);
 	}
-	
-	public void cancelPoisonSchedule() { 
-		if (poisonSchedule != null) {
-			poisonSchedule.cancel(false);
-		}
+	cancelTask = null;
+    }
+
+    public final void cancelPoisonSchedule() {
+	if (poisonSchedule != null) {
+	    poisonSchedule.cancel(false);
 	}
+	poisonSchedule = null;
+    }
 }

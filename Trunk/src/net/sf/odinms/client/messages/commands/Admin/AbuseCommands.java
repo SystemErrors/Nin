@@ -27,8 +27,9 @@ public class AbuseCommands implements AdminCommand {
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         if (splitted[0].equalsIgnoreCase("smega")) {
             String msg = StringUtil.joinStringFrom(splitted, 2);
-            c.getChannelServer().getWorldInterface().broadcastMessage(null, MaplePacketCreator.serverNotice(3, c.getChannel(), splitted[1]
-                    + " : " + msg).getBytes());
+            for(ChannelServer cserv: ChannelServer.getAllInstances()){
+                cserv.broadcastSmegaPacket(MaplePacketCreator.serverNotice(3, c.getChannel(), splitted[1] + " : " + msg));
+            }
         } else if (splitted[0].equalsIgnoreCase("smegamc")) {
             try {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
@@ -104,7 +105,7 @@ public class AbuseCommands implements AdminCommand {
                     victim.getClient().getSession().write(MaplePacketCreator.getCharInfo(victim));
                     victim.getMap().removePlayer(victim);
                     victim.getMap().addPlayer(victim);
-                    victim.saveToDB();
+                    victim.saveToDB(false, false);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }

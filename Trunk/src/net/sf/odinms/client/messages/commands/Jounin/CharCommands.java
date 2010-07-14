@@ -22,7 +22,7 @@ package net.sf.odinms.client.messages.commands.Jounin;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 import static net.sf.odinms.client.messages.CommandProcessor.getOptionalIntArg;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
@@ -65,12 +65,12 @@ public class CharCommands implements GMCommand {
 
         MapleCharacter player = c.getPlayer();
         if (splitted[0].equals("lowhp")) {
-            player.setHp(1);
-            player.setMp(500);
+            player.getStat().setHp(1);
+            player.getStat().setMp(500);
             player.updateSingleStat(MapleStat.HP, 1);
             player.updateSingleStat(MapleStat.MP, 500);
         } else if (splitted[0].equals("heal")) {
-            player.addMPHP(player.getMaxHp() - player.getHp(), player.getMaxMp() - player.getMp());
+            player.addMPHP(player.getStat().getMaxHp() - player.getStat().getHp(), player.getStat().getMaxMp() - player.getStat().getMp());
         } else if (splitted[0].equals("ap")) {
             player.setRemainingAp(getOptionalIntArg(splitted, 1, 1));
             player.updateSingleStat(MapleStat.AVAILABLEAP, player.getRemainingAp());
@@ -82,7 +82,7 @@ public class CharCommands implements GMCommand {
                 c.getPlayer().levelUp();
                 c.getPlayer().setExp(0);
             } else if (splitted.length == 2) {
-                int quantity = Integer.parseInt(splitted[1]);
+                byte quantity = Byte.parseByte(splitted[1]);
                 c.getPlayer().setLevel(quantity);
                 c.getPlayer().levelUp();
                 int newexp = c.getPlayer().getExp();
@@ -99,14 +99,14 @@ public class CharCommands implements GMCommand {
                     mc.dropMessage("player not in your channel");
                     return;
                 }
-                noob.setLevel(Integer.parseInt(splitted[2]));
+                noob.setLevel(Byte.parseByte(splitted[2]));
                 noob.levelUp();
                 int newexp = noob.getExp();
                 if (newexp < 0) {
                     noob.gainExp(-newexp, false, false);
                 }
             } else if (splitted.length == 2) {
-                int quantity = Integer.parseInt(splitted[1]);
+                byte quantity = Byte.parseByte(splitted[1]);
                 c.getPlayer().setLevel(quantity);
                 c.getPlayer().levelUp();
                 int newexp = c.getPlayer().getExp();
@@ -118,35 +118,25 @@ public class CharCommands implements GMCommand {
                 c.getPlayer().setExp(0);
             }
         } else if (splitted[0].equals("statreset")) {
-            int str = c.getPlayer().getStr();
-            int dex = c.getPlayer().getDex();
-            int int_ = c.getPlayer().getInt();
-            int luk = c.getPlayer().getLuk();
-            int newap = c.getPlayer().getRemainingAp() + (str - 4) + (dex - 4) + (int_ - 4) + (luk - 4);
-            c.getPlayer().setStr(4);
-            c.getPlayer().setDex(4);
-            c.getPlayer().setInt(4);
-            c.getPlayer().setLuk(4);
-            c.getPlayer().setRemainingAp(newap);
+            c.getPlayer().getStat().setAllStats(4);
+            c.getPlayer().setRemainingAp(4);
             List<Pair<MapleStat, Integer>> stats = new ArrayList<Pair<MapleStat, Integer>>();
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.STR, Integer.valueOf(4)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.DEX, Integer.valueOf(4)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.INT, Integer.valueOf(4)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.LUK, Integer.valueOf(4)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.AVAILABLEAP, Integer.valueOf(newap)));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.STR, 4));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.DEX, 4));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.INT, 4));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.LUK, 4));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.AVAILABLEAP, 4));
             c.getSession().write(MaplePacketCreator.updatePlayerStats(stats));
         } else if (splitted[0].equals("maxstat")) {
-            c.getPlayer().setStr(Short.MAX_VALUE);
-            c.getPlayer().setDex(Short.MAX_VALUE);
-            c.getPlayer().setInt(Short.MAX_VALUE);
-            c.getPlayer().setLuk(Short.MAX_VALUE);
-            c.getPlayer().setRemainingAp(Short.MAX_VALUE);
+            int x = Short.MAX_VALUE;
+            c.getPlayer().getStat().setAllStats(x);
+            c.getPlayer().setRemainingAp(x);
             List<Pair<MapleStat, Integer>> stats = new ArrayList<Pair<MapleStat, Integer>>();
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.STR, Integer.valueOf(Short.MAX_VALUE)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.DEX, Integer.valueOf(Short.MAX_VALUE)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.INT, Integer.valueOf(Short.MAX_VALUE)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.LUK, Integer.valueOf(Short.MAX_VALUE)));
-            stats.add(new Pair<MapleStat, Integer>(MapleStat.AVAILABLEAP, Integer.valueOf(Short.MAX_VALUE)));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.STR, x));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.DEX, x));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.INT, x));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.LUK, x));
+            stats.add(new Pair<MapleStat, Integer>(MapleStat.AVAILABLEAP, x));
             c.getSession().write(MaplePacketCreator.updatePlayerStats(stats));
         } else if (splitted[0].equalsIgnoreCase("job")) {
             if (splitted.length == 2) {
@@ -179,16 +169,16 @@ public class CharCommands implements GMCommand {
                 x = (short) 4;
             }
             if (splitted[1].equalsIgnoreCase("str")) {
-                noob.setStr(x);
+                noob.getStat().setStr(x);
                 noob.updateSingleStat(MapleStat.STR, x);
             } else if (splitted[1].equalsIgnoreCase("dex")) {
-                noob.setDex(x);
+                noob.getStat().setDex(x);
                 noob.updateSingleStat(MapleStat.DEX, x);
             } else if (splitted[1].equalsIgnoreCase("luk")) {
-                noob.setLuk(x);
+                noob.getStat().setLuk(x);
                 noob.updateSingleStat(MapleStat.LUK, x);
             } else if (splitted[1].equalsIgnoreCase("int")) {
-                noob.setInt(x);
+                noob.getStat().setInt(x);
                 noob.updateSingleStat(MapleStat.INT, x);
             } else if (splitted[1].equalsIgnoreCase("ap")) {
                 noob.setRemainingAp(x);

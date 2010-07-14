@@ -70,7 +70,7 @@ public final class AdminCommandHandler extends AbstractMaplePacketHandler {
                 target = c.getChannelServer().getPlayerStorage().getCharacterByName(victim);
                 if (target != null) {
                     String readableTargetName = MapleCharacterUtil.makeMapleReadable(target.getName());
-                    String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    String ip = target.getClient().getSessionIPAddress();
                     reason += readableTargetName + " (IP: " + ip + ")";
                     target.ban(reason);
                     c.getSession().write(MaplePacketCreator.sendGMOperation(4, (byte) 0));
@@ -89,7 +89,7 @@ public final class AdminCommandHandler extends AbstractMaplePacketHandler {
                 target = c.getChannelServer().getPlayerStorage().getCharacterByName(victim);
                 if (target != null) {
                     String readableTargetName = MapleCharacterUtil.makeMapleReadable(target.getName());
-                    String ip = target.getClient().getSession().getRemoteAddress().toString().split(":")[0];
+                    String ip = target.getClient().getSessionIPAddress();
                     reason += readableTargetName + " (IP: " + ip + ")";
                     if (duration == -1) {
                         target.ban(description + " " + reason);

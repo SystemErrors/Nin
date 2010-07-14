@@ -21,7 +21,7 @@ public class Kyra extends PircBot {
      * and open the template in the editor.
      */
 /*
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Kyra instance = new Kyra();
 
     public static Kyra getInstance() {

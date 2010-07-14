@@ -20,40 +20,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.client.Inventory;
 
-import java.util.List;
-
 public interface IItem extends Comparable<IItem> {
-
-    public final int ITEM = 2;
-    public final int EQUIP = 1;
-    public final int PET = 3;
 
     byte getType();
 
-    byte getPosition();
+    short getPosition();
 
-    void setPosition(byte position);
-
-    int getItemId();
+    byte getFlag();
 
     short getQuantity();
 
     String getOwner();
 
-    public byte getFlag();
+    String getGMLog();
+
+    int getItemId();
+
+    MaplePet getPet();
+
+    int getUniqueId();
 
     IItem copy();
 
-    void setOwner(String owner);
-
-    void setQuantity(short quantity);
-
-    public int getUniqueId();
-
-    public void setUniqueId(int id);
-    
     long getExpiration();
 
+    void setFlag(byte flag);
+
+    void setUniqueId(int id);
+
+    void setPosition(short position);
+
     void setExpiration(long expire);
-    public void setFlag(byte flag);
+
+    void setOwner(String owner);
+
+    void setGMLog(String GameMaster_log);
+
+    void setQuantity(short quantity);
 }

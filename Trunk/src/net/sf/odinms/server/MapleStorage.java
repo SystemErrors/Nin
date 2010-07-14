@@ -1,30 +1,6 @@
-/*
-This file is part of the OdinMS Maple Story Server
-Copyright (C) 2008 Patrick Huy <patrick.huy@frz.cc> 
-Matthias Butz <matze@odinms.de>
-Jan Christian Meyer <vimes@odinms.de>
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License version 3
-as published by the Free Software Foundation. You may not use, modify
-or distribute this program under any other version of the
-GNU Affero General Public License.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.sf.odinms.server;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,272 +16,299 @@ import net.sf.odinms.client.Inventory.Equip;
 import net.sf.odinms.client.Inventory.IEquip;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.Inventory.Item;
-import net.sf.odinms.client.Inventory.MapleInventory;
-import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
+import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.database.DatabaseException;
+import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.tools.MaplePacketCreator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- *
- * @author Matze
- */
-public class MapleStorage {
+public class MapleStorage implements Serializable {
 
+    private static final long serialVersionUID = 9179541993413738569L;
     private int id;
     private List<IItem> items;
     private int meso;
     private byte slots;
+    private boolean changed = false;
     private Map<MapleInventoryType, List<IItem>> typeItems = new HashMap<MapleInventoryType, List<IItem>>();
-    private static Logger log = LoggerFactory.getLogger(MapleStorage.class);
 
     private MapleStorage(int id, byte slots, int meso) {
-        this.id = id;
-        this.slots = slots;
-        this.items = new LinkedList<IItem>();
-        this.meso = meso;
+	this.id = id;
+	this.slots = slots;
+	this.items = new LinkedList<IItem>();
+	this.meso = meso;
     }
 
-    public static MapleStorage create(int id) {
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO storages (accountid, slots, meso) VALUES (?, ?, ?)");
-            ps.setInt(1, id);
-            ps.setInt(2, 16);
-            ps.setInt(3, 0);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException ex) {
-            log.error("Error creating storage", ex);
-        }
-        return loadOrCreateFromDB(id);
+    public static int create(int id) throws SQLException {
+	Connection con = DatabaseConnection.getConnection();
+	PreparedStatement ps = con.prepareStatement("INSERT INTO storages (accountid, slots, meso) VALUES (?, ?, ?)", DatabaseConnection.RETURN_GENERATED_KEYS);
+	ps.setInt(1, id);
+	ps.setInt(2, 4);
+	ps.setInt(3, 0);
+	ps.executeUpdate();
+
+	int storageid;
+	ResultSet rs = ps.getGeneratedKeys();
+	if (rs.next()) {
+	    storageid = rs.getInt(1);
+	    ps.close();
+	    rs.close();
+	    return storageid;
+	}
+	ps.close();
+	rs.close();
+	throw new DatabaseException("Inserting char failed.");
     }
 
-    public static MapleStorage loadOrCreateFromDB(int id) {
-        MapleStorage ret = null;
-        int storeId;
-        try {
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("SELECT * FROM storages WHERE accountid = ?");
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next()) {
-                rs.close();
-                ps.close();
-                return create(id);
-            } else {
-                storeId = rs.getInt("storageid");
-                ret = new MapleStorage(storeId, (byte) rs.getInt("slots"), rs.getInt("meso"));
-                rs.close();
-                ps.close();
-                String sql = "SELECT * FROM inventoryitems " + "LEFT JOIN inventoryequipment USING (inventoryitemid) " + "WHERE storageid = ?";
-                ps = con.prepareStatement(sql);
-                ps.setInt(1, storeId);
-                rs = ps.executeQuery();
-                while (rs.next()) {
-                    MapleInventoryType type = MapleInventoryType.getByType((byte) rs.getInt("inventorytype"));
-                    if (type.equals(MapleInventoryType.EQUIP) || type.equals(MapleInventoryType.EQUIPPED)) {
-                        int itemid = rs.getInt("itemid");
-                        Equip equip = new Equip(itemid, (byte) rs.getInt("position"));
-                        equip.setOwner(rs.getString("owner"));
-                        equip.setQuantity((short) rs.getInt("quantity"));
-                        equip.setAcc((short) rs.getInt("acc"));
-                        equip.setAvoid((short) rs.getInt("avoid"));
-                        equip.setDex((short) rs.getInt("dex"));
-                        equip.setHands((short) rs.getInt("hands"));
-                        equip.setHp((short) rs.getInt("hp"));
-                        equip.setInt((short) rs.getInt("int"));
-                        equip.setJump((short) rs.getInt("jump"));
-                        equip.setLuk((short) rs.getInt("luk"));
-                        equip.setMatk((short) rs.getInt("matk"));
-                        equip.setMdef((short) rs.getInt("mdef"));
-                        equip.setMp((short) rs.getInt("mp"));
-                        equip.setSpeed((short) rs.getInt("speed"));
-                        equip.setStr((short) rs.getInt("str"));
-                        equip.setWatk((short) rs.getInt("watk"));
-                        equip.setWdef((short) rs.getInt("wdef"));
-                        equip.setUpgradeSlots((byte) rs.getInt("upgradeslots"));
-                        equip.setLevel((byte) rs.getInt("level"));
-                        equip.setHammers((byte) rs.getInt("hammers"));
-                        equip.setExpiration(rs.getLong("expiredate"));                        
-                        ret.items.add(equip);
-                    } else {
-                        Item item = new Item(rs.getInt("itemid"), (byte) rs.getInt("position"), (short) rs.getInt("quantity"), rs.getInt("uniqueid"));
-                        item.setOwner(rs.getString("owner"));
-                        item.setExpiration(rs.getLong("expiredate"));
-                        ret.items.add(item);
-                    }
-                }
-                rs.close();
-                ps.close();
-            }
-        } catch (SQLException ex) {
-            log.error("Error loading storage", ex);
-        }
-        return ret;
+    public static MapleStorage loadStorage(int id) {
+	MapleStorage ret = null;
+	int storeId;
+	try {
+	    Connection con = DatabaseConnection.getConnection();
+	    PreparedStatement ps = con.prepareStatement("SELECT * FROM storages WHERE accountid = ?");
+	    ps.setInt(1, id);
+	    ResultSet rs = ps.executeQuery();
+
+	    if (rs.next()) {
+		storeId = rs.getInt("storageid");
+		ret = new MapleStorage(storeId, rs.getByte("slots"), rs.getInt("meso"));
+		rs.close();
+		ps.close();
+
+		ps = con.prepareStatement("SELECT * FROM inventoryitems LEFT JOIN inventoryequipment USING (inventoryitemid) WHERE storageid = ?");
+		ps.setInt(1, storeId);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+		    MapleInventoryType type = MapleInventoryType.getByType((byte) rs.getInt("inventorytype"));
+		    if (type.equals(MapleInventoryType.EQUIP) || type.equals(MapleInventoryType.EQUIPPED)) {
+			int itemid = rs.getInt("itemid");
+			Equip equip = new Equip(itemid, rs.getByte("position"), rs.getInt("ringid"), rs.getByte("flag"));
+			equip.setOwner(rs.getString("owner"));
+			equip.setQuantity(rs.getShort("quantity"));
+			equip.setAcc(rs.getShort("acc"));
+			equip.setAvoid(rs.getShort("avoid"));
+			equip.setDex(rs.getShort("dex"));
+			equip.setHands(rs.getShort("hands"));
+			equip.setHp(rs.getShort("hp"));
+			equip.setInt(rs.getShort("int"));
+			equip.setJump(rs.getShort("jump"));
+			equip.setLuk(rs.getShort("luk"));
+			equip.setMatk(rs.getShort("matk"));
+			equip.setMdef(rs.getShort("mdef"));
+			equip.setMp(rs.getShort("mp"));
+			equip.setSpeed(rs.getShort("speed"));
+			equip.setStr(rs.getShort("str"));
+			equip.setWatk(rs.getShort("watk"));
+			equip.setWdef(rs.getShort("wdef"));
+			equip.setItemLevel(rs.getByte("itemLevel"));
+			equip.setItemEXP(rs.getShort("itemEXP"));
+			equip.setUpgradeSlots(rs.getByte("upgradeslots"));
+			equip.setLevel(rs.getByte("level"));
+			equip.setViciousHammer(rs.getByte("ViciousHammer"));
+			equip.setExpiration(rs.getLong("expiredate"));
+			equip.setFlag(rs.getByte("flag"));
+			ret.items.add(equip);
+		    } else {
+			Item item = new Item(rs.getInt("itemid"), (byte) rs.getInt("position"), (short) rs.getInt("quantity"), rs.getByte("flag"));
+			item.setOwner(rs.getString("owner"));
+			item.setExpiration(rs.getLong("expiredate"));
+			item.setFlag(rs.getByte("flag"));
+			ret.items.add(item);
+		    }
+		}
+		rs.close();
+		ps.close();
+	    } else {
+		storeId = create(id);
+		ret = new MapleStorage(storeId, (byte) 4, 0);
+	    }
+	} catch (SQLException ex) {
+	    System.err.println("Error loading storage" + ex);
+	}
+	return ret;
     }
 
     public void saveToDB() {
-        try {
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-            Connection con = DatabaseConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement("UPDATE storages SET slots = ?, meso = ? WHERE storageid = ?");
-            ps.setInt(1, slots);
-            ps.setInt(2, meso);
-            ps.setInt(3, id);
-            ps.executeUpdate();
-            ps.close();
-            ps = con.prepareStatement("DELETE FROM inventoryitems WHERE storageid = ?");
-            ps.setInt(1, id);
-            ps.executeUpdate();
-            ps.close();
-            ps = con.prepareStatement("INSERT INTO inventoryitems (storageid, itemid, inventorytype, position, quantity, owner, uniqueid, expiredate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            PreparedStatement pse = con.prepareStatement("INSERT INTO inventoryequipment VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            MapleInventoryType type;
-            for (IItem item : items) {
-                ps.setInt(1, id);
-                ps.setInt(2, item.getItemId());
-                type = ii.getInventoryType(item.getItemId());
-                ps.setInt(3, type.getType());
-                ps.setInt(4, item.getPosition());
-                ps.setInt(5, item.getQuantity());
-                ps.setString(6, item.getOwner());
-                ps.setInt(7, item.getUniqueId());
-                ps.setLong(8, item.getExpiration());
-                ps.executeUpdate();
-                ResultSet rs = ps.getGeneratedKeys();
-                int itemid;
-                if (rs.next()) {
-                    itemid = rs.getInt(1);
-                } else {
-                    throw new DatabaseException("Inserting char failed.");
-                }
-                if (type.equals(MapleInventoryType.EQUIP) || type.equals(MapleInventoryType.EQUIPPED)) {
-                    pse.setInt(1, itemid);
-                    IEquip equip = (IEquip) item;
-                    pse.setInt(2, equip.getUpgradeSlots());
-                    pse.setInt(3, equip.getLevel());
-                    pse.setInt(4, equip.getStr());
-                    pse.setInt(5, equip.getDex());
-                    pse.setInt(6, equip.getInt());
-                    pse.setInt(7, equip.getLuk());
-                    pse.setInt(8, equip.getHp());
-                    pse.setInt(9, equip.getMp());
-                    pse.setInt(10, equip.getWatk());
-                    pse.setInt(11, equip.getMatk());
-                    pse.setInt(12, equip.getWdef());
-                    pse.setInt(13, equip.getMdef());
-                    pse.setInt(14, equip.getAcc());
-                    pse.setInt(15, equip.getAvoid());
-                    pse.setInt(16, equip.getHands());
-                    pse.setInt(17, equip.getSpeed());
-                    pse.setInt(18, equip.getJump());
-                    pse.setInt(19, equip.getHammers());
-                    pse.setInt(20, equip.getRingId());
-                    pse.executeUpdate();
-                }
-            }
-            ps.close();
-            pse.close();
-        } catch (SQLException ex) {
-            log.error("Error saving storage", ex);
-        }
+	if (!changed) {
+	    return;
+	}
+	try {
+	    Connection con = DatabaseConnection.getConnection();
+
+	    PreparedStatement ps = con.prepareStatement("UPDATE storages SET slots = ?, meso = ? WHERE storageid = ?");
+	    ps.setInt(1, slots);
+	    ps.setInt(2, meso);
+	    ps.setInt(3, id);
+	    ps.executeUpdate();
+	    ps.close();
+
+	    ps = con.prepareStatement("DELETE FROM inventoryitems WHERE storageid = ?");
+	    ps.setInt(1, id);
+	    ps.executeUpdate();
+	    ps.close();
+
+	    ps = con.prepareStatement("INSERT INTO inventoryitems (storageid, itemid, inventorytype, position, quantity, owner, GM_Log, expiredate, flag) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", DatabaseConnection.RETURN_GENERATED_KEYS);
+	    PreparedStatement pse = con.prepareStatement("INSERT INTO inventoryequipment VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+	    for (IItem item : items) {
+		ps.setInt(1, id);
+		ps.setInt(2, item.getItemId());
+		ps.setInt(3, item.getType()); // type.getType()
+		ps.setInt(4, item.getPosition());
+		ps.setInt(5, item.getQuantity());
+		ps.setString(6, item.getOwner());
+		ps.setString(7, item.getGMLog());
+		ps.setLong(8, item.getExpiration());
+		ps.setByte(9, item.getFlag());
+		ps.executeUpdate();
+
+		ResultSet rs = ps.getGeneratedKeys();
+		int itemid;
+		if (rs.next()) {
+		    itemid = rs.getInt(1);
+		} else {
+		    throw new DatabaseException("Inserting char failed.");
+		}
+		if (item.getType() == 1) {
+		    pse.setInt(1, itemid);
+		    IEquip equip = (IEquip) item;
+		    pse.setInt(2, equip.getUpgradeSlots());
+		    pse.setInt(3, equip.getLevel());
+		    pse.setInt(4, equip.getStr());
+		    pse.setInt(5, equip.getDex());
+		    pse.setInt(6, equip.getInt());
+		    pse.setInt(7, equip.getLuk());
+		    pse.setInt(8, equip.getHp());
+		    pse.setInt(9, equip.getMp());
+		    pse.setInt(10, equip.getWatk());
+		    pse.setInt(11, equip.getMatk());
+		    pse.setInt(12, equip.getWdef());
+		    pse.setInt(13, equip.getMdef());
+		    pse.setInt(14, equip.getAcc());
+		    pse.setInt(15, equip.getAvoid());
+		    pse.setInt(16, equip.getHands());
+		    pse.setInt(17, equip.getSpeed());
+		    pse.setInt(18, equip.getJump());
+		    pse.setInt(19, equip.getRingId());
+		    pse.setInt(20, equip.getViciousHammer());
+		    pse.setInt(21, equip.getItemLevel());
+		    pse.setInt(22, equip.getItemEXP());
+		    pse.executeUpdate();
+		}
+	    }
+	    ps.close();
+	    pse.close();
+	} catch (SQLException ex) {
+	    System.err.println("Error saving storage" + ex);
+	}
     }
 
     public IItem takeOut(byte slot) {
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        IItem ret = items.remove(slot);
-        MapleInventoryType type = ii.getInventoryType(ret.getItemId());
-        typeItems.put(type, new ArrayList<IItem>(filterItems(type)));
-        return ret;
+	changed = true;
+	IItem ret = items.remove(slot);
+	MapleInventoryType type = InventoryConstants.getInventoryType(ret.getItemId());
+	typeItems.put(type, new ArrayList<IItem>(filterItems(type)));
+	return ret;
     }
 
     public void store(IItem item) {
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        items.add(item);
-        MapleInventoryType type = ii.getInventoryType(item.getItemId());
-        typeItems.put(type, new ArrayList<IItem>(filterItems(type)));
+	changed = true;
+	items.add(item);
+	MapleInventoryType type = InventoryConstants.getInventoryType(item.getItemId());
+	typeItems.put(type, new ArrayList<IItem>(filterItems(type)));
     }
 
     public List<IItem> getItems() {
-        return Collections.unmodifiableList(items);
+	return Collections.unmodifiableList(items);
     }
 
     private List<IItem> filterItems(MapleInventoryType type) {
-        List<IItem> ret = new LinkedList<IItem>();
-        MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        for (IItem item : items) {
-            if (ii.getInventoryType(item.getItemId()) == type) {
-                ret.add(item);
-            }
-        }
-        return ret;
+	List<IItem> ret = new LinkedList<IItem>();
+
+	for (IItem item : items) {
+	    if (InventoryConstants.getInventoryType(item.getItemId()) == type) {
+		ret.add(item);
+	    }
+	}
+	return ret;
     }
 
     public byte getSlot(MapleInventoryType type, byte slot) {
-        // MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        byte ret = 0;
-        for (IItem item : items) {
-            if (item == typeItems.get(type).get(slot)) {
-                return ret;
-            }
-            ret++;
-        }
-        return -1;
+	// MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
+	byte ret = 0;
+	for (IItem item : items) {
+	    if (item == typeItems.get(type).get(slot)) {
+		return ret;
+	    }
+	    ret++;
+	}
+	return -1;
     }
 
     public void sendStorage(MapleClient c, int npcId) {
-        final MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
-        // sort by inventorytype to avoid confusion
-        Collections.sort(items, new Comparator<IItem>() {
+	// sort by inventorytype to avoid confusion
+	Collections.sort(items, new Comparator<IItem>() {
 
-            public int compare(IItem o1, IItem o2) {
-                if (ii.getInventoryType(o1.getItemId()).getType() < ii.getInventoryType(o2.getItemId()).getType()) {
-                    return -1;
-                } else if (ii.getInventoryType(o1.getItemId()) == ii.getInventoryType(o2.getItemId())) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-        });
-        for (MapleInventoryType type : MapleInventoryType.values()) {
-            typeItems.put(type, new ArrayList<IItem>(items));
-        }
-        c.getSession().write(MaplePacketCreator.getStorage(npcId, slots, items, meso));
+	    public int compare(IItem o1, IItem o2) {
+		if (InventoryConstants.getInventoryType(o1.getItemId()).getType() < InventoryConstants.getInventoryType(o2.getItemId()).getType()) {
+		    return -1;
+		} else if (InventoryConstants.getInventoryType(o1.getItemId()) == InventoryConstants.getInventoryType(o2.getItemId())) {
+		    return 0;
+		} else {
+		    return 1;
+		}
+	    }
+	});
+	for (MapleInventoryType type : MapleInventoryType.values()) {
+	    typeItems.put(type, new ArrayList<IItem>(items));
+	}
+	c.getSession().write(MaplePacketCreator.getStorage(npcId, slots, items, meso));
     }
 
     public void sendStored(MapleClient c, MapleInventoryType type) {
-        c.getSession().write(MaplePacketCreator.storeStorage(slots, type, typeItems.get(type)));
+	c.getSession().write(MaplePacketCreator.storeStorage(slots, type, typeItems.get(type)));
     }
 
     public void sendTakenOut(MapleClient c, MapleInventoryType type) {
-        c.getSession().write(MaplePacketCreator.takeOutStorage(slots, type, typeItems.get(type)));
+	c.getSession().write(MaplePacketCreator.takeOutStorage(slots, type, typeItems.get(type)));
     }
 
     public int getMeso() {
-        return meso;
+	return meso;
     }
 
     public void setMeso(int meso) {
-        if (meso < 0) {
-            throw new RuntimeException();
-        }
-        this.meso = meso;
+	if (meso < 0) {
+	    return;
+	}
+        changed = true;
+	this.meso = meso;
     }
 
     public void sendMeso(MapleClient c) {
-        c.getSession().write(MaplePacketCreator.mesoStorage(slots, meso));
+	c.getSession().write(MaplePacketCreator.mesoStorage(slots, meso));
     }
 
     public boolean isFull() {
-        return items.size() >= slots;
+	return items.size() >= slots;
+    }
+
+    public int getSlots() {
+	return slots;
+    }
+
+    public void increaseSlots(byte gain) {
+        changed = true;
+	this.slots += gain;
+    }
+
+    public void setSlots(byte set) {
+        changed = true;
+	this.slots = set;
     }
 
     public void close() {
-        typeItems.clear();
+	typeItems.clear();
     }
 }

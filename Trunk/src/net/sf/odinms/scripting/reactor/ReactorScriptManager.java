@@ -31,8 +31,8 @@ import javax.script.Invocable;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.scripting.AbstractScriptManager;
-import net.sf.odinms.server.life.MapleMonsterInformationProvider.DropEntry;
 import net.sf.odinms.server.maps.MapleReactor;
+import net.sf.odinms.server.maps.ReactorDropEntry;
 
 /**
  * @author Lerk
@@ -40,7 +40,7 @@ import net.sf.odinms.server.maps.MapleReactor;
 public class ReactorScriptManager extends AbstractScriptManager {
 
     private static ReactorScriptManager instance = new ReactorScriptManager();
-    private Map<Integer, List<DropEntry>> drops = new HashMap<Integer, List<DropEntry>>();
+    private Map<Integer, List<ReactorDropEntry>> drops = new HashMap<Integer, List<ReactorDropEntry>>();
 
     public synchronized static ReactorScriptManager getInstance() {
         return instance;
@@ -62,17 +62,17 @@ public class ReactorScriptManager extends AbstractScriptManager {
         }
     }
 
-    public List<DropEntry> getDrops(int rid) {
-        List<DropEntry> ret = drops.get(rid);
+    public List<ReactorDropEntry> getDrops(int rid) {
+        List<ReactorDropEntry> ret = drops.get(rid);
         if (ret == null) {
-            ret = new LinkedList<DropEntry>();
+            ret = new LinkedList<ReactorDropEntry>();
             try {
                 Connection con = DatabaseConnection.getConnection();
-                PreparedStatement ps = con.prepareStatement("SELECT itemid, chance FROM reactordrops WHERE reactorid = ? AND chance >= 0");
+                PreparedStatement ps = con.prepareStatement("SELECT itemid, chance, questid FROM reactordrops WHERE reactorid = ? AND chance >= 0");
                 ps.setInt(1, rid);
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    ret.add(new DropEntry(rs.getInt("itemid"), rs.getInt("chance")));
+                    ret.add(new ReactorDropEntry(rs.getInt("itemid"), rs.getInt("chance"), rs.getInt("questid")));
                 }
                 rs.close();
                 ps.close();

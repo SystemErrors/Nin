@@ -41,12 +41,15 @@ function monsterValue(eim, mobId) {
 function setup(partyid) {
     exitMap = em.getChannelServer().getMapFactory().getMap(200000000);
     var instanceName = "BossQuest" + partyid;
+
     var eim = em.newInstance(instanceName);
     var mf = eim.getMapFactory();
     var map = mf.getMap(240060200, false, true, false);
     map.toggleDrops();
+
     eim.setProperty("points", 0);
     eim.setProperty("monster_number", 0);
+
     eim.schedule("beginQuest", 5000);
     return eim;
 }
@@ -59,7 +62,7 @@ function playerEntry(eim, player) {
 function playerDead(eim, player) {
 }
 
-function playerRevive(eim, player) { 
+function playerRevive(eim, player) {
     player.setHp(player.getMaxHp());
     playerExit(eim, player);
     return false;
@@ -69,16 +72,14 @@ function playerDisconnected(eim, player) {
     removePlayer(eim, player);
 }
 
-function leftParty(eim, player) {			
+function leftParty(eim, player) {
     playerExit(eim, player);
 }
 
 function disbandParty(eim) {
     var party = eim.getPlayers();
-    if(party != null){
-        for (var i = 0; i < party.size(); i++) {
-            playerExit(eim, party.get(i));
-        }
+    for (var i = 0; i < party.size(); i++) {
+        playerExit(eim, party.get(i));
     }
 }
 
@@ -103,7 +104,7 @@ function removePlayer(eim, player) {
     if (party.size() == 1) {
         dispose = true;
     }
-    eim.saveBossQuestPoints(parseInt(eim.getProperty("points")), player);
+   // eim.saveBossQuestPoints(parseInt(eim.getProperty("points")), player);
     eim.unregisterPlayer(player);
     player.getMap().removePlayer(player);
     player.setMap(exitMap);
@@ -122,28 +123,42 @@ function clearPQ(eim) {
 function allMonstersDead(eim) {
     var monster_number = parseInt(eim.getProperty("monster_number"));
     var points = parseInt(eim.getProperty("points"));
-	
+
     var monster_end = java.lang.System.currentTimeMillis();
     var monster_time = Math.round((monster_end - parseInt(eim.getProperty("monster_start"))) / 1000);
-	
+
+
+
     if (3600 - monster_time <= 0)
-        points += monster_number * 2;
+        points += monster_number * 3;
     else
-        points += (monster_number * 3);
-	
+        points += (monster_number * 3) + (monster_number + 1);
+
     monster_number++;
-	
+
     eim.setProperty("points", points);
     eim.setProperty("monster_number", monster_number);
-	
+
     var map = eim.getMapInstance(240060200);
 
     if (monster_number > 19) {
         map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] Congratulations! Your team has defeated all the bosses with " + points + " points!"));
         map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] The points have been awarded, spend them as you wish."));
-        disbandParty();
+        map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] You will be warped out in 15 seconds."));
+        var party = eim.getPlayers();
+        for (var i = 0; i < party.size(); i++) {
+            var pl = party.get(i);
+            pl.setBossPoints(pl.getBossPoints() + (points/party.size()));
+        }
+        map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.getClock(15));
+        eim.schedule("disbandParty", 15000);
     } else {
-        map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] Your team now has " + points + " points! The next boss will spawn in 10 seconds."));
+        map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] Your team now has gained " + points + " points! The next boss will spawn in 10 seconds."));
+        var party = eim.getPlayers();
+       for (var i = 0; i < party.size(); i++) {
+            var pl = party.get(i);
+            pl.setBossPoints(pl.getBossPoints() + (points/party.size()));
+        }
         map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.getClock(10));
         eim.schedule("monsterSpawn", 10000);
     }
@@ -176,9 +191,9 @@ function monsterSpawn(eim) {
 
 function beginQuest(eim) {
     var map = eim.getMapInstance(240060200);
-    map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] The creatures of the darkness are coming in 30 seconds. Prepare for the worst!"));
-    eim.schedule("monsterSpawn", 30000);
-    map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.getClock(30));
+    map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[The Boss Quest] The creatures of the darkness are coming in 10 seconds. Prepare for the worst!"));
+    eim.schedule("monsterSpawn", 10000);
+    map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.getClock(10));
 }
 
 function cancelSchedule() {

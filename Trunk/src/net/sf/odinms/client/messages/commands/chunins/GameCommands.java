@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.SkillFactory;
+import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.client.messages.InternCommand;
 import net.sf.odinms.client.messages.InternCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;

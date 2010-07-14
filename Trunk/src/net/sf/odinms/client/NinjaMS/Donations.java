@@ -4,7 +4,7 @@
  */
 package net.sf.odinms.client.NinjaMS;
 
-import net.sf.odinms.client.Enums.MapleStat;
+import net.sf.odinms.client.Buffs.MapleStat;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.server.MapleInventoryManipulator;
@@ -81,12 +81,12 @@ public class Donations {
                 pl.showMessage("You have gained 100 Fame");
                 return true;
             case 14:
-                pl.setJqpoints(pl.getJqpoints() + 1);
+                pl.setJqpoints((short)(pl.getJqpoints() + 1));
                 pl.showMessage("you have gained a JQ point");
                 return true;
             case 15:
                 int p = chance > 5 ? 1 : 2;
-                pl.setJqpoints(pl.getJqpoints() + p);
+                pl.setJqpoints((short)(pl.getJqpoints() + p));
                 pl.showMessage("you have gained " + p + " JQ Points");
                 return true;
             case 16:

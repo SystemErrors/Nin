@@ -37,7 +37,7 @@ function scheduleNew() {
     cal.set(java.util.Calendar.SECOND, 0);
     var nextTime = cal.getTimeInMillis();
     while (nextTime <= java.lang.System.currentTimeMillis()) {
-        nextTime += 1000 * 60 * 60; // every minute
+        nextTime += 1000 * 60 * 60 * 4; // 4 hours
     }
     setupTask = em.scheduleAtTimestamp("setup", nextTime);
 }
@@ -49,11 +49,14 @@ function cancelSchedule() {
 function setup() {
     em.setProperty("entryPossible", "false");
     returnMap = em.getChannelServer().getMapFactory().getMap(101000000);
+    var createInstances = new Array("lolcastle5");
     var x;
-    var eim = em.newInstance("lolcastle5");
-    var mf = eim.getMapFactory();
-    var map = mf.getMap(mapId, false, false);
-    map.toggleDrops();
+    for (x = 0; x < createInstances.length; x++) {
+        var eim = em.newInstance(createInstances[x]);
+        var mf = eim.getMapFactory();
+        var map = mf.getMap(mapId, false, false);
+        map.toggleDrops();
+    }
     for (x = 0; x < 5; x++) {
         em.schedule("announce", 5 * 60000 + x * 60000);
     }
@@ -66,7 +69,7 @@ function announce() {
     em.setProperty("entryPossible", "true");
     if (i == 0) i = 5;
     em.getChannelServer().broadcastPacket(
-        net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[Event] The Great Ninja Shiken will open in " + i + " minutes"));
+        net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[Event] The Great ninja Shiken will open in " + i + " minutes"));
     i--;
 }
 
@@ -76,12 +79,12 @@ function mesoDistribution() {
     while (iter.hasNext()) {
         var eim = iter.next();
         if (eim.getPlayerCount() > 0) {
-            var meso = eim.getPlayerCount() * 10;
+            var tao = eim.getPlayerCount() * 10;
             var randWinner = Math.floor(Math.random() * eim.getPlayerCount());
             var winner = eim.getPlayers().get(randWinner);
             var map = eim.getMapFactory().getMap(mapId, false, false);
-            map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[Event] " + winner.getName() + " wins " + meso + " Tao of sight"));
-            winner.gainItem(4032016, meso);
+            map.broadcastMessage(net.sf.odinms.tools.MaplePacketCreator.serverNotice(6, "[Event] " + winner.getName() + " wins " + tao + " tao of sights"));
+            winner.gainItem(4032016, tao);
         }
     }
 }
@@ -122,24 +125,25 @@ function startInstance(eim) {
             }
             var mob = net.sf.odinms.server.life.MapleLifeFactory.getMonster(mobId);
             var overrideStats = new net.sf.odinms.server.life.MapleMonsterStats();
-            overrideStats.setHp(mob.getHp());
-            overrideStats.setExp(mob.getExp() / 4);
+            overrideStats.setHp(mob.getHp() * 2);
+            overrideStats.setExp(mob.getExp());
             overrideStats.setMp(mob.getMaxMp());
             mob.setOverrideStats(overrideStats);
             eim.registerMonster(mob);
-            map.spawnMonsterOnGroudBelow(mob, new java.awt.Point(randX(), 100));
+
+            map.spawnMonsterOnGroundBelow(mob, new java.awt.Point(randX(), 100));
         }
         for (var x = 0; x < 3; x++) {
             var mob = net.sf.odinms.server.life.MapleLifeFactory.getMonster(9300152);
             var overrideStats = new net.sf.odinms.server.life.MapleMonsterStats();
-            overrideStats.setHp(2000000);
+            overrideStats.setHp(5000000);
             overrideStats.setExp(mob.getExp());
             overrideStats.setMp(mob.getMaxMp());
             mob.setOverrideStats(overrideStats);
             mob.setHp(2000000);
             eim.registerMonster(mob);
-            map.spawnMonsterOnGroudBelow(mob, new java.awt.Point(randX(), 100));
-        }	
+            map.spawnMonsterOnGroundBelow(mob, new java.awt.Point(randX(), 100));
+        }
     }
 }
 
@@ -211,63 +215,63 @@ function allMonstersDead(eim) {
     } else if (priceRand > 35 && priceRand <= 37) {
         // uberweapons
         var uberWeapons = new Array(1452019,
-            1472053, 1462015, 1332051, 1312030, 1322045, 1302056, 1442044, 1432030,
-            1382035, 1412021, 1422027, 1402037, 1372010, 1302026, 1102041, 1302081,
-            1312037,1322060,1402046,1412033,1422037,1442063,1472023,1332073,1332074,
-            1372044,1382057,1432047,1462050,1472068,1492023,1302086,1312038,1322061,
-            1332075,1332076,1372045,1372059,1402047,1412034,1422038,1432049,1442067,
-            1452059,1462051,1472071,1482024,1492025);
-
+                1472053,
+                1462015,
+                1332051,
+                1312030,
+                1322045,
+                1302056,
+                1442044,
+                1432030,
+                1382035,
+                1412021,
+                1422027,
+                1402037,
+                1372010,
+                1302026, // black umbrella
+                1102041 //pink adventurer cape
+                );      
         var uberRand = Math.floor(Math.random() * uberWeapons.length);
         var weaponId = uberWeapons[uberRand];
         price = ii.randomizeStats(ii.getEquipById(weaponId));
     } else if (priceRand > 37 && priceRand <= 45) {
         // 30% scroll
-        var scrolls30;
-        /*
-			none of these are available yet
-			2040103, // face accessory hp
-			2040108, // face accessory avoid
-			2040203, // eye accessory acc
-			2040208, // eye accessory int
-		*/
-        scrolls30 = new Array(
-            2040013, // helmet int
-            2040015, // helmet acc
-            2040307, // earring dex
-            2044705, // claw att
-            2044505, // bow att
-            2043305, // dagger att
-            2044605, // crossbow att
-            2040407, // topwear str
-            2040411, // topwear luk
-            2040907, // shield luk
-            2041035, // cape str
-            2041037, // cape int
-            2041039, // cape dex
-            2041041, // cape luk
-            2043105, // one-handed axe att
-            2044105, // two-handed axe att
-            2043205, // one-handed bw att
-            2044205, // two-handed bw att
-            2043005, // one-handed sword att
-            2044005, // two-handed sword att
-            2044405, // pole arm att
-            2044305, // spear att
-            2043805, // staff matt
-            2043705, // wand matt
-            2040715, // shoes jump
-            2040509, // overall dex
-            2040519, // overall int
-            2040521, // overall luk
-            2040811, // gloves att
-            2040815, // gloves matt
-            2040305, // earring int
-            2040917, // shield att
-            2040922, // shield matt
-            2043007, // sword matt
-            // GM SCrolls
-            2044503, 2044703, 2044603, 2043303, 2044303, 2044403, 2043803, 2043703, 2043003, 2044003, 2043203, 2044203, 2043103, 2044103, 2040506, 2040709, 2040710, 2040711, 2040303, 2040807, 2040806);
+        var scrolls30 = new Array(
+                2040013, // helmet int
+                2040015, // helmet acc
+                2040307, // earring dex
+                2044705, // claw att
+                2044505, // bow att
+                2043305, // dagger att
+                2044605, // crossbow att
+                2040407, // topwear str
+                2040411, // topwear luk
+                2040907, // shield luk
+                2041035, // cape str
+                2041037, // cape int
+                2041039, // cape dex
+                2041041, // cape luk
+                2043105, // one-handed axe att
+                2044105, // two-handed axe att
+                2043205, // one-handed bw att
+                2044205, // two-handed bw att
+                2043005, // one-handed sword att
+                2044005, // two-handed sword att
+                2044405, // pole arm att
+                2044305, // spear att
+                2043805, // staff matt
+                2043705, // wand matt
+                2040715, // shoes jump
+                2040509, // overall dex
+                2040519, // overall int
+                2040521, // overall luk
+                2040811, // gloves att
+                2040815, // gloves matt
+                2040305, // earring int
+                2040917, // shield att
+                2040922, // shield matt
+                2043007 // sword matt
+                );
         var scrollRand = Math.floor(Math.random() * scrolls30.length);
         price = new net.sf.odinms.client.Inventory.Item(scrolls30[scrollRand], 0, 1);
     } else if (priceRand > 45 && priceRand <= 70) {
@@ -276,11 +280,11 @@ function allMonstersDead(eim) {
             new Array(2022245, 3),
             new Array(2022179, 1));
         var powerRand = Math.floor(Math.random() * powerUps.length);
-        price = new net.sf.odinms.client.Item(powerUps[powerRand][0], 0, powerUps[powerRand][1]);
+        price = new net.sf.odinms.client.Inventory.Item(powerUps[powerRand][0], 0, powerUps[powerRand][1]);
     } else if (priceRand > 70 && priceRand <= 75) {
         // throwing stars
         var starId = 2070003 + Math.floor(Math.random() * 14);
-        price = new net.sf.odinms.client.Item(starId, 0, ii.getSlotMax(starId));
+        price = new net.sf.odinms.client.Inventory.Item(starId, 0, ii.getSlotMax(starId));
     } else if (priceRand > 75 && priceRand <= 95) {
         // 60% scroll
         var scrolls60 = new Array(	2044701, // claw att
@@ -306,7 +310,7 @@ function allMonstersDead(eim) {
             2040301 // earring int
             );
         var scrollRand = Math.floor(Math.random() * scrolls60.length);
-        price = new net.sf.odinms.client.Item(scrolls60[scrollRand], 0, 1);
+        price = new net.sf.odinms.client.Inventory.Item(scrolls60[scrollRand], 0, 1);
     } else {
         // 40% scroll
         var scrolls40 = new Array(
@@ -328,7 +332,7 @@ function allMonstersDead(eim) {
             2044708 // claw att
             );
         var scrollRand = Math.floor(Math.random() * scrolls40.length);
-        price = new net.sf.odinms.client.Item(scrolls40[scrollRand], 0, 1);
+        price = new net.sf.odinms.client.Inventory.Item(scrolls40[scrollRand], 0, 1);
     }
     var iter = eim.getPlayers().iterator();
     while (iter.hasNext()) {
@@ -364,4 +368,17 @@ function warpWinnersOut(eim) {
         eim.unregisterPlayer(player);
     }
     eim.dispose();
+}
+
+function leftParty(eim, player) {
+
+}
+
+function disbandParty(eim, player) {
+
+}
+
+// can't happen
+function playerRevive(eim, player) {
+
 }

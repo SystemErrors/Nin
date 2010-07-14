@@ -21,7 +21,7 @@ public class Amen extends PircBot {
      * and open the template in the editor.
      */
 
-    private String channel = "#ninjas";
+    private String channel = "#ninjams";
     private static Amen instance = new Amen();
 
     public static Amen getInstance() {

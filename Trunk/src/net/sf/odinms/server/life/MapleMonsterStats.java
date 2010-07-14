@@ -34,22 +34,15 @@ import net.sf.odinms.tools.Pair;
  */
 public class MapleMonsterStats {
 
-    private int exp;
-    private int hp, mp;
-    private int level;
-    private int PADamage;
-    private boolean boss;
-    private boolean undead;
+    private byte cp, selfDestruction_action, tagColor, tagBgColor, rareItemDropLevel, HPDisplayType;
+    private short level, PhysicalDefense, MagicDefense, eva;
+    private int exp, hp, mp, removeAfter, buffToGive, fixedDamage, selfDestruction_hp;
+    private boolean gmspawn, boss, undead, ffaLoot, firstAttack, isExplosiveReward, mobile, fly, onlyNormalAttack, friendly;
     private String name;
-    private Map<String, Integer> animationTimes = new HashMap<String, Integer>();
     private Map<Element, ElementalEffectiveness> resistance = new HashMap<Element, ElementalEffectiveness>();
     private List<Integer> revives = Collections.emptyList();
-    private byte tagColor;
-    private byte tagBgColor;
     private List<Pair<Integer, Integer>> skills = new ArrayList<Pair<Integer, Integer>>();
-    private boolean firstAttack;
-    private int buffToGive;
-    private boolean isGMS = false;
+    private BanishInfo banish;
 
     public int getExp() {
         return exp;
@@ -75,12 +68,92 @@ public class MapleMonsterStats {
         this.mp = mp;
     }
 
-    public int getLevel() {
+    public short getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(short level) {
         this.level = level;
+    }
+
+    public void setSelfD(byte selfDestruction_action) {
+        this.selfDestruction_action = selfDestruction_action;
+    }
+
+    public byte getSelfD() {
+        return selfDestruction_action;
+    }
+
+    public void setSelfDHP(int selfDestruction_hp) {
+        this.selfDestruction_hp = selfDestruction_hp;
+    }
+
+    public int getSelfDHp() {
+        return selfDestruction_hp;
+    }
+
+    public void setFixedDamage(int damage) {
+        this.fixedDamage = damage;
+    }
+
+    public int getFixedDamage() {
+        return fixedDamage;
+    }
+
+    public void setPhysicalDefense(final short PhysicalDefense) {
+        this.PhysicalDefense = PhysicalDefense;
+    }
+
+    public short getPhysicalDefense() {
+        return PhysicalDefense;
+    }
+
+    public final void setMagicDefense(final short MagicDefense) {
+        this.MagicDefense = MagicDefense;
+    }
+
+    public final short getMagicDefense() {
+        return MagicDefense;
+    }
+
+    public final void setEva(final short eva) {
+        this.eva = eva;
+    }
+
+    public final short getEva() {
+        return eva;
+    }
+
+    public void setOnlyNormalAttack(boolean onlyNormalAttack) {
+        this.onlyNormalAttack = onlyNormalAttack;
+    }
+
+    public boolean getOnlyNoramlAttack() {
+        return onlyNormalAttack;
+    }
+
+    public BanishInfo getBanishInfo() {
+        return banish;
+    }
+
+    public void setBanishInfo(BanishInfo banish) {
+        this.banish = banish;
+    }
+
+    public int getRemoveAfter() {
+        return removeAfter;
+    }
+
+    public void setRemoveAfter(int removeAfter) {
+        this.removeAfter = removeAfter;
+    }
+
+    public byte getrareItemDropLevel() {
+        return rareItemDropLevel;
+    }
+
+    public void setrareItemDropLevel(byte rareItemDropLevel) {
+        this.rareItemDropLevel = rareItemDropLevel;
     }
 
     public void setBoss(boolean boss) {
@@ -91,20 +164,36 @@ public class MapleMonsterStats {
         return boss;
     }
 
-    public void setAnimationTime(String name, int delay) {
-        animationTimes.put(name, delay);
+    public void setFfaLoot(boolean ffaLoot) {
+        this.ffaLoot = ffaLoot;
     }
 
-    public int getAnimationTime(String name) {
-        Integer ret = animationTimes.get(name);
-        if (ret == null) {
-            return 500;
-        }
-        return ret.intValue();
+    public boolean isFfaLoot() {
+        return ffaLoot;
     }
 
-    public boolean isMobile() {
-        return animationTimes.containsKey("move") || animationTimes.containsKey("fly");
+    public void setExplosiveReward(boolean isExplosiveReward) {
+        this.isExplosiveReward = isExplosiveReward;
+    }
+
+    public boolean isExplosiveReward() {
+        return isExplosiveReward;
+    }
+
+    public void setMobile(boolean mobile) {
+        this.mobile = mobile;
+    }
+
+    public boolean getMobile() {
+        return mobile;
+    }
+
+    public void setFly(boolean fly) {
+        this.fly = fly;
+    }
+
+    public boolean getFly() {
+        return fly;
     }
 
     public List<Integer> getRevives() {
@@ -125,6 +214,10 @@ public class MapleMonsterStats {
 
     public void setEffectiveness(Element e, ElementalEffectiveness ee) {
         resistance.put(e, ee);
+    }
+
+    public void removeEffectiveness(Element e) {
+        resistance.remove(e);
     }
 
     public ElementalEffectiveness getEffectiveness(Element e) {
@@ -160,9 +253,9 @@ public class MapleMonsterStats {
         this.tagBgColor = (byte) tagBgColor;
     }
 
-    public void setSkills(List<Pair<Integer, Integer>> skills) {
-        for (Pair<Integer, Integer> skill : skills) {
-            this.skills.add(skill);
+    public void setSkills(List<Pair<Integer, Integer>> skill_) {
+        for (Pair<Integer, Integer> skill : skill_) {
+            skills.add(skill);
         }
     }
 
@@ -170,8 +263,8 @@ public class MapleMonsterStats {
         return Collections.unmodifiableList(this.skills);
     }
 
-    public int getNoSkills() {
-        return this.skills.size();
+    public byte getNoSkills() {
+        return (byte) skills.size();
     }
 
     public boolean hasSkill(int skillId, int level) {
@@ -191,6 +284,22 @@ public class MapleMonsterStats {
         return firstAttack;
     }
 
+    public void setCP(byte cp) {
+        this.cp = cp;
+    }
+
+    public byte getCP() {
+        return cp;
+    }
+
+    public void setFriendly(boolean friendly) {
+        this.friendly = friendly;
+    }
+
+    public boolean isFriendly() {
+        return friendly;
+    }
+
     public void setBuffToGive(int buff) {
         this.buffToGive = buff;
     }
@@ -199,19 +308,19 @@ public class MapleMonsterStats {
         return buffToGive;
     }
 
-    public int getPADamage() {
-        return PADamage;
+    public byte getHPDisplayType() {
+        return HPDisplayType;
     }
 
-    public void setPADamage(int PADamage) {
-        this.PADamage = PADamage;
+    public void setHPDisplayType(byte HPDisplayType) {
+        this.HPDisplayType = HPDisplayType;
     }
 
-    public boolean getGMSpawn() {
-        return this.isGMS;
+    public boolean isGmspawn() {
+        return gmspawn;
     }
 
-    public void setGMSpawn() {
-        this.isGMS = true;
+    public void setGmspawn(boolean gmspawn) {
+        this.gmspawn = gmspawn;
     }
 }

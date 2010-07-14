@@ -18,6 +18,8 @@
         <int name="VRLeft" value="-225"/>
         <int name="VRBottom" value="750"/>
         <int name="VRRight" value="1304"/>
+        <string name="onFirstUserEnter" value=""/>
+        <string name="onUserEnter" value="welcome_Msg"/>
     </imgdir>
     <imgdir name="back">
         <imgdir name="0">

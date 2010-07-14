@@ -20,13 +20,13 @@ public class CloneCommands implements AdminCommand {
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         if (splitted[0].equalsIgnoreCase("setclonelimit")) {
             MapleCharacter noob = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-            int number = Integer.parseInt(splitted[2]);
+            byte number = Byte.parseByte(splitted[2]);
             if (noob == null) {
                 mc.dropMessage("player does not exist or not in your channel");
                 return;
             }
             noob.setCloneLimit(number);
-            noob.saveToDB();
+            noob.saveToDB(false, false);
             mc.dropMessage("haxxed his clone limit");
         } else if (splitted[0].equalsIgnoreCase("kagebunshin")) {
             if (c.getPlayer().hasClones()) {
@@ -36,21 +36,23 @@ public class CloneCommands implements AdminCommand {
                 Clones clone = new Clones(c.getPlayer(), ((c.getPlayer().getId() * 100) + c.getPlayer().getClones().size() + 1));
                 c.getPlayer().addClone(clone);
             }
-            mc.dropMessage("Please move around for it to take effect. Clone Limit for you is : " + c.getPlayer().getAllowedClones());
+            mc.dropMessage("Please move around for it to take effect. Clone Limit for you is : " + c.getPlayer().getCloneLimit());
         } else if (splitted[0].equalsIgnoreCase("fkagebunshin")) {
             MapleCharacter noob = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
-            int numbers = Integer.parseInt(splitted[2]);
+            byte numbers = Byte.parseByte(splitted[2]);
             if (noob == null) {
                 mc.dropMessage("player does not exist or not in your channel");
                 return;
             }
             if (noob.hasClones()) {
                 noob.removeClones();
+                mc.dropMessage("You have forced the nub to remove all clones.");
+                return;
             }
             if (numbers > 69) {
                 numbers = 10;
             }
-            for (int i = 0; i < numbers; i++) {
+            for (byte i = 0; i < numbers; i++) {
                 Clones clone = new Clones(noob, ((noob.getId() * 100) + noob.getClones().size() + 1));
                 noob.addClone(clone);
             }
