@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import net.sf.odinms.database.DatabaseConnection;
@@ -109,7 +110,17 @@ public class BuddyList {
 		}
 		return buddyIds;
 	}
-	
+
+     public void loadFromTransfer(final List<BuddyData> data) {
+	for (BuddyData bd : data){
+            if(!bd.isVisible()){
+                pendingRequests.push(new CharacterNameAndId(bd.getBuddyId(), bd.getName()));
+            } else {
+                put(new BuddylistEntry(bd.getName(), bd.getGroup(), bd.getBuddyId(), -1, true));
+            }
+        }
+    }
+
 	public void loadFromDb(int characterId) throws SQLException {
 		Connection con = DatabaseConnection.getConnection();
 		PreparedStatement ps = con.prepareStatement("SELECT b.buddyid, b.group, b.pending, c.name as buddyname FROM buddies as b, characters as c WHERE c.id = b.buddyid AND b.characterid = ?");

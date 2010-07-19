@@ -4,7 +4,6 @@
  */
 package net.sf.odinms.client.messages.commands.chunins;
 
-import static net.sf.odinms.client.messages.CommandProcessor.getNamedIntArg;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -51,7 +50,7 @@ public class PunishCommands implements InternCommand {
             if (noob == null) {
                 mc.dropMessage("this noob does not exist or in a diff channel");
             } else {
-                noob.mute(2);
+                noob.mute((byte)2);
                 mc.dropMessage("unmuted");
             }
         } else if (splitted[0].equalsIgnoreCase("tban")){

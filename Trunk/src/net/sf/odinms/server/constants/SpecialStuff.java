@@ -297,7 +297,7 @@ public class SpecialStuff {
         MapleInventoryType type = MapleInventoryType.getByType(item.getType());
         if (type == MapleInventoryType.EQUIPPED || type == MapleInventoryType.EQUIP) {
             Equip equip = (Equip) item;
-            if (equip.getLevel() > 68) {
+            if (equip.getLevel() > 68 || equip.getOwner().equals("Genin")) {
                 player.showMessage("You cannot drop a Stat Item. If you want to remove it any way, use @removeitem or @removeeqrow");
                 return false;
             }

@@ -90,6 +90,81 @@ public class Gacha {
         1302094 // - Angry Stirge - (no description)
     };
 
+    private static int[] itemsWithScrolls = {1302107, 2043003, // - Black Crystal Blade
+        1382016, 2043803,// - Pyogo Mushroom
+        1382045, 2043803,// - Elemental Staff 1
+        1382046, 2043803,// - Elemental Staff 2
+        1382047, 2043803,// - Elemental Staff 3
+        1382048, 2043803,// - Elemental Staff 4
+        1382049, 2043803,// - Elemental Staff 5
+        1382050, 2043803,// - Elemental Staff 6
+        1382051, 2043803,// - Elemental Staff 7
+        1382052, 2043803,// - Elemental Staff 8
+        1382060, 2043803,// - Crimson Arcanon
+        1442068, 2044403,// - Crimson Arcglaive
+        1452060, 2044503,// - Crimson Arclancer
+        1372035, 2043703,// - Elemental Wand 1
+        1372036, 2043703,// - Elemental Wand 2
+        1372037, 2043703,// - Elemental Wand 3
+        1372038, 2043703,// - Elemental Wand 4
+        1372039, 2043703,// - Elemental Wand 5
+        1372040, 2043703,// - Elemental Wand 6
+        1372041, 2043703,// - Elemental Wand 7
+        1372042, 2043703,// - Elemental Wand 8
+        1302081, 2043003,// - Timeless Executioners
+        1312037, 2043103,// - Timeless Bardiche
+        1322060, 2043203,// - Timeless Allargando
+        1402046, 2044003,// - Timeless Nibleheim
+        1412033, 2044103,// - Timeless Tabarzin
+        1422037, 2044203,// - Timeless Bellocce
+        1442063, 2044403,// - Timeless Diesra
+        1482023, 2044803,// - Timeless Equinox (10%)
+        1332073, 2043303,// - Timeless Pescas
+        1332074, 2043303,// - Timeless Killic
+        1372044, 2043703,// - Timeless Enreal Tear
+        1382057, 2043803,// - Timeless Aeas Hand
+        1432047, 2044303,// - Timeless Alchupiz
+        1462050, 2044603,// - Timeless Black Beauty
+        1472068, 2044703,// - Timeless Lampion
+        1492023, 2044902,// - Timeless Blindness (10%)
+        1322063, 2043203,// - Duck tube
+        1322064, 2043203,// - Duck tube
+        1402048, 2044003,// - Raven's Wing
+        1402049, 2044003,// - Night Raven's Wing
+        1402050, 2044003,// - Dawn Raven's Wing
+        1402051, 2044003,// - Dusk Raven's Wing
+        1422030, 2044203,// - Pink Seal Cushion
+        1422031, 2044203,// - Blue Seal Cushion
+        1442065, 2044403,// - Tsunami Wave
+        1442066, 2044403,// - Bullseye Board
+        1412040, 2044103,// - Redner
+        1432056, 2044303,// - Stormshear
+        1472072, 2044703,// - Raven's Claw
+        1472073, 2044703,// - Night Raven's Claw
+        1472074, 2044703,// - Dawn Raven's Claw
+        1472075, 2044703,// - Dusk Raven's Claw
+        1462052, 2044603,// - Raven's Eye
+        1462053, 2044603,// - Night Raven's Eye
+        1462054, 2044603,// - Dawn Raven's Eye
+        1462055, 2044603,// - Dusk Raven's Eye
+        1332077, 2043303,// - Raven's Beak
+        1332078, 2043303,// - Night Raven's Beak
+        1332079, 2043303,// - Dawn Raven's Beak
+        1332080, 2043303,// - Dusk Raven's Beak
+        1432039, 2044303,// - Fishing Pole - (no description)
+        1432046, 2044303,// - Maplemas Tree - (no description)
+        1302073, 2043003,// - Singapore Flag (Beginner) - (no description)
+        1302074, 2043003,// - Malaysia Flag (Beginner) - (no description)
+        1302080, 2043003,// - Maplemas Lights - (no description)
+        1302088, 2043003,// - Stirge-on-a-String - (no description)
+        1302089, 2043003,// - Stirge-on-a-Rope - (no description)
+        1302090, 2043003,// - Stirge-o-Whip - (no description)
+        1302091, 2043003,// - Stirge Grappler - (no description)
+        1302092, 2043003,//- Swooping Stirge - (no description)
+        1302093, 2043003,// - Frantic Strige - (no description)
+        1302094, 2043003// - Angry Stirge - (no description)
+    };
+
     public static int itemGacha(MapleCharacter player) {
         if (!player.haveItem(Items.GachaType.regular, 1)) {
             player.dropMessage("You do not have a Gacha ticket");

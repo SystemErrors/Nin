@@ -144,7 +144,7 @@ public class EventCommands implements GMCommand {
         } else if (splitted[0].equalsIgnoreCase("mutemap")) {
             for (MapleCharacter noob : c.getPlayer().getMap().getCharacters()) {
                 if (!noob.isChunin()) {
-                    noob.mute(1);
+                    noob.mute((byte)1);
                 }
             }
         } else if (splitted[0].equalsIgnoreCase("unmutemap")) {

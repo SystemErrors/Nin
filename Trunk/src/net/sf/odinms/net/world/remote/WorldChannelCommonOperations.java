@@ -33,6 +33,8 @@ public interface WorldChannelCommonOperations {
 
     public void broadcastSmega(byte[] message) throws RemoteException;
 
+    public void broadcastASmega(byte[] bytes) throws RemoteException;
+
     public void broadcastGMMessage(byte[] message) throws RemoteException;
 
     public void whisper(String sender, String target, int channel, String message) throws RemoteException;

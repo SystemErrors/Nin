@@ -4,10 +4,10 @@
  */
 package net.sf.odinms.client.messages.commands.Jounin;
 
+import net.sf.odinms.client.Inventory.Equip;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.Inventory.Item;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
-import net.sf.odinms.client.Inventory.MaplePet;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.GMCommand;
@@ -18,6 +18,7 @@ import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MapleShop;
 import net.sf.odinms.server.MapleShopFactory;
+import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.server.constants.SpecialStuff;
 import static net.sf.odinms.client.messages.CommandProcessor.getOptionalIntArg;
 
@@ -36,32 +37,44 @@ public class InventoryManipulationCommands implements GMCommand {
             MapleShop shop = sfact.getShop(getOptionalIntArg(splitted, 1, 1));
             shop.sendShop(c);
         } else if (splitted[0].equals("item")) {
-            short quantity = (short) getOptionalIntArg(splitted, 2, 1);
-            int itemId = Integer.parseInt(splitted[1]);
-            if (ii.getSlotMax(itemId) > 0) {               
-                MapleInventoryManipulator.addById(c, itemId, quantity, c.getPlayer().getName() + "used !item with quantity " + quantity, player.getName());
-            } else {
-                mc.dropMessage("Item " + itemId + " not found.");
-            }
+            final int itemId = Integer.parseInt(splitted[1]);
+	    final short quantity = (short) getOptionalIntArg(splitted, 2, 1);
+
+	    if (InventoryConstants.isPet(itemId)) {
+		c.getPlayer().dropMessage(5, "Please purshase a pet from the cash shop instead.");
+	    } else {
+		IItem item;
+		if (InventoryConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {		    
+		    item = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+		} else {
+		    item = new Item(itemId, (byte) 0, (short) quantity, (byte) 0);
+		}
+		item.setOwner(c.getPlayer().getName());
+		item.setGMLog(c.getPlayer().getName());
+		MapleInventoryManipulator.addbyItem(c, item);
+	    }
         } else if (splitted[0].equals("drop")) {
-            int itemId = Integer.parseInt(splitted[1]);
-            if (ii.getSlotMax(itemId) > 0) {
-                if (SpecialStuff.getInstance().isGMBlocked(itemId) && !player.isHokage()) {
+            final int itemId = Integer.parseInt(splitted[1]);
+	    final short quantity = (short) (short) getOptionalIntArg(splitted, 2, 1);
+
+	    if (InventoryConstants.isPet(itemId)) {
+		c.getPlayer().dropMessage(5, "Please purshase a pet from the cash shop instead.");
+	    } else if (SpecialStuff.getInstance().isGMBlocked(itemId) && !player.isHokage()) {
                     mc.dropMessage("Sunny says you cannot drop this item");
                     return;
-                }
-                short quantity = (short) (short) getOptionalIntArg(splitted, 2, 1);
-                IItem toDrop;
-                if (ii.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
-                    toDrop = ii.getEquipById(itemId);
-                } else {
-                    toDrop = new Item(itemId, (byte) 0, (short) quantity);
-                }
-                toDrop.setOwner(player.getName());
-                c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), toDrop, c.getPlayer().getPosition(), true, true);
+            } else if (ii.getSlotMax(itemId) < 1) {
+            mc.dropMessage("The Item " + itemId + " does not exist");
             } else {
-                mc.dropMessage("The Item " + itemId + " does not exist");
-            }
+		IItem toDrop;
+		if (InventoryConstants.getInventoryType(itemId) == MapleInventoryType.EQUIP) {
+		    toDrop = ii.randomizeStats((Equip) ii.getEquipById(itemId));
+		} else {
+		    toDrop = new Item(itemId, (byte) 0, (short) quantity, (byte) 0);
+		}
+		toDrop.setGMLog(c.getPlayer().getName());
+
+		c.getPlayer().getMap().spawnItemDrop(c.getPlayer(), c.getPlayer(), toDrop, c.getPlayer().getPosition(), true, true);
+	    }           
         } else if (splitted[0].equalsIgnoreCase("clearslot")) {
             if (splitted[1].equalsIgnoreCase("all")) {
                 clearslot(c, 1);
@@ -146,7 +159,7 @@ public class InventoryManipulationCommands implements GMCommand {
             if (tempItem == null) {
                 continue;
             }
-            MapleInventoryManipulator.removeFromSlot(c, type, i);
+            MapleInventoryManipulator.removeFromSlot(c, type, i, tempItem.getQuantity(), true);
         }
     }
 }

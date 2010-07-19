@@ -12,8 +12,6 @@ import net.sf.odinms.client.messages.IllegalCommandSyntaxException;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.client.messages.PlayerCommand;
 import net.sf.odinms.client.messages.PlayerCommandDefinition;
-import net.sf.odinms.net.channel.handler.BuddylistModifyHandler;
-import net.sf.odinms.net.channel.handler.WhisperHandler;
 import net.sf.odinms.server.constants.Items;
 import net.sf.odinms.tools.StringUtil;
 

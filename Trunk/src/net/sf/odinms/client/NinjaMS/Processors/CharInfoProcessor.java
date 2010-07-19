@@ -76,7 +76,7 @@ public class CharInfoProcessor {
                     + " DojoPoints : " + other.getDojoPoints()
                     + " BQPoints : " + other.getBossPoints()
                     + " JQFinished : " + other.getJqFinished()
-                    + " JQPoints : " + other.getJqpoints());
+                    + " JQPoints : " + other.getJqPoints());
             sb.add("Rasengan Quest Level : " + other.getRasengan()
                     + "Exp/meso/drop/bossdrop boost :" + other.getExpBoost()
                     + " / " + other.getMesoBoost()
@@ -234,7 +234,7 @@ public class CharInfoProcessor {
                     + " DojoPoints : " + other.getDojoPoints()
                     + " BQPoints :" + other.getBossPoints()
                     + " JQFinished : " + other.getJqFinished()
-                    + " JQPoints : " + other.getJqpoints());
+                    + " JQPoints : " + other.getJqPoints());
             mc.dropMessage("Rasengan Quest Level : " + other.getRasengan()
                     + "Exp/meso/drop/bossdrop boost :" + other.getExpBoost()
                     + " / " + other.getMesoBoost()
@@ -451,7 +451,7 @@ public class CharInfoProcessor {
                     + "\r\n #bDojoPoints : #r" + other.getDojoPoints()
                     + "\r\n #bBQPoints : #r" + other.getBossPoints()
                     + "\r\n #bJQFinished : #r" + other.getJqFinished()
-                    + "; #bJQPoints : #r" + other.getJqpoints());
+                    + "; #bJQPoints : #r" + other.getJqPoints());
             sb.append("\r\n\r\n#d#e[Rates]#n");
             sb.append("\r\n #bExprate : #r" + other.getExpBoost()
                     + "#b ; Mesorate : #r" + other.getMesoBoost()

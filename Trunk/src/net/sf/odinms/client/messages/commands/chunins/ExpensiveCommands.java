@@ -36,10 +36,7 @@ public class ExpensiveCommands implements InternCommand {
             } finally {
                 try {
                     TimerManager tMan = TimerManager.getInstance();
-                    tMan.start();
-                    for (ChannelServer cserv : ChannelServer.getAllInstances()) {
-                        cserv.restarttimers();
-                    }
+                    tMan.start();                    
                     mc.dropMessage("Success");
                 } catch (Exception e) {
                     mc.dropMessage("Error : " + e);

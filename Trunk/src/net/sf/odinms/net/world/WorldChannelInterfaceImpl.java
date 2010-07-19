@@ -183,6 +183,17 @@ public class WorldChannelInterfaceImpl extends UnicastRemoteObject implements Wo
 	}
     }
 
+    public void broadcastASmega(byte[] message) throws RemoteException {
+	for (int i : WorldRegistryImpl.getInstance().getChannelServer()) {
+	    final ChannelWorldInterface cwi = WorldRegistryImpl.getInstance().getChannel(i);
+	    try {
+		cwi.broadcastASmega(message);
+	    } catch (RemoteException e) {
+		WorldRegistryImpl.getInstance().deregisterChannelServer(i);
+	    }
+	}
+    }
+
     public void broadcastGMMessage(byte[] message) throws RemoteException {
 	for (int i : WorldRegistryImpl.getInstance().getChannelServer()) {
 	    final ChannelWorldInterface cwi = WorldRegistryImpl.getInstance().getChannel(i);

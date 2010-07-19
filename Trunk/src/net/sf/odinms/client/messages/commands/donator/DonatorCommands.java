@@ -9,7 +9,6 @@ import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.DonatorCommand;
 import net.sf.odinms.client.messages.DonatorCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
-import net.sf.odinms.net.world.remote.WorldChannelInterface;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
 
@@ -29,7 +28,7 @@ public class DonatorCommands implements DonatorCommand {
             c.getPlayer().setLegend(legend);
         } else if (splitted[0].equalsIgnoreCase("changejob")) {
             MapleCharacter player = c.getPlayer();
-            if (player.getCheatTracker().spam(60000, 1)) {
+            if (player.getCheatTracker().isSpam(60000, 10)) {
                 mc.dropMessage("[Anbu]not so often bitch ;P");
                 return;
             }
@@ -37,7 +36,7 @@ public class DonatorCommands implements DonatorCommand {
                 mc.dropMessage("[Anbu]only in henesys babe");
                 return;
             }
-            if (player.getPath() == 1) {
+            if (player.getJob() <= 910) {
                 if (splitted.length < 2) {
                     mc.dropMessage("[Anbu]Syntax : #changejob <job name> [hero, paladin, dk, bishop, fire, ice, bow, xbow, nl, dit, gun, brawler]");
                 } else if (splitted.length == 2) {
@@ -63,18 +62,14 @@ public class DonatorCommands implements DonatorCommand {
                 }
             }
         } else if (splitted[0].equalsIgnoreCase("callgm")) {
-            if(!c.getPlayer().getCheatTracker().spam(60000, 8)){
+            if(!c.getPlayer().getCheatTracker().isSpam(60000, 13)){
                 StringBuilder sb = new StringBuilder();
                 sb.append("Player ");
                 sb.append(c.getPlayer().getName());
                 sb.append(" needs your assistance! His problem is: ");
                 sb.append(StringUtil.joinStringFrom(splitted, 1));
-                WorldChannelInterface wci = c.getChannelServer().getWorldInterface();
-                try {
-                    wci.broadcastGMMessage(null, MaplePacketCreator.serverNotice(5, sb.toString()).getBytes());
-                } catch (Exception ex) {
-                    mc.dropMessage("Failed to call gm... " + ex + "");
-                }
+                c.getChannelServer().broadcastStaffPacket(MaplePacketCreator.serverNotice(5, sb.toString()));
+                
                 mc.dropMessage("You have called a Elite ninja for assistance regarding: " + StringUtil.joinStringFrom(splitted, 1));
             } else {
                 mc.dropMessage("You have to wait at least 60 seconds before using this command again!");

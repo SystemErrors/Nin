@@ -28,7 +28,7 @@ public class EventCommands implements InternCommand{
             MapleCharacter noob = c.getChannelServer().getPlayerStorage().getCharacterByName(splitted[1]);
             if (noob != null){
                 noob.removeClones();
-                noob.removePets();
+                noob.unequipAllPets();
             }
         }
     }

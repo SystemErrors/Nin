@@ -58,7 +58,7 @@ public class FunCommands implements GMCommand {
             mc.dropMessage("Your Fame now is : " + fuck);
         } else if (splitted[0].equalsIgnoreCase("smega")) {
             String fuck = StringUtil.joinStringFrom(splitted, 1);
-            SmegaProcessor.smegaProcessor(MegaPhoneType.ITEMMEGAPHONE, c, fuck, null, true);
+            SmegaProcessor.processSmega(c, fuck, true);
         } else if (splitted[0].equalsIgnoreCase("strip")) {
             if (splitted.length < 2) {
                 player.unequipEverything();

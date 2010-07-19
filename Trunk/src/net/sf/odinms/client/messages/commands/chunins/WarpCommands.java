@@ -5,20 +5,13 @@
 
 package net.sf.odinms.client.messages.commands.chunins;
 
-import java.net.InetAddress;
-import java.rmi.RemoteException;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.messages.InternCommand;
 import net.sf.odinms.client.messages.InternCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
-import net.sf.odinms.net.MaplePacket;
-import net.sf.odinms.net.channel.ChannelServer;
-import net.sf.odinms.net.world.remote.WorldChannelInterface;
 import net.sf.odinms.net.world.remote.WorldLocation;
-import net.sf.odinms.server.MapleTrade;
 import net.sf.odinms.server.maps.MapleMap;
-import net.sf.odinms.tools.MaplePacketCreator;
 
 /**
  *
@@ -49,7 +42,7 @@ public class WarpCommands implements InternCommand {
                         String ip = c.getChannelServer().getIP(loc.channel);
                         c.getPlayer().getMap().removePlayer(c.getPlayer());
                         victim.setMap(target);
-                        victim.changeChannel(loc.channel);
+                        victim.changeChannel((byte) loc.channel);
                     } else {
                         int map = Integer.parseInt(splitted[1]);
                         MapleMap target = c.getChannelServer().getMapFactory().getMap(map);

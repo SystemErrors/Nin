@@ -116,10 +116,10 @@ public class BanningCommands implements GMCommand {
             }
             victim.getClient().getSession().close();
             if (level >= 1) {
-                victim.getClient().disconnect();
+                victim.getClient().disconnect(true, false);
             }
             if (level >= 2) {
-                victim.saveToDB();
+                victim.saveToDB(false, false);
                 cserv.removePlayer(victim);
             }
         }

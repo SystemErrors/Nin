@@ -8,11 +8,11 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import net.sf.odinms.client.BuddyData;
 import net.sf.odinms.client.BuddylistEntry;
-import net.sf.odinms.client.Inventory.IItem;
-import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.Inventory.MapleMount;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.tools.Pair;
@@ -24,24 +24,23 @@ import net.sf.odinms.tools.Pair;
 public class CharacterTransfer implements Externalizable {
 
     public String name, legend, previousnames, createdate, accountname, footnote;
-    public short level, dpoints, damount;
+    public short level, dpoints, damount, jqpoints;
     public byte guildrank, allianceRank, mutality, clonelimit, rasengan, msi,
             prefixshit, autoap, GMSMode, smega, textColour, mission, gmLevel,
-            lastjq, village, ninjatensu, channel, gender;
+            lastjq, village, ninjatensu, channel, gender, lastDojoStage;
     public int characterid, fame, str, dex, int_, luk, hp, mp, maxhp, maxmp,
-            exp, remainingAp, meso,
-            skinColor, job, hair, face, mapid, initialSpawnPoint, world,
-            accountid, reborns, mobkilled, bosskilled, guildid, lmpoints,
-            pvpdeaths, pvpkills, rank, rankmove, jobrank, jobrankmove, taocheck,
-            lastDojoStage, dojoPoints, taorank, clantaorank, bossPoints,
+            exp, remainingAp, meso,skinColor, job, hair, face, mapid, 
+            initialSpawnPoint, world, accountid, reborns, mobkilled, bosskilled,
+            guildid, lmpoints,pvpdeaths, pvpkills, rank, rankmove, jobrank,
+            jobrankmove, taocheck,dojoPoints, taorank, clantaorank, bossPoints,
             kpqpoints, expBoost, mesoBoost, dropBoost, bdropBoost, partyid,
-            paypalNX, maplePoints, cardNX, jqfinished, jqpoints, messengerid,
+            paypalNX, maplePoints, cardNX, jqfinished, messengerid,
             messengerposition, mbookcover, mount_itemid, mBookCover,
             mount_Fatigue, mount_level, mount_exp;
-    public final Map<Integer, Pair<String, Boolean>> buddies = new LinkedHashMap<Integer, Pair<String, Boolean>>();
+    public final List<BuddyData> buddies = new LinkedList<BuddyData>();
     public Object monsterbook, inventorys, skillmacro, keymap, savedlocation, famedcharacters,
             storage, rocks, wishlist, autobuffs;
-    public long TransferTime;
+    public long TransferTime, lastfametime;
 
     public CharacterTransfer() {
     }
@@ -92,7 +91,7 @@ public class CharacterTransfer implements Externalizable {
         this.rank = chr.getRank();
         this.rankmove = chr.getRankMove();
         for (final BuddylistEntry qs : chr.getBuddylist().getBuddies()) {
-            this.buddies.put(qs.getCharacterId(), new Pair<String, Boolean>(qs.getName(), qs.isVisible()));
+            this.buddies.add(new BuddyData(qs.getName(), qs.getCharacterId(), qs.getGroup(), qs.isVisible()));
         }
         this.createdate = chr.getCreateDate();
         this.previousnames = chr.getPreviousNames();
@@ -120,16 +119,13 @@ public class CharacterTransfer implements Externalizable {
         this.ninjatensu = chr.getNinjaTensu();
         this.dpoints = chr.getDPoints();
         this.damount = chr.getDAmount();
-        this.jqpoints = chr.getJqpoints();
+        this.jqpoints = chr.getJqPoints();
         this.jqfinished = chr.getJqFinished();
         this.lastjq = chr.getLastJQ();
         this.footnote = chr.getFootnote();
         this.village = chr.getVillage();
         this.gmLevel = chr.getGMLevel();
-        this.autobuffs = chr.getAutobuffs();
-        for (final BuddylistEntry qs : chr.getBuddylist().getBuddies()) {
-            this.buddies.put(qs.getCharacterId(), new Pair<String, Boolean>(qs.getName(), qs.isVisible()));
-        }
+        this.autobuffs = chr.getAutobuffs();       
         if (chr.getMessenger() != null) {
             this.messengerid = chr.getMessenger().getId();
             this.messengerposition = chr.getMessengerPosition();
@@ -144,6 +140,7 @@ public class CharacterTransfer implements Externalizable {
         this.skillmacro = chr.getSkillMacros();
         this.savedlocation = chr.getSavedLocations();
         this.famedcharacters = chr.getFamedCharacters();
+        this.lastfametime = chr.getLastFameTime();
         this.storage = chr.getStorage();
         this.wishlist = chr.getWishlist();
         this.rocks = chr.getRocks();
@@ -204,19 +201,20 @@ public class CharacterTransfer implements Externalizable {
         this.rankmove = in.readInt();
         final short addedbuddysize = in.readShort();
         int buddyid;
-        String buddyname;
+        String buddyname, group;
         boolean visible;
         for (int i = 0; i < addedbuddysize; i++) {
             buddyid = in.readInt();
             buddyname = (String) in.readObject();
+            group = (String) in.readObject();
             visible = in.readBoolean();
-            buddies.put(buddyid, new Pair(buddyname, visible));
+            buddies.add(new BuddyData(buddyname, buddyid, group, visible));
         }
         this.createdate = (String) in.readObject();
         this.previousnames = (String) in.readObject();
         this.taocheck = in.readInt();
         this.GMSMode = in.readByte();
-        this.lastDojoStage = in.readInt();
+        this.lastDojoStage = in.readByte();
         this.dojoPoints = in.readInt();
         this.taorank = in.readInt();
         this.clantaorank = in.readInt();
@@ -238,7 +236,7 @@ public class CharacterTransfer implements Externalizable {
         this.ninjatensu = in.readByte();
         this.dpoints = in.readShort();
         this.damount = in.readShort();
-        this.jqpoints = in.readInt();
+        this.jqpoints = in.readShort();
         this.jqfinished = in.readInt();
         this.lastjq = in.readByte();
         this.footnote = (String) in.readObject();
@@ -259,6 +257,7 @@ public class CharacterTransfer implements Externalizable {
         this.skillmacro = in.readObject();
         this.savedlocation = in.readObject();
         this.famedcharacters = in.readObject();
+        this.lastfametime = in.readLong();
         this.storage = in.readObject();
         this.wishlist = in.readObject();
         this.rocks = in.readObject();
@@ -315,7 +314,7 @@ public class CharacterTransfer implements Externalizable {
         out.writeObject(this.previousnames);
         out.writeInt(this.taocheck);
         out.writeByte(this.GMSMode);
-        out.writeInt(this.lastDojoStage);
+        out.writeByte(this.lastDojoStage);
         out.writeInt(this.dojoPoints);
         out.writeInt(this.taorank);
         out.writeInt(this.clantaorank);
@@ -337,7 +336,7 @@ public class CharacterTransfer implements Externalizable {
         out.writeByte(this.ninjatensu);
         out.writeShort(this.dpoints);
         out.writeShort(this.damount);
-        out.writeInt(this.jqpoints);
+        out.writeShort(this.jqpoints);
         out.writeInt(this.jqfinished);
         out.writeByte(this.lastjq);
         out.writeObject(this.footnote);
@@ -357,15 +356,10 @@ public class CharacterTransfer implements Externalizable {
         out.writeObject(this.skillmacro);
         out.writeObject(this.savedlocation);
         out.writeObject(this.famedcharacters);
+        out.writeLong(this.lastfametime);
         out.writeObject(this.storage);
         out.writeObject(this.wishlist);
         out.writeObject(this.rocks);
-
-        out.writeShort(this.buddies.size());
-        for (final Map.Entry<Integer, Pair<String, Boolean>> qs : this.buddies.entrySet()) {
-            out.writeInt(qs.getKey());
-            out.writeObject(qs.getValue().left);
-            out.writeBoolean(qs.getValue().right);
-        }
+        out.writeObject(this.buddies);
     }
 }

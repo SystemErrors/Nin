@@ -28,6 +28,7 @@ import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.tools.StringUtil;
 import java.util.Collection;
 import net.sf.odinms.client.NinjaMS.IRCStuff.MainIRC;
+import net.sf.odinms.net.world.WorldServer;
 
 public class ServerMessageCommand implements GMCommand {
 
@@ -35,7 +36,7 @@ public class ServerMessageCommand implements GMCommand {
     public void execute(MapleClient c, MessageCallback mc, String[] splittedLine) throws Exception {
         String msg = StringUtil.joinStringFrom(splittedLine, 1);
         if (msg.equalsIgnoreCase("!array")) {
-            msg = ChannelServer.getArrayString();
+            msg = WorldServer.getInstance().getArrayString();
         }
         Collection<ChannelServer> cservs = ChannelServer.getAllInstances();
         for (ChannelServer cserv : cservs) {

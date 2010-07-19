@@ -30,6 +30,7 @@ import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.net.MaplePacket;
 import net.sf.odinms.net.channel.ChannelServer;
+import net.sf.odinms.net.channel.handler.InterServerHandler;
 import net.sf.odinms.net.world.remote.WorldChannelInterface;
 import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.MaplePortal;
@@ -66,7 +67,7 @@ public class WarpCommands implements GMCommand {
                         victim.setMap(target);
                         String[] socket = ip.split(":");
                         if (c.getPlayer().getTrade() != null) {
-                            MapleTrade.cancelTrade(c.getPlayer());
+                            MapleTrade.cancelTrade(c.getPlayer().getTrade());
                         }
                         try {
                             WorldChannelInterface wci = ChannelServer.getInstance(c.getChannel()).getWorldInterface();
@@ -75,12 +76,12 @@ public class WarpCommands implements GMCommand {
                         } catch (RemoteException e) {
                             c.getChannelServer().reconnectWorld();
                         }
-                        c.getPlayer().saveToDB();
+                        c.getPlayer().saveToDB(true, false);
                         if (c.getPlayer().getCheatTracker() != null) {
                             c.getPlayer().getCheatTracker().dispose();
                         }
                         ChannelServer.getInstance(c.getChannel()).removePlayer(c.getPlayer());
-                        c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION);
+                        c.updateLoginState(MapleClient.LOGIN_SERVER_TRANSITION, c.getSessionIPAddress());
                         try {
                             MaplePacket packet = MaplePacketCreator.getChannelChange(InetAddress.getByName(socket[0]), Integer.parseInt(socket[1]));
                             c.getSession().write(packet);
@@ -111,7 +112,7 @@ public class WarpCommands implements GMCommand {
                                 c.getPlayer().getPosition()));
                     } else if (victim != null) {
                         mc.dropMessage(victim.getName() + " is being CCed to you.");
-                        victim.changeChannel(c.getChannel());
+                        InterServerHandler.ChangeChannel((byte)c.getChannel(), victim.getClient(), victim);
                         TimerManager.getInstance().schedule(new Runnable() {
                             @Override
                             public void run() {

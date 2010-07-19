@@ -44,7 +44,6 @@ import net.sf.odinms.client.Inventory.MapleInventoryType;
 
 import net.sf.odinms.client.Skills.SkillFactory;
 import net.sf.odinms.scripting.AbstractPlayerInteraction;
-import net.sf.odinms.scripting.event.EventManager;
 import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MapleShopFactory;
@@ -72,7 +71,6 @@ public class NPCConversationManager extends AbstractPlayerInteraction {
     private MapleClient c;
     private int npc, questid;
     private String getText;
-
     private byte type; // -1 = NPC, 0 = start quest, 1 = end quest
 public boolean pendingDisposal = false;
 
@@ -84,71 +82,100 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
 	this.type = type;
     }
 
+ public int getNpc() {
+	return npc;
+    }
+
+    public int getQuest() {
+	return questid;
+    }
+
+    public byte getType() {
+	return type;
+    }
+
+    public void safeDispose() {
+	pendingDisposal = true;
+    }
+
     public void dispose() {
         NPCScriptManager.getInstance().dispose(this);
     }
 
+    public void askMapSelection(final String sel) {
+	c.getSession().write(MaplePacketCreator.getMapSelection(npc, sel));
+    }
+    
     public void sendNext(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "00 01"));
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "00 01", (byte) 0));
+    }
+
+    public void sendNextS(String text, byte type) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "00 01", type));
     }
 
     public void sendPrev(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "01 00"));
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "01 00", (byte) 0));
+    }
+
+    public void sendPrevS(String text, byte type) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "01 00", type));
     }
 
     public void sendNextPrev(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "01 01"));
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "01 01", (byte) 0));
+    }
+
+    public void sendNextPrevS(String text, byte type) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "01 01", type));
     }
 
     public void sendOk(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "00 00"));
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "00 00", (byte) 0));
     }
 
-    public void voteMSG() {
-        sendOk("Don't forget to vote for us #b http://ninjams.org/vote");
-        dispose();
+    public void sendOkS(String text, byte type) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0, text, "00 00", type));
     }
 
     public void sendYesNo(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 1, text, ""));
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 1, text, "", (byte) 0));
     }
 
-    public void sendAcceptDecline(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0x0C, text, ""));
+    public void sendYesNoS(String text, byte type) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 1, text, "", type));
+    }
+
+    public void askAcceptDecline(String text) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0x0B, text, "", (byte) 0));
+    }
+
+    public void askAcceptDeclineNoESC(String text) {
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 0x0D, text, "", (byte) 0));
+    }
+
+    public void askAvatar(String text, int... args) {
+	c.getSession().write(MaplePacketCreator.getNPCTalkStyle(npc, text, args));
     }
 
     public void sendSimple(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 4, text, ""));
-    }
-
-    public void sendStyle(String text, int styles[]) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalkStyle(npc, text, styles));
+	c.getSession().write(MaplePacketCreator.getNPCTalk(npc, (byte) 4, text, "", (byte) 0));
     }
 
     public void sendGetNumber(String text, int def, int min, int max) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalkNum(npc, text, def, min, max));
+	c.getSession().write(MaplePacketCreator.getNPCTalkNum(npc, text, def, min, max));
     }
 
     public void sendGetText(String text) {
-        getClient().getSession().write(MaplePacketCreator.getNPCTalkText(npc, text));
+	c.getSession().write(MaplePacketCreator.getNPCTalkText(npc, text));
     }
 
     public void setGetText(String text) {
-        this.getText = text;
-    }
-
-    public int getNumber() {
-        int fuck = 0;
-        try {
-            fuck = Integer.parseInt(getText);
-        } catch (NumberFormatException numberFormatException) {
-            fuck = 0;
-        }
-        return fuck;
+	this.getText = text;
     }
 
     public String getText() {
-        return this.getText;
+	return getText;
     }
 
     public void openShop(int id) {
@@ -175,14 +202,6 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
         MapleQuest.getInstance(id).forfeit(getPlayer());
     }
 
-    /**
-     * use getPlayer().getMeso() instead
-     * @return
-     */
-    @Deprecated
-    public int getMeso() {
-        return getPlayer().getMeso();
-    }
 
     public void gainMeso(int gain) {
         getPlayer().gainMeso(gain, true, false, true);
@@ -191,20 +210,7 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
     public void gainExp(int gain) {
         getPlayer().gainExp(gain, true, true);
     }
-
-    public int getNpc() {
-        return npc;
-    }
-
-    /**
-     * use getPlayer().getLevel() instead
-     * @return
-     */
-    @Deprecated
-    public int getLevel() {
-        return getPlayer().getLevel();
-    }
-
+  
     public void unequipEverything() {
         MapleInventory equipped = getPlayer().getInventory(MapleInventoryType.EQUIPPED);
         MapleInventory equip = getPlayer().getInventory(MapleInventoryType.EQUIP);
@@ -221,15 +227,6 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
         getPlayer().changeSkillLevel(SkillFactory.getSkill(id), level, masterlevel);
     }
 
-    /**
-     * Use getPlayer() instead (for consistency with MapleClient)
-     * @return
-     */
-    @Deprecated
-    public MapleCharacter getChar() {
-        return getPlayer();
-    }
-
     public MapleClient getC() {
         return getClient();
     }
@@ -241,11 +238,7 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
             stars.setQuantity(ii.getSlotMax(stars.getItemId()));
             getC().getSession().write(MaplePacketCreator.updateInventorySlot(MapleInventoryType.USE, (Item) stars));
         }
-    }
-
-    public EventManager getEventManager(String event) {
-        return getClient().getChannelServer().getEventSM().getEventManager(event);
-    }
+    }    
 
     public void showEffect(String effect) {
         getPlayer().getMap().broadcastMessage(MaplePacketCreator.showEffect(effect));
@@ -428,7 +421,7 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
     }
 
     public void claimVoteRewards() {
-        if (getPlayer().getCheatTracker().spam(600000, 7)) {
+        if (getPlayer().getCheatTracker().isSpam(600000, 7)) {
             c.showMessage(5, "You are trying too often So The system did not check if you have any rewards left. try after 15 minutes");
             return;
         } else {
@@ -496,7 +489,7 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
     }
 
     public void jqBonus() {
-        int jqp = getPlayer().getJqpoints();
+        int jqp = getPlayer().getJqPoints();
         if (jqp >= 1) {
             getPlayer().bonusReward();
         } else {
@@ -505,9 +498,9 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
     }
 
     public void jqRBBonus() {
-        int jqp = getPlayer().getJqpoints();
+        int jqp = getPlayer().getJqPoints();
         if (jqp >= 1) {
-            getPlayer().setJqpoints((short) (jqp - 1));
+            getPlayer().setJqPoints((short) (jqp - 1));
             for (int i = 0; i < 5; i++) {
                 Rebirths.giveRebirth(getPlayer());
             }
@@ -716,10 +709,10 @@ public NPCConversationManager(MapleClient c, int npc, int questid, byte type) {
         short[] stat = {69, 1337, 3337, 7337, 13337, 31337};
         for (byte i = 1; i <= item.length; i++) {
             if(haveItem(item[i-1], 1)){
-                int jqp = getPlayer().getJqpoints();
+                int jqp = getPlayer().getJqPoints();
                 byte lol = (byte) (i * 3);
                 if(jqp >= lol){
-                    getPlayer().setJqpoints((short)(jqp - lol));
+                    getPlayer().setJqPoints((short)(jqp - lol));
                     gainStatItem(item[i], stat[i], lol , lol);
                     break;
                 }

@@ -5,6 +5,7 @@
 package net.sf.odinms.client.messages.commands.Admin;
 
 import net.sf.odinms.client.MapleCharacter;
+import net.sf.odinms.client.MapleCharacterUtil;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.NinjaMS.Processors.SmegaProcessor;
 import net.sf.odinms.client.messages.AdminCommand;
@@ -14,7 +15,6 @@ import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.channel.handler.WhisperHandler;
 import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.MapleInventoryManipulator;
-import net.sf.odinms.server.constants.Items.MegaPhoneType;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
 
@@ -26,16 +26,20 @@ public class AbuseCommands implements AdminCommand {
 
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         if (splitted[0].equalsIgnoreCase("smega")) {
-            String msg = StringUtil.joinStringFrom(splitted, 2);
-            for(ChannelServer cserv: ChannelServer.getAllInstances()){
-                cserv.broadcastSmegaPacket(MaplePacketCreator.serverNotice(3, c.getChannel(), splitted[1] + " : " + msg));
+            String msg = StringUtil.joinStringFrom(splitted, 1);
+            for (ChannelServer cserv : ChannelServer.getAllInstances()) {
+                cserv.broadcastPacket(MaplePacketCreator.serverNotice(3, c.getChannel(), msg));
             }
         } else if (splitted[0].equalsIgnoreCase("smegamc")) {
+            if (splitted.length != 3) {
+                mc.dropMessage("Hey nub read /commands. Syntax: /smegamc ign text");
+                return;
+            }
             try {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    SmegaProcessor.smegaProcessor(MegaPhoneType.SUPERMEGAPHONE, victim.getClient(), victim.getName() + " : " + StringUtil.joinStringFrom(splitted, 2), null, true);
+                    SmegaProcessor.processSmega(victim.getClient(), StringUtil.joinStringFrom(splitted, 2), true);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }
@@ -43,11 +47,15 @@ public class AbuseCommands implements AdminCommand {
                 mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline. Error :" + e.toString());
             }
         } else if (splitted[0].equalsIgnoreCase("ismegamc")) {
-            try {
+            if (splitted.length != 3) {
+                mc.dropMessage("Hey nub read /commands. Syntax: /ismegamc ign msg");
+                return;
+            }
+           try {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
                     MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    SmegaProcessor.smegaProcessor(MegaPhoneType.ITEMMEGAPHONE, victim.getClient(), victim.getName() + " : " + StringUtil.joinStringFrom(splitted, 2), null, true);
+                    SmegaProcessor.processISmega(victim.getClient(), null, StringUtil.joinStringFrom(splitted, 2), true);
                 } else {
                     mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
                 }
@@ -91,26 +99,37 @@ public class AbuseCommands implements AdminCommand {
                 mc.dropMessage("Hey nub read /commands. Syntax: /alias ign newname");
                 return;
             }
+            String newname = StringUtil.joinStringFrom(splitted, 2);
             try {
                 WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
                 if (loc != null) {
-                    MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    String newname = StringUtil.joinStringFrom(splitted, 2);
-                    if (newname.length() > 14) {
-                        mc.dropMessage("[Anbu] Name is too long to hold.");
-                        return;
-                    }
-                    c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[Anbu] " + victim.getName() + " - The retard is now known as " + newname + "!"));
-                    victim.setName(newname);
-                    victim.getClient().getSession().write(MaplePacketCreator.getCharInfo(victim));
-                    victim.getMap().removePlayer(victim);
-                    victim.getMap().addPlayer(victim);
-                    victim.saveToDB(false, false);
-                } else {
-                    mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
+                    mc.dropMessage("[Anbu] Some one with that name already Exists and is online or that name is bugged");
+                    return;
                 }
-            } catch (Exception e) {
-                mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline. Error :" + e.toString());
+                if (newname.length() > 14) {
+                    mc.dropMessage("[Anbu] Name is too long to hold.");
+                    return;
+                } else if (MapleCharacterUtil.getIdByName(newname) != -1) {
+                    mc.dropMessage("[Anbu] Some one with that name already Exists.");
+                    return;
+                }
+                try {
+                    WorldLocation loc1 = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
+                    if (loc1 != null) {
+                        MapleCharacter victim = ChannelServer.getInstance(loc1.channel).getPlayerStorage().getCharacterByName(splitted[1]);
+                        c.getChannelServer().broadcastPacket(MaplePacketCreator.serverNotice(6, "[Anbu] " + victim.getName() + " - The retard is now known as " + newname + "!"));
+                        victim.setName(newname);
+                        victim.getClient().getSession().write(MaplePacketCreator.getCharInfo(victim));
+                        victim.getMap().removePlayer(victim);
+                        victim.getMap().addPlayer(victim);
+                        victim.saveToDB(false, false);
+                    } else {
+                        mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
+                    }
+                } catch (Exception e) {
+                    mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline. Error :" + e.toString());
+                }
+            } catch (Exception ignore) {                
             }
         } else if (splitted[0].equalsIgnoreCase("mapmc")) {
             for (MapleCharacter mch : c.getPlayer().getMap().getCharacters()) {
@@ -124,10 +143,8 @@ public class AbuseCommands implements AdminCommand {
             if (loc != null) {
                 MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
                 if (victim != null) {
-                    MapleClient client = victim.getClient();
-                    WhisperHandler.whisper(splitted[2], StringUtil.joinStringFrom(splitted, 2), c);
+                    WhisperHandler.whisper(splitted[2], StringUtil.joinStringFrom(splitted, 2), victim.getClient());
                 }
-
             }
         }
     }

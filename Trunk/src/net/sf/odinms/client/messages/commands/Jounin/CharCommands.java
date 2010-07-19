@@ -188,41 +188,6 @@ public class CharCommands implements GMCommand {
                 return;
             }
             mc.dropMessage("Command Executed");
-        } else if (splitted[0].equalsIgnoreCase("setclan")) {
-            if (splitted.length < 3) {
-                mc.dropMessage("Read !commands please. Syntax : !setclan ign clanname");
-            } else {
-                MapleCharacter other = c.getPlayer();
-                try {
-                    WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
-                    if (loc != null) {
-                        other = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                    } else {
-                        mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
-                        return;
-                    }
-                } catch (Exception e) {
-                    mc.dropMessage("[Anbu] '" + splitted[1] + "' does not exist, is CCing, or is offline.");
-                    return;
-                }
-                if (splitted[2].equalsIgnoreCase("undecided")) {
-                    other.setClanz(0);
-                } else if (splitted[2].equalsIgnoreCase("earth")) {
-                    other.setClanz(1);
-                } else if (splitted[2].equalsIgnoreCase("wind")) {
-                    other.setClanz(2);
-                } else if (splitted[2].equalsIgnoreCase("naruto")) {
-                    other.setClanz(3);
-                } else if (splitted[2].equalsIgnoreCase("fire")) {
-                    other.setClanz(4);
-                } else if (splitted[1].equalsIgnoreCase("lightning")) {
-                    other.setClanz(5);
-                } else {
-                    mc.dropMessage("Read !commands please. Syntax : !setclan ign clanname");
-                    return;
-                }
-                mc.dropMessage(splitted[1] + " has been set to" + splitted[2] + " clan");
-            }
-        }
+        } 
     }
 }

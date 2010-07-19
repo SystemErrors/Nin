@@ -129,14 +129,10 @@ public class MapleClient {
 
     public final List<MapleCharacter> loadCharacters(final int serverId) { // TODO make this less costly zZz
         final List<MapleCharacter> chars = new LinkedList<MapleCharacter>();
-        for (final CharNameAndId cni : loadCharactersInternal(serverId)) {
-            try {
+        for (final CharNameAndId cni : loadCharactersInternal(serverId)) {            
                 final MapleCharacter chr = MapleCharacter.loadCharFromDB(cni.id, this, false);
                 chars.add(chr);
-                allowedChar.add(chr.getId());
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+                allowedChar.add(chr.getId());           
         }
         return chars;
     }

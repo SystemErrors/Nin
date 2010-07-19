@@ -133,12 +133,7 @@ public class ReactorActionManager extends AbstractPlayerInteraction {
 	for (int i = 0; i < qty; i++) {
 	    reactor.getMap().spawnMonsterOnGroundBelow(MapleLifeFactory.getMonster(id), pos);
 	}
-    }
-
-    @Override
-    public void spawnNpc(int npcId) {
-	spawnNpc(npcId, getPosition());
-    }
+    }   
 
     // returns slightly above the reactor's position for monster spawns
     public Point getPosition() {

@@ -872,6 +872,23 @@ public class Skills {
     }
     return false;
     }*/
+
+    public static final boolean isMulungSkill(final int skill) {
+	switch (skill) {
+	    case 1009:
+	    case 1010:
+	    case 1011:
+	    case 10001009:
+	    case 10001010:
+	    case 10001011:
+	    case 20001009:
+	    case 20001010:
+	    case 20001011:
+		return true;
+	}
+	return false;
+    }
+    
     public static final boolean isRecoveryIncSkill(final int id) {
         switch (id) {
             case 1110000:
@@ -1110,4 +1127,24 @@ public class Skills {
         // TODO delay for final attack, weapon type, swing,stab etc
         return 330; // Default usually
     }
+
+    public static final int getMPEaterForJob(final int job) {
+	switch (job) {
+	    case 210:
+	    case 211:
+	    case 212:
+		return 2100000;
+	    case 220:
+	    case 221:
+	    case 222:
+		return 2200000;
+	    case 230:
+	    case 231:
+	    case 232:
+		return 2300000;
+	}
+	return 2100000; // Default, in case GM
+    }
+
+    
 }

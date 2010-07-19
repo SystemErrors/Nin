@@ -6,6 +6,7 @@ package net.sf.odinms.client.messages.commands.donator;
 
 import net.sf.odinms.client.Clones;
 import net.sf.odinms.client.MapleCharacter;
+import net.sf.odinms.client.MapleCharacterUtil;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.client.NinjaMS.Processors.SmegaProcessor;
 import net.sf.odinms.client.messages.MessageCallback;
@@ -14,7 +15,6 @@ import net.sf.odinms.client.messages.DonatorCommandDefinition;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.constants.GameConstants;
-import net.sf.odinms.server.constants.Items.MegaPhoneType;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
 
@@ -27,6 +27,10 @@ public class FunCommands implements DonatorCommand {
     public void execute(MapleClient c, MessageCallback mc, String[] splitted) throws Exception {
         MapleCharacter player = c.getPlayer();
         if (splitted[0].equalsIgnoreCase("smega") || splitted[0].equalsIgnoreCase("ismega")) {
+            if(player.getCheatTracker().isSpam(10000, 1)){
+                c.showMessage("You cannot use Smega that much often");
+                return;
+            }
             String fuck = StringUtil.joinStringFrom(splitted, 1);
             if (fuck.length() < 3 && !player.isJounin()) {
                 mc.dropMessage("Message needs to be more than 3 characters in length");
@@ -35,10 +39,10 @@ public class FunCommands implements DonatorCommand {
             if (fuck.length() > 100 && !player.isJounin()) {
                 fuck = fuck.substring(0, 100);
             }
-            if (splitted[0].equalsIgnoreCase("ismega")) {
-                SmegaProcessor.smegaProcessor(MegaPhoneType.ITEMMEGAPHONE, c, fuck, null, true);
+            if (!splitted[0].equalsIgnoreCase("ismega")) {
+                SmegaProcessor.processSmega(c, fuck, true);
             } else {
-                SmegaProcessor.smegaProcessor(MegaPhoneType.SUPERMEGAPHONE, c, fuck, null, true);
+                SmegaProcessor.processISmega(c, null, fuck, true);
             }
         } else if (splitted[0].equalsIgnoreCase("emo")) {
             player.kill();
@@ -67,15 +71,15 @@ public class FunCommands implements DonatorCommand {
             if (splitted.length == 2) {
                 numbers = Integer.parseInt(splitted[1]);
             }
-            if (numbers > player.getAllowedClones()) {
-                numbers = player.getAllowedClones();
+            if (numbers > player.getCloneLimit()) {
+                numbers = player.getCloneLimit();
             }
             if (player.haveItem(4006001, numbers * 10, false, true)) {
                 for (int i = 0; i < numbers; i++) {
                     Clones clone = new Clones(c.getPlayer(), ((c.getPlayer().getId() * 100) + c.getPlayer().getClones().size() + 1));
                     c.getPlayer().addClone(clone);
                 }
-                mc.dropMessage("Please move around for it to take effect. Clone Limit for You is : " + player.getAllowedClones());
+                mc.dropMessage("Please move around for it to take effect. Clone Limit for You is : " + player.getCloneLimit());
             } else {
                 mc.dropMessage("You do not have enough summon rocks. You need number of clones * 10 summon rocks");
             }
@@ -116,7 +120,9 @@ public class FunCommands implements DonatorCommand {
                 mc.dropMessage("[Anbu] Name is too long to hold.");
                 return;
             }
-            if(GameConstants.isBlockedName(newname)){
+            if (GameConstants.isBlockedName(newname)
+                    && !MapleCharacterUtil.isNameLegal(newname)
+                    && (MapleCharacterUtil.getIdByName(newname) != -1)) {
                 mc.dropMessage("[Anbu] Name is not permitted.");
                 return;
             }
@@ -129,7 +135,7 @@ public class FunCommands implements DonatorCommand {
                 player.getClient().getSession().write(MaplePacketCreator.getCharInfo(player));
                 player.getMap().removePlayer(player);
                 player.getMap().addPlayer(player);
-                player.saveToDB();
+                player.saveToDB(true, false);
             } else {
                 mc.dropMessage("You need atleast 500 Tao Of Sight to change name");
             }
@@ -162,7 +168,7 @@ public class FunCommands implements DonatorCommand {
                     new DonatorCommandDefinition("leet", "on/off", "leet talk"),
                     new DonatorCommandDefinition("kagebunshin", "number", "Shadow Clone Jutsu specially from Naruto"),
                     new DonatorCommandDefinition("cancelkagebunshin", "", "removes all clones"),
-                    new DonatorCommandDefinition("retardcure", "ign", " sures Retardness. hopefully"),
+                    new DonatorCommandDefinition("retardcure", "ign", " cures Retardness. hopefully"),
                     new DonatorCommandDefinition("rebuff", "", " Rebuffs you"),
                    // new DonatorCommandDefinition("legend", "on/off", " turns on and off legend"),
                     new DonatorCommandDefinition("namechange", "newign", "Changes your nick name for a fee"),

@@ -154,4 +154,5 @@ public interface WorldChannelInterface extends Remote, WorldChannelCommonOperati
     public void addDiseaseToStorage(int chrid, List<PlayerDiseaseValueHolder> toStore) throws RemoteException;
 
     public List<PlayerDiseaseValueHolder> getDiseaseFromStorage(int chrid) throws RemoteException;
+
 }

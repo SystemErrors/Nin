@@ -22,6 +22,7 @@ package net.sf.odinms.server.constants;
 
 import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.Inventory.MapleWeaponType;
+import net.sf.odinms.server.MapleItemInformationProvider;
 
 public class InventoryConstants {
 
@@ -213,8 +214,12 @@ public class InventoryConstants {
         return id >= 4250000 && id <= 4251402;
     }
 
-    public static boolean isCashEquip(int itemId) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    public static final boolean isCashEquip(int itemId) {
+        return MapleItemInformationProvider.getInstance().isCashEquip(itemId);
+    }
+
+    public static final byte gachaponRareItem(int itemId) {
+        return 1;
     }
 }
 

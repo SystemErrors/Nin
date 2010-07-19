@@ -28,8 +28,7 @@ package net.sf.odinms.scripting.event;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
@@ -42,55 +41,61 @@ import net.sf.odinms.scripting.AbstractScriptManager;
  */
 public class EventScriptManager extends AbstractScriptManager {
 
-	private class EventEntry {
-		public EventEntry(String script, Invocable iv, EventManager em) {
-			this.script = script;
-			this.iv = iv;
-			this.em = em;
-		}
-		
-		public String script;
-		public Invocable iv;
-		public EventManager em;
+    private class EventEntry {
+
+	public EventEntry(final String script, final Invocable iv, final EventManager em) {
+	    this.script = script;
+	    this.iv = iv;
+	    this.em = em;
 	}
-	
-	private Map<String,EventEntry> events = new LinkedHashMap<String,EventEntry>();
-	
-	public EventScriptManager(ChannelServer cserv, String[] scripts) {
-		super();
-		for (String script : scripts) {
-			if (!script.equals("")) {
-				Invocable iv = getInvocable("event/" + script + ".js", null);
-				events.put(script, new EventEntry(script, iv, new EventManager(cserv, iv, script)));
-			}
+	public String script;
+	public Invocable iv;
+	public EventManager em;
+    }
+    private final Map<String, EventEntry> events = new LinkedHashMap<String, EventEntry>();
+    private final AtomicInteger runningInstanceMapId = new AtomicInteger(0);
+
+    public final int getNewInstanceMapId() {
+	return runningInstanceMapId.addAndGet(1);
+    }
+
+    public EventScriptManager(final ChannelServer cserv, final String[] scripts) {
+	super();
+	for (final String script : scripts) {
+	    if (!script.equals("")) {
+		final Invocable iv = getInvocable("event/" + script + ".js", null);
+
+		if (iv != null) {
+		    events.put(script, new EventEntry(script, iv, new EventManager(cserv, iv, script)));
 		}
+	    }
 	}
-	
-	public EventManager getEventManager(String event) {
-		EventEntry entry = events.get(event);
-		if (entry == null) {
-			return null;
-		}
-		return entry.em;
+    }
+
+    public final EventManager getEventManager(final String event) {
+	final EventEntry entry = events.get(event);
+	if (entry == null) {
+	    return null;
 	}
-	
-	public void init() {
-		for (EventEntry entry : events.values()) {
-			try {
-				((ScriptEngine) entry.iv).put("em", entry.em);
-				entry.iv.invokeFunction("init", (Object) null);
-			} catch (ScriptException ex) {
-				Logger.getLogger(EventScriptManager.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (NoSuchMethodException ex) {
-				Logger.getLogger(EventScriptManager.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
+	return entry.em;
+    }
+
+    public final void init() {
+	for (final EventEntry entry : events.values()) {
+	    try {
+		((ScriptEngine) entry.iv).put("em", entry.em);
+		entry.iv.invokeFunction("init", (Object) null);
+	    } catch (final ScriptException ex) {
+		ex.printStackTrace();
+	    } catch (final NoSuchMethodException ex) {
+		ex.printStackTrace();
+	    }
 	}
-	
-	public void cancel() {
-		for (EventEntry entry : events.values()) {
-			entry.em.cancel();
-		}
+    }
+
+    public final void cancel() {
+	for (final EventEntry entry : events.values()) {
+	    entry.em.cancel();
 	}
-	
+    }
 }

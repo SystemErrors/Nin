@@ -81,12 +81,12 @@ public class Donations {
                 pl.showMessage("You have gained 100 Fame");
                 return true;
             case 14:
-                pl.setJqpoints((short)(pl.getJqpoints() + 1));
+                pl.setJqPoints((short)(pl.getJqPoints() + 1));
                 pl.showMessage("you have gained a JQ point");
                 return true;
             case 15:
                 int p = chance > 5 ? 1 : 2;
-                pl.setJqpoints((short)(pl.getJqpoints() + p));
+                pl.setJqPoints((short)(pl.getJqPoints() + p));
                 pl.showMessage("you have gained " + p + " JQ Points");
                 return true;
             case 16:

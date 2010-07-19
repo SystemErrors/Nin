@@ -6,13 +6,11 @@ package net.sf.odinms.client.messages.commands.Jounin;
 
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleClient;
-import net.sf.odinms.client.NinjaMS.Processors.SmegaProcessor;
 import net.sf.odinms.client.messages.GMCommand;
 import net.sf.odinms.client.messages.GMCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.net.channel.ChannelServer;
 import net.sf.odinms.net.world.remote.WorldLocation;
-import net.sf.odinms.server.constants.Items.MegaPhoneType;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
 
@@ -118,13 +116,13 @@ public class AbuseCommands implements GMCommand {
             player.setBossPoints(bossPoints);
             mc.dropMessage("[Anbu]Your boss pq points set to : " + bossPoints);
         } else if (splitted[0].equalsIgnoreCase("jqp")){
-            int jqPoints = 0;
+            short jqPoints = 0;
             try {
-                jqPoints = Integer.parseInt(splitted[1]);
+                jqPoints = Short.parseShort(splitted[1]);
             } catch (NumberFormatException w) {
                 mc.dropMessage("[Anbu]Drunk bastard learn to type a number rite!");
             }
-            player.setJqpoints(jqPoints);
+            player.setJqPoints(jqPoints);
              mc.dropMessage("[Anbu]Your JQ points set to : " + jqPoints);
         }
     }

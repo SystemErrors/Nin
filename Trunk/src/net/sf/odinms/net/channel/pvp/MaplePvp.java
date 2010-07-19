@@ -20,24 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.net.channel.pvp;
 
-import java.util.Collections;
-import net.sf.odinms.client.Buffs.MapleBuffStat;
-import net.sf.odinms.client.Buffs.MapleStat;
-
-import net.sf.odinms.client.MapleCharacter;
-import net.sf.odinms.client.NinjaMS.NinjaMath;
-
-import net.sf.odinms.net.world.guild.MapleGuild;
-import net.sf.odinms.net.channel.handler.AbstractDealDamageHandler;
-import net.sf.odinms.net.channel.handler.AbstractDealDamageHandler.AttackInfo;
-import net.sf.odinms.server.life.MapleMonster;
-import net.sf.odinms.server.life.MapleLifeFactory;
-import net.sf.odinms.server.maps.MapleMap;
-import net.sf.odinms.tools.MaplePacketCreator;
-import net.sf.odinms.tools.Packets.MobPacket;
-
 public class MaplePvp {
-
+/*
     private static int pvpDamage;
     private static int maxDis;
     private static int maxHeight;
@@ -45,7 +29,7 @@ public class MaplePvp {
     public static boolean isLeft = false;
     public static boolean isRight = false;
 
-    private static boolean isMeleeAttack(AbstractDealDamageHandler.AttackInfo attack) {
+    private static boolean isMeleeAttack(AttackInfo attack) {
         switch (attack.skill) {
             case 1001004: //Power Strike
             case 1001005: //Slash Blast
@@ -89,7 +73,7 @@ public class MaplePvp {
         return false;
     }
 
-    private static boolean isRangeAttack(AbstractDealDamageHandler.AttackInfo attack) {
+    private static boolean isRangeAttack(AttackInfo attack) {
         switch (attack.skill) {
             case 2001004:    //Energy Bolt
             case 2001005:    //Magic Claw
@@ -128,7 +112,7 @@ public class MaplePvp {
         return false;
     }
 
-    private static boolean isAoeAttack(AbstractDealDamageHandler.AttackInfo attack) {
+    private static boolean isAoeAttack(AttackInfo attack) {
         switch (attack.skill) {
             case 2201005:    //Thunderbolt
             case 3101005:    //Arrow Bomb : Bow
@@ -161,11 +145,11 @@ public class MaplePvp {
         return false;
     }
 
-    private static void getDirection(AbstractDealDamageHandler.AttackInfo attack) {
+    private static void getDirection(AttackInfo attack) {
         if (isAoe) {
             isRight = true;
             isLeft = true;
-        } else if (attack.direction <= 0 && attack.stance <= 0) {
+       } else if (attack.direction <= 0 && attack.stance <= 0) {
             isRight = false;
             isLeft = true;
         } else {
@@ -174,7 +158,7 @@ public class MaplePvp {
         }
     }
 
-    private static void DamageBalancer(AbstractDealDamageHandler.AttackInfo attack) {
+    private static void DamageBalancer(AttackInfo attack) {
         if (attack.skill == 0) {
             pvpDamage = 1000;
             maxDis = 130;
@@ -229,7 +213,7 @@ public class MaplePvp {
         }
     }
 
-    private static void monsterBomb(MapleCharacter player, MapleCharacter attackedPlayers, MapleMap map, AbstractDealDamageHandler.AttackInfo attack) {
+    private static void monsterBomb(MapleCharacter player, MapleCharacter attackedPlayers, MapleMap map, AttackInfo attack) {
         //level balances
         if (attackedPlayers.getLevel() > player.getLevel() + 25) {
             pvpDamage *= 1.35;
@@ -299,7 +283,7 @@ public class MaplePvp {
         }
     }
 
-  /*  public static void doPvP(MapleCharacter player, MapleMap map, AttackInfo attack) {
+   public static void doPvP(MapleCharacter player, MapleMap map, AttackInfo attack) {
         DamageBalancer(attack);
         getDirection(attack);
         for (MapleCharacter attackedPlayers : player.getMap().getNearestPvpChar(player.getPosition(), maxDis, maxHeight, Collections.unmodifiableCollection(player.getMap().getCharacters()))) {

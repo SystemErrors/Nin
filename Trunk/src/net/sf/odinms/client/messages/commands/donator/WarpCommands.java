@@ -115,7 +115,7 @@ public class WarpCommands implements DonatorCommand {
                             if (SpecialStuff.getInstance().canWarpTo(player, loc.map)) {
                                 mc.dropMessage("[Anbu] You are CCing to " + noob.getName() + ". Please wait while you lag.");
                                 player.setMap( c.getChannelServer().getMapFactory().getMap(loc.map));
-                                player.changeChannel(loc.channel);
+                                player.changeChannel((byte) loc.channel);
                             } else {
                                 mc.dropMessage("[Anbu] You cannot warp to this map.");
                             }

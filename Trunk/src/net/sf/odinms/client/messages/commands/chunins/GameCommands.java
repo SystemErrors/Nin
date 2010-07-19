@@ -59,7 +59,7 @@ public class GameCommands implements InternCommand {
                         vic.getEventInstance().dispose();
                     }
                     cserv.removePlayer(vic);
-                    vic.getClient().disconnect();
+                    vic.getClient().disconnect(true, false);
                 }
             }
 

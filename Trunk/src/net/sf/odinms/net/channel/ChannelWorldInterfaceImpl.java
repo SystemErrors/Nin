@@ -103,6 +103,11 @@ public class ChannelWorldInterfaceImpl extends UnicastRemoteObject implements Ch
     }
 
     @Override
+    public void broadcastASmega(byte[] message) throws RemoteException {
+	server.broadcastASmegaPacket(new ByteArrayMaplePacket(message));
+    }
+
+    @Override
     public void broadcastGMMessage(byte[] message) throws RemoteException {
 	server.broadcastGMPacket(new ByteArrayMaplePacket(message));
     }

@@ -15,6 +15,7 @@ import net.sf.odinms.client.messages.PlayerCommand;
 import net.sf.odinms.client.messages.PlayerCommandDefinition;
 import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MapleItemInformationProvider;
+import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.server.constants.Items;
 import net.sf.odinms.server.constants.SpecialStuff;
 import net.sf.odinms.tools.MaplePacketCreator;
@@ -34,11 +35,11 @@ public class InventoryManipulationCommands implements PlayerCommand {
                 return;
             }
             int id = Integer.parseInt(splitted[1]);
-            MapleInventoryType type = MapleItemInformationProvider.getInstance().getInventoryType(id);
+            MapleInventoryType type = InventoryConstants.getInventoryType(id);
             MapleInventory iv = player.getInventory(type);
             int possessed = iv.countById(id);
             if (possessed > 0) {
-                MapleInventoryManipulator.removeById(c, MapleItemInformationProvider.getInstance().getInventoryType(id), id, possessed, true, false);
+                MapleInventoryManipulator.removeById(c, InventoryConstants.getInventoryType(id), id, possessed, true, false);
                 c.getSession().write(MaplePacketCreator.getShowItemGain(id, (short) -possessed, true));
             }
             mc.dropMessage("Complete.");
@@ -71,19 +72,17 @@ public class InventoryManipulationCommands implements PlayerCommand {
                 mc.dropMessage("[System] Smuggle Much? Try relog if this is a mistake :p");
             }
         } else if (splitted[0].equalsIgnoreCase("rechargestars")) {
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             for (IItem stars : c.getPlayer().getInventory(MapleInventoryType.USE).list()) {
-                if (ii.isThrowingStar(stars.getItemId())) {
-                    stars.setQuantity(ii.getSlotMax(stars.getItemId()));
+                if (InventoryConstants.isThrowingStar(stars.getItemId())) {
+                    stars.setQuantity(MapleItemInformationProvider.getInstance().getSlotMax(stars.getItemId()));
                     c.getSession().write(MaplePacketCreator.updateInventorySlot(MapleInventoryType.USE, stars));
                 }
             }
             mc.dropMessage("[System] Recharged stars :)!");
         } else if (splitted[0].equalsIgnoreCase("rechargebullets")) {
-            MapleItemInformationProvider ii = MapleItemInformationProvider.getInstance();
             for (IItem bullets : c.getPlayer().getInventory(MapleInventoryType.USE).list()) {
-                if (ii.isBullet(bullets.getItemId())) {
-                    bullets.setQuantity(ii.getSlotMax(bullets.getItemId()));
+                if (InventoryConstants.isBullet(bullets.getItemId())) {
+                    bullets.setQuantity(MapleItemInformationProvider.getInstance().getSlotMax(bullets.getItemId()));
                     c.getSession().write(MaplePacketCreator.updateInventorySlot(MapleInventoryType.USE, bullets));
                 }
             }

@@ -20,12 +20,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.sf.odinms.net;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.net.channel.ChannelServer;
+import net.sf.odinms.net.CashShop.handler.CashShopOperation;
+import net.sf.odinms.net.channel.handler.ChairHandler;
+import net.sf.odinms.net.channel.handler.ChatHandler;
+import net.sf.odinms.net.channel.handler.DamageHandler;
+import net.sf.odinms.net.channel.handler.DueyHandler;
+import net.sf.odinms.net.channel.handler.HiredMerchantHandler;
 import net.sf.odinms.net.channel.handler.InterServerHandler;
+import net.sf.odinms.net.channel.handler.InventoryHandler;
+import net.sf.odinms.net.channel.handler.NPCHandler;
+import net.sf.odinms.net.channel.handler.NotProcessedPacketsHandler;
+import net.sf.odinms.net.channel.handler.PetHandler;
+import net.sf.odinms.net.channel.handler.PlayerHandler;
+import net.sf.odinms.net.channel.handler.PlayersHandler;
+import net.sf.odinms.net.channel.handler.StatsHandler;
+import net.sf.odinms.net.channel.handler.UseItemsHandler;
 import net.sf.odinms.net.login.handler.CharLoginHandler;
 import net.sf.odinms.tools.MapleAESOFB;
-import net.sf.odinms.tools.MaplePacketCreator;
+import net.sf.odinms.tools.Packets.LoginPacket;
+import net.sf.odinms.tools.Pair;
 import net.sf.odinms.tools.data.input.ByteArrayByteStream;
 import net.sf.odinms.tools.data.input.GenericSeekableLittleEndianAccessor;
 import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;
@@ -40,11 +59,10 @@ public class MapleServerHandler extends IoHandlerAdapter {
 
     private final static Logger log = LoggerFactory.getLogger(MapleServerHandler.class);
     private final static short MAPLE_VERSION = 75;
-    private PacketProcessor processor;
     private int channel = -1;
-    private boolean trace = false;
-    private String lol;
     private ServerType type = null;
+    private final List<String> BlockedIP = new ArrayList();
+    private final Map<String, Pair<Long, Byte>> tracker = new ConcurrentHashMap<String, Pair<Long, Byte>>();
 
     public MapleServerHandler(ServerType type) {
         this.type = type;
@@ -72,6 +90,36 @@ public class MapleServerHandler extends IoHandlerAdapter {
 
     @Override
     public void sessionOpened(IoSession session) throws Exception {
+        final String address = session.getRemoteAddress().toString().split(":")[0];
+
+        if (BlockedIP.contains(address)) {
+            session.close();
+            return;
+        }
+        final Pair<Long, Byte> track = tracker.get(address);
+
+        byte count;
+        if (track == null) {
+            count = 1;
+        } else {
+            count = track.right;
+
+            final long difference = System.currentTimeMillis() - track.left;
+            if (difference < 2000) { // Less than 2 sec
+                count++;
+            } else if (difference > 20000) { // Over 20 sec
+                count = 1;
+            }
+            if (count >= 10) {
+                BlockedIP.add(address);
+                tracker.remove(address); // Cleanup
+                session.close();
+                return;
+            }
+        }
+        tracker.put(address, new Pair(System.currentTimeMillis(), count));
+        // End of IP checking.
+
         // log.info("IoSession with {} opened", session.getRemoteAddress());
         if (channel > -1) {
             if (ChannelServer.getInstance(channel).isShutdown()) {
@@ -89,10 +137,12 @@ public class MapleServerHandler extends IoHandlerAdapter {
         MapleAESOFB recvCypher = new MapleAESOFB(key, ivRecv, MAPLE_VERSION);
         MapleClient client = new MapleClient(sendCypher, recvCypher, session);
         client.setChannel(channel);
-        session.write(MaplePacketCreator.getHello(MAPLE_VERSION, ivSend, ivRecv, false));
+        session.write(LoginPacket.getHello(MAPLE_VERSION, ivSend, ivRecv));
         session.setAttribute(MapleClient.CLIENT_KEY, client);
         session.setIdleTime(IdleStatus.READER_IDLE, 30);
         session.setIdleTime(IdleStatus.WRITER_IDLE, 30);
+
+
     }
 
     @Override
@@ -100,7 +150,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
         synchronized (session) {
             MapleClient client = (MapleClient) session.getAttribute(MapleClient.CLIENT_KEY);
             if (client != null) {
-                client.disconnect();
+                client.disconnect(true, false);
                 session.close();
                 session.removeAttribute(MapleClient.CLIENT_KEY);
             }
@@ -108,6 +158,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
         super.sessionClosed(session);
     }
 
+    @Override
     public void messageReceived(final IoSession session, final Object message) throws Exception {
         final SeekableLittleEndianAccessor slea = new GenericSeekableLittleEndianAccessor(new ByteArrayByteStream((byte[]) message));
         final short header_num = slea.readShort();
@@ -144,7 +195,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
             case PONG: //((short) 0x19, false),
                 c.pongReceived();
                 break;
-                //Login
+            //Login
             case LOGIN_PASSWORD: //((short) 0x01, false),
                 CharLoginHandler.login(slea, c);
                 break;
@@ -177,6 +228,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 CharLoginHandler.charSelected(slea, c);
                 break;
             case STRANGE_DATA: //((short) 0x1C),
+                NotProcessedPacketsHandler.strangeData(c);
                 break;
             case CHECK_CHAR_NAME: //((short) 0x15),
                 CharLoginHandler.CheckCharName(slea.readMapleAsciiString(), c);
@@ -188,74 +240,200 @@ public class MapleServerHandler extends IoHandlerAdapter {
                 CharLoginHandler.DeleteChar(slea, c);
                 break;
 
-                //channel
+            //channel
             case PLAYER_DC: //((short) 0xC0),
-                break; //Not handled :(
+                NotProcessedPacketsHandler.player_DC(c);
+                break;
             case PLAYER_LOGGEDIN: //((short) 0x14, false),
-                InterServerHandler.playerLoggedIn(slea, c);
+                final int playerid = slea.readInt();
+                if (type == ServerType.CHANNEL) {
+                    InterServerHandler.Loggedin(playerid, c);
+                } else {
+                    CashShopOperation.EnterCS(playerid, c);
+                }
                 break;
             case CREATE_CYGNUS: //((short) 0x17),
-            case ERROR: //((short) 0x1A),
-            case CLIENT_START: //((short) 0x1A),
-            case CLIENT_ERROR: //((short) 0x1B),
-            case RELOG: //((short) 0x1D),
-            case CHANGE_MAP: //((short) 0x25),
+                NotProcessedPacketsHandler.createCygnus(c);
+                break;
+            case CHANGE_MAP:
+                if (type == ServerType.CHANNEL) {
+                    PlayerHandler.ChangeMap(slea, c, c.getPlayer());
+                } else {
+                    CashShopOperation.LeaveCS(slea, c, c.getPlayer());
+                }
+                break;
+
             case CHANGE_CHANNEL: //((short) 0x26),
+                InterServerHandler.ChangeChannel((byte) (slea.readByte() + 1), c, c.getPlayer());
+                break;
             case ENTER_CASH_SHOP: //((short) 0x27),
+                InterServerHandler.EnterCS(slea, c, c.getPlayer());
+                break;
             case MOVE_PLAYER: //((short) 0x28),
+                PlayerHandler.MovePlayer(slea, c, c.getPlayer());
+                break;
             case CANCEL_CHAIR: //((short) 0x29),
+                ChairHandler.CancelChair(slea.readShort(), c, c.getPlayer());
+                break;
             case USE_CHAIR: //((short) 0x2A),
+                ChairHandler.UseChair(slea.readInt(), c, c.getPlayer());
+                break;
             case CLOSE_RANGE_ATTACK: //((short) 0x2B),
+                DamageHandler.closeRangeAttack(slea, c, c.getPlayer());
+                break;
             case RANGED_ATTACK: //((short) 0x2C),
+                DamageHandler.rangedAttack(slea, c, c.getPlayer());
+                break;
             case MAGIC_ATTACK: //((short) 0x2D),
-            case ENERGY_CHARGE_ATTACK: //((short) 0x2E),
+                DamageHandler.magicDamage(slea, c, c.getPlayer());
+                break;
+            case ENERGY_CHARGE_ATTACK: //((short) 0x2E), //PASSIVE_ENERGY
+                NotProcessedPacketsHandler.EnergyChargeAttack();
+                break;
             case TAKE_DAMAGE: //((short) 0x2F),
+                DamageHandler.TakeDamage(slea, c, c.getPlayer());
+                break;
             case GENERAL_CHAT: //((short) 0x30),
+                ChatHandler.generalChat(slea, c, c.getPlayer());
+                break;
             case CLOSE_CHALKBOARD: //((short) 0x31),
+                c.getPlayer().setChalkboard(null);
+                break;
             case FACE_EXPRESSION: //((short) 0x32),
+                PlayerHandler.ChangeEmotion(slea.readInt(), c.getPlayer());
+                break;
             case USE_ITEMEFFECT: //((short) 0x33),
+                PlayerHandler.UseItemEffect(slea.readInt(), c, c.getPlayer());
+                break;
             case MONSTER_BOOK_COVER: //((short) 0x38),
+                PlayerHandler.ChangeMonsterBookCover(slea.readInt(), c, c.getPlayer());
+                break;
             case NPC_TALK: //((short) 0x39),
+                NPCHandler.NPCTalk(slea, c, c.getPlayer());
+                break;
             case NPC_TALK_MORE: //((short) 0x3B),
+                NPCHandler.NPCMoreTalk(slea, c);
+                break;
             case NPC_SHOP: //((short) 0x3C),
+                NPCHandler.NPCShop(slea, c, c.getPlayer());
+                break;
             case STORAGE: //((short) 0x3D),
+                NPCHandler.Storage(slea, c, c.getPlayer());
+                break;
             case HIRED_MERCHANT_REQUEST: //((short) 0x3E),
+                HiredMerchantHandler.UseHiredMerchant(slea, c);
+                break;
             case DUEY_ACTION: //((short) 0x40),
+                DueyHandler.DueyOperation(slea, c);
+                break;
             case ITEM_SORT: //((short) 0x44),
+                InventoryHandler.itemSort(slea, c);
+                break;
             case ITEM_SORT2: //((short) 0x45),
+                InventoryHandler.itemSort2(slea, c);
+                break;
             case ITEM_MOVE: //((short) 0x46),
+                InventoryHandler.itemMove(slea, c);
+                break;
             case USE_ITEM: //((short) 0x47),
+                UseItemsHandler.UseItem(slea, c, c.getPlayer());
+                break;
             case CANCEL_ITEM_EFFECT: //((short) 0x48),
+                PlayerHandler.CancelItemEffect(slea.readInt(), c.getPlayer());
+                break;
             case USE_SUMMON_BAG: //((short) 0x4A),
+                UseItemsHandler.UseSummonBag(slea, c, c.getPlayer());
+                break;
             case PET_FOOD: //((short) 0x4B),
+                PetHandler.PetFood(slea, c, c.getPlayer());
+                break;
             case USE_MOUNT_FOOD: //((short) 0x4C),
+                UseItemsHandler.UseMountFood(slea, c, c.getPlayer());
+                break;
             case SCRIPTED_ITEM: //((short) 0x4D),
+                UseItemsHandler.UseScriptedNPCItem(slea, c, c.getPlayer());
+                break;
             case USE_CASH_ITEM: //((short) 0x4E),
+                UseItemsHandler.UseCashItem(slea, c);
+                break;
             case USE_CATCH_ITEM: //((short) 0x50),
+                UseItemsHandler.UseCatchItem(slea, c, c.getPlayer());
+                break;
             case USE_SKILL_BOOK: //((short) 0x51),
+                UseItemsHandler.UseSkillBook(slea, c, c.getPlayer());
+                break;
             case USE_TELEPORT_ROCK: //((short) 0x53),
+                NotProcessedPacketsHandler.useTelePortRock();
+                break;
             case USE_RETURN_SCROLL: //((short) 0x54),
+                UseItemsHandler.UseReturnScroll(slea, c, c.getPlayer());
+                break;
             case USE_UPGRADE_SCROLL: //((short) 0x55),
+                UseItemsHandler.UseUpgradeScroll(slea, c, c.getPlayer());
+                break;
             case DISTRIBUTE_AP: //((short) 0x56),
+                StatsHandler.DistributeAP(slea, c, c.getPlayer());
+                break;
             case AUTO_DISTRIBUTE_AP: //((short) 0x57),
+                StatsHandler.AutoAssignAP(slea, c, c.getPlayer());
+                break;
             case HEAL_OVER_TIME: //((short) 0x58),
+                PlayerHandler.Heal(slea, c.getPlayer());
+		break;
             case DISTRIBUTE_SP: //((short) 0x59),
+                StatsHandler.DistributeSP(slea.readInt(), c, c.getPlayer());
+                break;
             case SPECIAL_MOVE: //((short) 0x5A),
+                PlayerHandler.SpecialMove(slea, c, c.getPlayer());
+		break;
             case CANCEL_BUFF: //((short) 0x5B),
+                PlayerHandler.CancelBuffHandler(slea.readInt(), c.getPlayer());
+		break;
             case SKILL_EFFECT: //((short) 0x5C),
+                PlayerHandler.SkillEffect(slea, c.getPlayer());
+                break;
             case MESO_DROP: //((short) 0x5D),
+                slea.skip(4);
+		PlayerHandler.DropMeso(slea.readInt(), c.getPlayer());
+		break;
             case GIVE_FAME: //((short) 0x5E),
+                PlayersHandler.GiveFame(slea, c, c.getPlayer());
+		break;
             case CHAR_INFO_REQUEST: //((short) 0x60),
-            case CANCEL_DEBUFF: //((short) 0x62),
-            case CHANGE_MAP_SPECIAL: //((short) 0x63),
-            case USE_INNER_PORTAL: //((short) 0x64),
+                slea.skip(4);
+		PlayerHandler.CharInfoRequest(slea.readInt(), c, c.getPlayer());
+		break;
+            case CANCEL_DEBUFF:
+		PlayerHandler.cancelDebuff(c);
+		break;
+            case CHANGE_MAP_SPECIAL:
+                slea.skip(1);
+                PlayerHandler.ChangeMapSpecial(slea.readMapleAsciiString(), c, c.getPlayer());
+                break;
+            case USE_INNER_PORTAL:
+                slea.skip(1);
+                PlayerHandler.InnerPortal(slea, c, c.getPlayer());
+                break;
             case TROCK_ADD_MAP: //((short) 0x65),
-            case QUEST_ACTION: //((short) 0x6A),
-            case SKILL_MACRO: //((short) 0x6D),
-            case SPOUSE_CHAT: //((short) 0x6E),
+                PlayerHandler.TrockAddMap(slea, c, c.getPlayer());
+		break;
             case REPORT: //((short) 0x69),
+                PlayerHandler.report(slea, c);
+                break;
+            case QUEST_ACTION: //((short) 0x6A),
+                NPCHandler.QuestAction(slea, c, c.getPlayer());
+                break;
+            case SKILL_MACRO: //((short) 0x6D),
+                PlayerHandler.ChangeSkillMacro(slea, c.getPlayer());
+		break;
+            case SPOUSE_CHAT: //((short) 0x6E),
+            case USE_REWARD_ITEM:
+                UseItemsHandler.UseRewardItem(slea, c, c.getPlayer());
+                break;
             case MAKER_SKILL: //((short) 0x70),
             case USE_TREATURE_BOX: //((short) 0x73),
+                UseItemsHandler.UseTreasureChest(slea, c, c.getPlayer());
+                break;
             case PARTYCHAT: //((short) 0x75),
             case WHISPER: //((short) 0x76),
             case MESSENGER: //((short) 0x78),
@@ -278,6 +456,8 @@ public class MapleServerHandler extends IoHandlerAdapter {
             case ALLIANCE_OPERATION: //((short) 0x96),
             case BBS_OPERATION: //((short) 0x99),
             case ENTER_MTS: //((short) 0x9A),
+                InterServerHandler.EnterMTS(c);
+                break;
             case MOVE_SUMMON: //((short) 0xA9),
             case SUMMON_ATTACK: //((short) 0xAA),
             case DAMAGE_SUMMON: //((short) 0xAB),
@@ -287,6 +467,7 @@ public class MapleServerHandler extends IoHandlerAdapter {
             case MONSTER_BOMB: //((short) 0xB7),
             case MOB_DAMAGE_MOB: //((short) 0xB8),
             case NPC_ACTION: //((short) 0xBB),
+                NPCHandler.NPCAnimation(slea, c);
             case ITEM_PICKUP: //((short) 0xC0),
             case DAMAGE_REACTOR: //((short) 0xC3),
             case TOUCHING_REACTOR: //((short) 0xC4),

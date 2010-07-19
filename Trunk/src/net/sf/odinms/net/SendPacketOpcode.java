@@ -182,7 +182,9 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     SPOUSE_CHAT,
     DOJO_WARP_UP,
     ENERGY,
-    HPQ_MOON;
+    HPQ_MOON,
+    FINISH_SORT,
+    FINISH_SORT2;
     private int code = -2;
 
     public void setValue(int code) {

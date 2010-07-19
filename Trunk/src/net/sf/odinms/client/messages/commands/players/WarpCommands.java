@@ -34,7 +34,7 @@ public class WarpCommands implements PlayerCommand {
                 mc.dropMessage("[Anbu] You cannot CC in this place or situation.");
                 return;
             }
-            final int channel = Integer.parseInt(splitted[1]);
+            final byte channel = Byte.parseByte(splitted[1]);
             if (channel < 1 || channel > ChannelServer.getAllInstances().size()) {
                 c.showMessage(1, "This channel does not exist!");
             } else {
