@@ -25,7 +25,7 @@ public class DonationProcessor {
                 // first add points...
                 victim.modifyDAmount(damount);
                 victim.modifyDPoints(damount);
-                victim.showMessage(1, "[TheBass] Thank you for donating $" + damount + " to FarmerStory. A total of " + victim.getDPoints() + " Donator Points has been set for you by default.\r\n\r\nSee your chatbox if you have any extra functions given to you.");
+                victim.showMessage(1, "[TheBass] Thank you for donating $" + damount + " to NinjaMS. A total of " + victim.getDPoints() + " Donator Points has been set for you by default.\r\n\r\nSee your chatbox if you have any extra functions given to you.");
                 c.dropMessage("[TheBass] Successfully distributed " + damount + " to " + victim.getName());
                 // extra point at one time!
                 short extrapoints = 0;

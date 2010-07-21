@@ -1,36 +1,36 @@
 /*
-	This file is part of the OdinMS Maple Story Server
-    Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
-                       Matthias Butz <matze@odinms.de>
-                       Jan Christian Meyer <vimes@odinms.de>
+This file is part of the OdinMS Maple Story Server
+Copyright (C) 2008 ~ 2010 Patrick Huy <patrick.huy@frz.cc> 
+Matthias Butz <matze@odinms.de>
+Jan Christian Meyer <vimes@odinms.de>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License version 3
-    as published by the Free Software Foundation. You may not use, modify
-    or distribute this program under any other version of the
-    GNU Affero General Public License.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License version 3
+as published by the Free Software Foundation. You may not use, modify
+or distribute this program under any other version of the
+GNU Affero General Public License.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package net.sf.odinms.tools.Packets;
 
+import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.net.MaplePacket;
 import net.sf.odinms.net.SendPacketOpcode;
 import net.sf.odinms.tools.data.output.MaplePacketLittleEndianWriter;
 
-
-
 public class FamilyPacket {
+
     public static MaplePacket getFamilyData() {
         MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-        mplew.writeShort(SendPacketOpcode.FAMILY.getValue());
+        mplew.writeShort(SendPacketOpcode.LOAD_FAMILY);
         mplew.writeInt(11); // Number of events
 
         mplew.write(0);
@@ -99,6 +99,71 @@ public class FamilyPacket {
         mplew.writeMapleAsciiString("2 X EXP event for Party(30min)");
         mplew.writeMapleAsciiString("[Target] My Party\n[Duration] 30min\n[Effect] EXP gained from monsters  will be #cincreased by 100%.#\nThe effect will be disregarded if overlapped with other EXP event.");
 
+        return mplew.getPacket();
+    }
+
+    public static MaplePacket sendFamilyMessage() {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter(6);
+        mplew.writeShort(SendPacketOpcode.FAMILY_MESSAGE);
+        mplew.writeInt(0);
+        return mplew.getPacket();
+    }
+
+    public static MaplePacket getFamilyInfo(MapleCharacter chr) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.OPEN_FAMILY); // who cares what header is
+       /*mplew.writeInt(chr.getFamily().getReputation()); // cur rep left
+        mplew.writeInt(chr.getFamily().getTotalReputation()); // tot rep left
+        mplew.writeInt(chr.getFamily().getTodaysRep()); // todays rep
+        mplew.writeShort(chr.getFamily().getJuniors()); // juniors added
+        mplew.writeShort(chr.getFamily().getTotalJuniors()); // juniors allowed
+        mplew.writeShort(0);
+        mplew.writeInt(chr.getFamilyId()); // id?
+        mplew.writeMapleAsciiString(chr.getFamily().getFamilyName());
+        mplew.writeInt(0);
+        mplew.writeShort(0);*/
+        //TODO : Do this
+        return mplew.getPacket();
+    }
+
+    public static final MaplePacket useRep(int mode, int type, int erate, int drate, int time) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.USE_FAMILY_REP);
+        mplew.write(mode);
+        mplew.writeInt(type);
+        if (mode < 4) {
+            mplew.writeInt(erate);
+            mplew.writeInt(drate);
+        }
+        mplew.write(0);
+        mplew.writeInt(time);
+        return mplew.getPacket();
+    }
+
+    //20 00
+    //00 00 00 00
+    //00 00 00 00 00 00 00 00
+    //80 01
+    //00 00 28 00
+    //8C 93 3E 00
+    //40 0D
+    //03 00 14 00
+    //8C 93 3E 00
+    //40 0D 03 00 00 00 00 00 02
+    public static final MaplePacket giveBuff() {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.GIVE_BUFF);
+        mplew.writeInt(0);
+        mplew.writeLong(0);
+
+        return null;
+    }
+
+    public static final MaplePacket sendFamilyInvite(int playerId, String inviter) {
+        MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
+        mplew.writeShort(SendPacketOpcode.FAMILY_INVITE);
+        mplew.writeInt(playerId);
+        mplew.writeMapleAsciiString(inviter);
         return mplew.getPacket();
     }
 }

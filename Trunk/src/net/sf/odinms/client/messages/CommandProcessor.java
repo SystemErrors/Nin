@@ -46,7 +46,6 @@ import net.sf.odinms.client.messages.commands.players.HelpPlayerCommand;
 import net.sf.odinms.client.messages.commands.Sannin.HelpSanninCommand;
 import net.sf.odinms.database.DatabaseConnection;
 import net.sf.odinms.net.channel.ChannelServer;
-import net.sf.odinms.net.channel.handler.GeneralChatHandler;
 import net.sf.odinms.server.TimerManager;
 import net.sf.odinms.server.maps.MapleMap;
 import net.sf.odinms.tools.ClassFinder;

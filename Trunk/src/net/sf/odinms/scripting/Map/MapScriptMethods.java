@@ -281,7 +281,7 @@ private static final Point witchTowerPos = new Point(-60, 184);
     private static void showIntro(final MapleClient c, final String data) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT.getValue());
+	mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT);
 	mplew.write(0x14);
 	mplew.writeMapleAsciiString(data);
 
@@ -291,7 +291,7 @@ private static final Point witchTowerPos = new Point(-60, 184);
     private static void sendDojoClock(MapleClient c, int time) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.CLOCK.getValue());
+	mplew.writeShort(SendPacketOpcode.CLOCK);
 	mplew.write(2);
 	mplew.writeInt(time);
 
@@ -306,7 +306,7 @@ private static final Point witchTowerPos = new Point(-60, 184);
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
 	// 79 00 01 00 01 00 00 00
-	mplew.writeShort(SendPacketOpcode.BOSS_ENV.getValue());
+	mplew.writeShort(SendPacketOpcode.BOSS_ENV);
 	mplew.writeShort(1);
 	mplew.writeShort(1);
 	mplew.writeShort(0);

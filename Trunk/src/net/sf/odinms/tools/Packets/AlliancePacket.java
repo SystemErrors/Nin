@@ -36,7 +36,7 @@ import net.sf.odinms.tools.data.output.MaplePacketLittleEndianWriter;
 public class AlliancePacket {
  public static MaplePacket showAllianceInfo(MapleCharacter chr) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	mplew.writeShort(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.ALLIANCE_OPERATION);
 	mplew.write(0x0C);
 	MapleAlliance alliance = chr.getGuild().getAlliance(chr.getClient());
 	if (alliance == null) { //show empty alliance (used for leaving, expelled)
@@ -62,14 +62,14 @@ public class AlliancePacket {
 
     public static MaplePacket createAlliance(String name) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	mplew.writeShort(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.ALLIANCE_OPERATION);
 	mplew.write(0x0F);
 	return mplew.getPacket();
     }
 
     public static MaplePacket showAllianceMembers(MapleCharacter chr) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	mplew.writeShort(SendPacketOpcode.ALLIANCE_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.ALLIANCE_OPERATION);
 	mplew.write(0x0D);
 	MapleAlliance az = chr.getGuild().getAlliance(chr.getClient());
 	int e = 0;

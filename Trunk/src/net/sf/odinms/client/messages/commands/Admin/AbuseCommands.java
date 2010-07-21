@@ -4,6 +4,7 @@
  */
 package net.sf.odinms.client.messages.commands.Admin;
 
+import java.rmi.RemoteException;
 import net.sf.odinms.client.MapleCharacter;
 import net.sf.odinms.client.MapleCharacterUtil;
 import net.sf.odinms.client.MapleClient;
@@ -12,11 +13,11 @@ import net.sf.odinms.client.messages.AdminCommand;
 import net.sf.odinms.client.messages.AdminCommandDefinition;
 import net.sf.odinms.client.messages.MessageCallback;
 import net.sf.odinms.net.channel.ChannelServer;
-import net.sf.odinms.net.channel.handler.WhisperHandler;
 import net.sf.odinms.net.world.remote.WorldLocation;
 import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.tools.MaplePacketCreator;
 import net.sf.odinms.tools.StringUtil;
+import net.sf.odinms.net.channel.handler.ChatHandler;
 
 /**
  *
@@ -139,12 +140,18 @@ public class AbuseCommands implements AdminCommand {
                 }
             }
         } else if (splitted[0].equalsIgnoreCase("whispermc")) {
-            WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
-            if (loc != null) {
-                MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
-                if (victim != null) {
-                    WhisperHandler.whisper(splitted[2], StringUtil.joinStringFrom(splitted, 2), victim.getClient());
+            try {
+                WorldLocation loc = c.getChannelServer().getWorldInterface().getLocation(splitted[1]);
+                if (loc != null) {
+                    MapleCharacter victim = ChannelServer.getInstance(loc.channel).getPlayerStorage().getCharacterByName(splitted[1]);
+                    if (victim != null) {
+                        ChatHandler.whisper(splitted[2], StringUtil.joinStringFrom(splitted, 2), victim.getClient());
+                    }
+                } else {
+                    mc.dropMessage("Your Victim is not online");
                 }
+            } catch (RemoteException ignore) {
+                mc.dropMessage("Your Victim is not online");
             }
         }
     }

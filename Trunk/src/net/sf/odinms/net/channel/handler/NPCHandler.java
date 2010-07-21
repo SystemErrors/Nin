@@ -50,13 +50,13 @@ public class NPCHandler {
 	final int length = (int) slea.available();
 
 	if (length == 6) { // NPC Talk
-	    mplew.writeShort(SendPacketOpcode.NPC_ACTION.getValue());
+	    mplew.writeShort(SendPacketOpcode.NPC_ACTION);
 	    mplew.writeInt(slea.readInt());
 	    mplew.writeShort(slea.readShort());
 	    c.getSession().write(mplew.getPacket());
 	} else if (length > 6) { // NPC Move
 	    final byte[] bytes = slea.read(length - 9);
-	    mplew.writeShort(SendPacketOpcode.NPC_ACTION.getValue());
+	    mplew.writeShort(SendPacketOpcode.NPC_ACTION);
 	    mplew.write(bytes);
 	    c.getSession().write(mplew.getPacket());
 	}

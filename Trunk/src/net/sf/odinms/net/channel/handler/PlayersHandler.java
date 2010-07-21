@@ -27,6 +27,7 @@ import net.sf.odinms.client.Buffs.MapleStat;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.Inventory.MapleInventoryType;
 import net.sf.odinms.client.anticheat.CheatingOffense;
+import net.sf.odinms.scripting.reactor.ReactorScriptManager;
 import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.maps.MapleDoor;
@@ -147,5 +148,20 @@ public class PlayersHandler {
 	    return;
 	}
 	reactor.hitReactor(charPos, stance, c);
+    }
+
+    public final static void touchReactor(SeekableLittleEndianAccessor slea, MapleClient c) {
+        slea.toString();
+        int oid = slea.readInt();
+        boolean touching = slea.readByte() != 0; // Credits : Bui
+        MapleReactor reactor = c.getPlayer().getMap().getReactorByOid(oid);
+        System.err.println("Oid : " + oid + " | Touching : " + touching);
+        if (reactor != null) {
+            if (touching) {
+                ReactorScriptManager.getInstance().touch(c, reactor);
+            } else {
+                ReactorScriptManager.getInstance().untouch(c, reactor);
+            }
+        }
     }
 }

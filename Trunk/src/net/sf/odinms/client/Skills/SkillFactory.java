@@ -23,8 +23,11 @@ package net.sf.odinms.client.Skills;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import net.sf.odinms.client.SummonSkillEntry;
 
 import net.sf.odinms.provider.MapleData;
+import net.sf.odinms.provider.MapleDataDirectoryEntry;
+import net.sf.odinms.provider.MapleDataFileEntry;
 import net.sf.odinms.provider.MapleDataProvider;
 import net.sf.odinms.provider.MapleDataProviderFactory;
 import net.sf.odinms.provider.MapleDataTool;
@@ -32,39 +35,57 @@ import net.sf.odinms.tools.StringUtil;
 
 public class SkillFactory {
 
-    private static Map<Integer, ISkill> skills = new HashMap<Integer, ISkill>();
-    private static MapleDataProvider datasource = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Skill.wz"));
-    private static MapleData stringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Skill.img");
+    private static final Map<Integer, ISkill> skills = new HashMap<Integer, ISkill>();
+    private static final Map<Integer, SummonSkillEntry> SummonSkillInformation = new HashMap<Integer, SummonSkillEntry>();
+    private final static MapleData stringData = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/String.wz")).getData("Skill.img");
 
-    public static ISkill getSkill(int id) {
-        ISkill ret = skills.get(Integer.valueOf(id));
-        if (ret != null) {
-            return ret;
-        }
-        synchronized (skills) {
-            // see if someone else that's also synchronized has loaded the skill by now
-            ret = skills.get(Integer.valueOf(id));
-            if (ret == null) {
-                int job = id / 10000;
-                MapleData skillroot = datasource.getData(StringUtil.getLeftPaddedStr(String.valueOf(job), '0', 3) + ".img");
-                MapleData skillData = skillroot.getChildByPath("skill/" + StringUtil.getLeftPaddedStr(String.valueOf(id), '0', 7));
-                if (skillData != null) {
-                    ret = Skill.loadFromData(id, skillData);
-                }
-                skills.put(Integer.valueOf(id), ret);
-            }
-            return ret;
-        }
+    public static final ISkill getSkill(final int id) {
+	if (skills.size() != 0) {
+	    return skills.get(Integer.valueOf(id));
+	}
+	System.out.println("Loading SkillFactory :::");
+	final MapleDataProvider datasource = MapleDataProviderFactory.getDataProvider(new File(System.getProperty("net.sf.odinms.wzpath") + "/Skill.wz"));
+	final MapleDataDirectoryEntry root = datasource.getRoot();
+	int skillid;
+	MapleData summon_data;
+	SummonSkillEntry sse;
+	for (MapleDataFileEntry topDir : root.getFiles()) { // Loop thru jobs
+	    if (topDir.getName().length() <= 8) {
+		for (MapleData data : datasource.getData(topDir.getName())) { // Loop thru each jobs
+		    if (data.getName().equals("skill")) {
+			for (MapleData data2 : data) { // Loop thru each jobs
+			    if (data2 != null) {
+				skillid = Integer.parseInt(data2.getName());
+				skills.put(skillid, Skill.loadFromData(skillid, data2));
+
+				summon_data = data2.getChildByPath("summon/attack1/info");
+				if (summon_data != null) {
+				    sse = new SummonSkillEntry();
+				    sse.attackAfter = (short) MapleDataTool.getInt("attackAfter", summon_data, 999999);
+				    sse.type = (byte) MapleDataTool.getInt("type", summon_data, 0);
+				    sse.mobCount = (byte) MapleDataTool.getInt("mobCount", summon_data, 1);
+				    SummonSkillInformation.put(skillid, sse);
+				}
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	return null;
     }
 
-    public static String getSkillName(int id) {
-        String strId = Integer.toString(id);
-        strId = StringUtil.getLeftPaddedStr(strId, '0', 7);
-        MapleData skillroot = stringData.getChildByPath(strId);
-        if (skillroot != null) {
-            return MapleDataTool.getString(skillroot.getChildByPath("name"), "");
-        }
-        return null;
+    public static final String getSkillName(final int id) {
+	String strId = Integer.toString(id);
+	strId = StringUtil.getLeftPaddedStr(strId, '0', 7);
+	MapleData skillroot = stringData.getChildByPath(strId);
+	if (skillroot != null) {
+	    return MapleDataTool.getString(skillroot.getChildByPath("name"), "");
+	}
+	return null;
     }
 
+    public static final SummonSkillEntry getSummonData(final int skillid) {
+	return SummonSkillInformation.get(skillid);
+    }
 }

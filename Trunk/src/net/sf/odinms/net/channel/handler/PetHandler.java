@@ -222,4 +222,12 @@ public static final void SpawnPet(final SeekableLittleEndianAccessor slea, final
 	    chr.getMap().broadcastMessage(chr, PetPacket.movePet(chr.getId(), petId, slot, res), false);
 	}
     }
+
+    public static final void itemExclude(final SeekableLittleEndianAccessor slea, final MapleClient c, final MapleCharacter chr) {
+        slea.readLong();
+        final byte amount = slea.readByte();
+        for (int i = 0; i < amount; i++) {
+            chr.addExcluded(slea.readInt());
+        }
+    }
 }

@@ -106,7 +106,7 @@ import net.sf.odinms.scripting.npc.NPCScriptManager;
 import net.sf.odinms.server.MapleCarnivalChallenge;
 import net.sf.odinms.server.MapleCarnivalParty;
 import net.sf.odinms.server.MapleInventoryManipulator;
-import net.sf.odinms.server.MiniGame;
+import net.sf.odinms.server.MapleMiniGame;
 import net.sf.odinms.server.life.MapleLifeFactory;
 import net.sf.odinms.server.life.MobSkill;
 import net.sf.odinms.server.life.MobSkillFactory;
@@ -225,10 +225,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     private boolean autobuffchange = false;
     //points
     private int bossPoints, kpqpoints, lmpoints;
-    //MiniGames
-    private int omokwins, omokties, omoklosses, matchcardwins, matchcardties,
-            matchcardlosses;
-    private MiniGame miniGame;
+    private MapleMiniGame miniGame;
     //HiredMerchant
     private HiredMerchant hiredMerchant = null;
     private boolean hasMerchant = false;
@@ -3653,8 +3650,8 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
             ps.executeUpdate();
         } catch (SQLException ex) {
             System.err.println("Error Sending Note : " + ex);
-        } finally{
-            if(ps != null){
+        } finally {
+            if (ps != null) {
                 try {
                     ps.close();
                 } catch (SQLException e) {
@@ -4469,13 +4466,13 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     public List<LifeMovementFragment> getLastRes() {
-	return lastres;
+        return lastres;
     }
 
     public void setLastRes(List<LifeMovementFragment> lastres) {
-	this.lastres = lastres;
+        this.lastres = lastres;
     }
-    
+
     public void setID(int i) {
         this.id = i;
     }
@@ -5597,52 +5594,12 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
     }
 
     // MiniGames
-    public MiniGame getMiniGame() {
+    public MapleMiniGame getMapleMiniGame() {
         return miniGame;
     }
 
-    public int getMiniGamePoints(String type, boolean omok) {
-        if (omok) {
-            if (type.equals("wins")) {
-                return omokwins;
-            } else if (type.equals("losses")) {
-                return omoklosses;
-            } else {
-                return omokties;
-            }
-        } else {
-            if (type.equals("wins")) {
-                return matchcardwins;
-            } else if (type.equals("losses")) {
-                return matchcardlosses;
-            } else {
-                return matchcardties;
-            }
-        }
-    }
-
-    public void setMiniGame(MiniGame miniGame) {
+    public void setMapleMiniGame(MapleMiniGame miniGame) {
         this.miniGame = miniGame;
-    }
-
-    public void setMiniGamePoints(boolean win, boolean loss, boolean omok) {
-        if (omok) {
-            if (win) {
-                this.omokwins++;
-            } else if (loss) {
-                this.omoklosses++;
-            } else {
-                this.omokties++;
-            }
-        } else {
-            if (win) {
-                this.matchcardwins++;
-            } else if (loss) {
-                this.matchcardwins++;
-            } else {
-                this.matchcardties++;
-            }
-        }
     }
 
     public HiredMerchant getHiredMerchant() {
@@ -5962,7 +5919,7 @@ public class MapleCharacter extends AbstractAnimatedMapleMapObject implements In
         for (int i = 0; i < 10; i++) {
             wishlist[i] = 0;
         }
-    }
+    }    
 
     public int getWishlistSize() {
         int ret = 0;

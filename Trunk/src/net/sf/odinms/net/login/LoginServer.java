@@ -56,7 +56,7 @@ import org.apache.mina.transport.socket.nio.SocketAcceptorConfig;
 
 public class LoginServer {
 
-    public static final int PORT = 8484;
+    public static final int PORT = 11111;
     private static InetSocketAddress InetSocketadd;
     private IoAcceptor acceptor;
     private static WorldRegistry worldRegistry = null;

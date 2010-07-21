@@ -20,6 +20,8 @@
 */
 package net.sf.odinms.server.shops;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import net.sf.odinms.client.Inventory.IItem;
 import net.sf.odinms.client.Inventory.ItemFlag;
@@ -134,5 +136,5 @@ public class HiredMerchant extends AbstractPlayerStore {
     @Override
     public void sendSpawnData(MapleClient client) {
 	client.getSession().write(PlayerShopPacket.spawnHiredMerchant(this));
-    }
+    }    
 }

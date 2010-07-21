@@ -34,7 +34,7 @@ public class MulungDojoPackets {
     public static MaplePacket Mulung_DojoUp() {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
+	mplew.writeShort(SendPacketOpcode.SHOW_STATUS_INFO);
 	mplew.write(0x0A);
 	mplew.writeShort(1207); // ???
 	mplew.writeMapleAsciiString("pt=5599;min=4;belt=3;tuto=1"); // todo
@@ -45,7 +45,7 @@ public class MulungDojoPackets {
     public static MaplePacket Mulung_DojoUp2() {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT.getValue());
+	mplew.writeShort(SendPacketOpcode.SHOW_ITEM_GAIN_INCHAT);
 	mplew.write(7);
 
 	return mplew.getPacket();
@@ -54,7 +54,7 @@ public class MulungDojoPackets {
     public static MaplePacket Mulung_Pts(int recv, int total) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.SHOW_STATUS_INFO.getValue());
+	mplew.writeShort(SendPacketOpcode.SHOW_STATUS_INFO);
 	mplew.write(9);
 	mplew.writeMapleAsciiString("You have received " + recv + " training points, for the accumulated total of " + total + " training points.");
 
@@ -63,7 +63,7 @@ public class MulungDojoPackets {
 
     public static MaplePacket MulungEnergy(int energy) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	mplew.writeShort(SendPacketOpcode.ENERGY.getValue());
+	mplew.writeShort(SendPacketOpcode.ENERGY);
 	mplew.writeMapleAsciiString("energy");
 	mplew.writeMapleAsciiString(String.valueOf(energy));
 	return mplew.getPacket();

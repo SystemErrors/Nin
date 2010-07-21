@@ -42,7 +42,6 @@ import net.sf.odinms.server.MapleInventoryManipulator;
 import net.sf.odinms.server.MapleItemInformationProvider;
 import net.sf.odinms.server.MaplePortal;
 import net.sf.odinms.server.TimerManager;
-import net.sf.odinms.server.constants.GameConstants;
 import net.sf.odinms.server.constants.InventoryConstants;
 import net.sf.odinms.server.constants.Skills;
 import net.sf.odinms.server.life.MapleMonster;
@@ -427,7 +426,6 @@ public class PlayerHandler {
         }
     }
     
-
     public static final void ChangeSkillMacro(final SeekableLittleEndianAccessor slea, final MapleCharacter chr) {
 	final int num = slea.readByte();
 	String name;
@@ -462,5 +460,74 @@ public class PlayerHandler {
 		chr.changeKeybinding(key, newbinding);
 	    }
 	}
+    }
+
+    public static final void RingAction(SeekableLittleEndianAccessor slea, MapleClient c) {
+        byte mode = slea.readByte();
+        MapleCharacter player = c.getPlayer();
+        switch (mode) {
+            case 0: //Send
+                String partnerName = slea.readMapleAsciiString();
+                MapleCharacter partner = c.getChannelServer().getPlayerStorage().getCharacterByName(partnerName);
+                if (partnerName.equalsIgnoreCase(player.getName())) {
+                    c.getPlayer().dropMessage(1, "You cannot put your own name in it.");
+                    return;
+                } else if (partner == null) {
+                    c.getPlayer().dropMessage(1, partnerName + " was not found on this channel. If you are both logged in, please make sure you are in the same channel.");
+                    return;
+                } else if (partner.getGender() == player.getGender()) {
+                    c.getPlayer().dropMessage(1, "Your partner is the same gender as you.");
+                    return;
+                } //else if (player.isMarried() && partner.isMarried())
+                // NPCScriptManager.getInstance().start(partner.getClient(), 9201002, "marriagequestion", player);
+                break;
+            case 1: //Cancel send
+                c.getPlayer().dropMessage(1, "You've cancelled the request.");
+                boolean accepted = slea.readByte() > 0;
+                String proposerName = slea.readMapleAsciiString();
+                if (accepted) {
+                    c.getSession().write(MaplePacketCreator.sendEngagementRequest(proposerName));
+                }
+                break;
+            case 3: //Drop Ring
+                /*
+                if (player.getPartner() != null) {
+                try {
+                Connection con = DatabaseConnection.getConnection();
+                int pid = 0;
+                if (player.getGender() == 0)
+                pid = player.getId();
+                else
+                pid = player.getPartner().getId();//we have an engagements SQL?
+                PreparedStatement ps = con.prepareStatement("DELETE FROM engagements WHERE husbandid = ?");
+                ps.setInt(1, pid);
+                ps.executeUpdate();
+                ps.close();
+                ps = con.prepareStatement("UPDATE characters SET marriagequest = 0 WHERE id = ?, and WHERE id = ?");
+                ps.setInt(1, player.getId());
+                ps.setInt(2, player.getPartner().getId());
+                ps.executeUpdate();
+                ps.close();
+                } catch (Exception ex) {
+                }
+                c.getPlayer().dropMessage(1, "Your engagement has been broken up.");
+                break;
+                }*/
+                break;
+            case 9: // groom's wishlist
+                int amount = slea.readShort();
+                if (amount > 10) {
+                    amount = 10;
+                }
+                String[] items = new String[10];
+                for (int i = 0; i < amount; i++) {
+                    items[i] = slea.readMapleAsciiString();
+                }
+                c.getSession().write(MaplePacketCreator.sendGroomWishlist());
+                break;
+            default:
+                System.out.println("NEW RING ACTION " + mode);
+                break;
+        }
     }
 }

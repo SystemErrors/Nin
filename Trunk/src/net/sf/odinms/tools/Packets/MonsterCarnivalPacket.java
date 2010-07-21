@@ -37,7 +37,7 @@ public class MonsterCarnivalPacket {
 
     public static MaplePacket startMonsterCarnival(final MapleCharacter chr, final int enemyavailable, final int enemytotal) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_START.getValue());
+	mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_START);
         final MapleCarnivalParty friendly = chr.getCarnivalParty();
 	mplew.write(friendly.getTeam());
         mplew.writeShort(chr.getAvailableCP());
@@ -53,7 +53,7 @@ public class MonsterCarnivalPacket {
 
     public static MaplePacket playerDiedMessage(String name, int lostCP, int team) { //CPQ
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
-	mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_DIED.getValue());
+	mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_DIED);
 	mplew.write(team); //team
 	mplew.writeMapleAsciiString(name);
 	mplew.write(lostCP);
@@ -63,9 +63,9 @@ public class MonsterCarnivalPacket {
     public static MaplePacket CPUpdate(boolean party, int curCP, int totalCP, int team) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 	if (!party) {
-	    mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_OBTAINED_CP.getValue());
+	    mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_OBTAINED_CP);
 	} else {
-	    mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_PARTY_CP.getValue());
+	    mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_PARTY_CP);
 	    mplew.write(team);
 	}
 	mplew.writeShort(curCP);
@@ -77,7 +77,7 @@ public class MonsterCarnivalPacket {
     public static MaplePacket playerSummoned(String name, int tab, int number) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_SUMMON.getValue());
+	mplew.writeShort(SendPacketOpcode.MONSTER_CARNIVAL_SUMMON);
 	mplew.write(tab);
 	mplew.write(number);
 	mplew.writeMapleAsciiString(name);

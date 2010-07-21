@@ -35,7 +35,7 @@ public class BBSPacket {
 public static MaplePacket BBSThreadList(ResultSet rs, int start) throws SQLException {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.BBS_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.BBS_OPERATION);
 	mplew.write(6);
 
 	int threadCount = rs.getRow();
@@ -75,7 +75,7 @@ public static MaplePacket BBSThreadList(ResultSet rs, int start) throws SQLExcep
     public static MaplePacket showThread(int localthreadid, ResultSet threadRS, ResultSet repliesRS) throws SQLException, RuntimeException {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.BBS_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.BBS_OPERATION);
 	mplew.write(7);
 
 	mplew.writeInt(localthreadid);

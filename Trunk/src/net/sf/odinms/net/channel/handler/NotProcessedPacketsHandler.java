@@ -23,6 +23,7 @@ package net.sf.odinms.net.channel.handler;
 
 import net.sf.odinms.client.MapleClient;
 import net.sf.odinms.server.AutobanManager;
+import net.sf.odinms.tools.data.input.SeekableLittleEndianAccessor;
 
 /**
  *
@@ -48,5 +49,29 @@ public class NotProcessedPacketsHandler {
 
     public static void useTelePortRock() {
         // Do nothing.
+    }
+
+    public static void spouseChat() {
+        // do nothing
+    }
+
+    public static void adminLog() {
+        // Do nothing.
+    }
+
+    public static void openFamily() {
+        // do nth
+    }
+
+    public static void pet_Talk() {
+        //do nth
+    }
+
+    public static void couponCode() {
+        // do nth
+    }
+
+    public static void mtsOp() {
+        // do nth
     }
 }

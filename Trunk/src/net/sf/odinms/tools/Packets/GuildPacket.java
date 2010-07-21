@@ -40,7 +40,7 @@ public class GuildPacket {
     public static MaplePacket showGuildInfo(MapleCharacter c) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x1A); //signature for showing guild info
 
 	if (c == null) { //show empty guild (used for leaving, expelled)
@@ -80,7 +80,7 @@ public class GuildPacket {
     public static MaplePacket guildMemberOnline(int gid, int cid, boolean bOnline) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x3d);
 	mplew.writeInt(gid);
 	mplew.writeInt(cid);
@@ -92,7 +92,7 @@ public class GuildPacket {
     public static MaplePacket guildInvite(int gid, String charName) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x05);
 	mplew.writeInt(gid);
 	mplew.writeMapleAsciiString(charName);
@@ -103,7 +103,7 @@ public class GuildPacket {
     public static MaplePacket denyGuildInvitation(String charname) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x37);
 	mplew.writeMapleAsciiString(charname);
 
@@ -113,7 +113,7 @@ public class GuildPacket {
     public static MaplePacket genericGuildMessage(byte code) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(code);
 
 	return mplew.getPacket();
@@ -122,7 +122,7 @@ public class GuildPacket {
     public static MaplePacket newGuildMember(MapleGuildCharacter mgc) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x27);
 	mplew.writeInt(mgc.getGuildId());
 	mplew.writeInt(mgc.getId());
@@ -141,7 +141,7 @@ public class GuildPacket {
     public static MaplePacket memberLeft(MapleGuildCharacter mgc, boolean bExpelled) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(bExpelled ? 0x2f : 0x2c);
 
 	mplew.writeInt(mgc.getGuildId());
@@ -154,7 +154,7 @@ public class GuildPacket {
     public static MaplePacket changeRank(MapleGuildCharacter mgc) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x40);
 	mplew.writeInt(mgc.getGuildId());
 	mplew.writeInt(mgc.getId());
@@ -166,7 +166,7 @@ public class GuildPacket {
     public static MaplePacket guildNotice(int gid, String notice) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x44);
 	mplew.writeInt(gid);
 	mplew.writeMapleAsciiString(notice);
@@ -177,7 +177,7 @@ public class GuildPacket {
     public static MaplePacket guildMemberLevelJobUpdate(MapleGuildCharacter mgc) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x3C);
 	mplew.writeInt(mgc.getGuildId());
 	mplew.writeInt(mgc.getId());
@@ -190,7 +190,7 @@ public class GuildPacket {
     public static MaplePacket rankTitleChange(int gid, String[] ranks) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x3e);
 	mplew.writeInt(gid);
 
@@ -203,7 +203,7 @@ public class GuildPacket {
     public static MaplePacket guildDisband(int gid) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x32);
 	mplew.writeInt(gid);
 	mplew.write(1);
@@ -214,7 +214,7 @@ public class GuildPacket {
     public static MaplePacket guildEmblemChange(int gid, short bg, byte bgcolor, short logo, byte logocolor) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x42);
 	mplew.writeInt(gid);
 	mplew.writeShort(bg);
@@ -228,7 +228,7 @@ public class GuildPacket {
     public static MaplePacket guildCapacityChange(int gid, int capacity) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x3a);
 	mplew.writeInt(gid);
 	mplew.write(capacity);
@@ -239,7 +239,7 @@ public class GuildPacket {
      public static MaplePacket showGuildRanks(int npcid, List<GuildRankingInfo> all) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x49);
 	mplew.writeInt(npcid);
 	mplew.writeInt(all.size());
@@ -259,7 +259,7 @@ public class GuildPacket {
     public static MaplePacket updateGP(int gid, int GP) {
 	MaplePacketLittleEndianWriter mplew = new MaplePacketLittleEndianWriter();
 
-	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION.getValue());
+	mplew.writeShort(SendPacketOpcode.GUILD_OPERATION);
 	mplew.write(0x48);
 	mplew.writeInt(gid);
 	mplew.writeInt(GP);
